@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\Reservation;
 use App\Models\Shift;
 use App\Models\Room;
+use App\Models\Machine;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -78,10 +79,22 @@ class ReservationController extends Controller
             return false;
         }
 
-        // Check Room Availability (Simplified: Any room free?)
-        // Ideally, link Menu to Room Type
-        $totalRooms = Room::count();
+        // Check Room Availability
+        // Use required_room_type from menu if set, otherwise any room (or specific default)
+        $roomType = $menu->required_room_type;
+        
+        $totalRoomsQuery = Room::query();
+        if ($roomType) {
+            $totalRoomsQuery->where('type', $roomType);
+        }
+        $totalRooms = $totalRoomsQuery->count();
+
         $busyRooms = Reservation::whereNotNull('room_id')
+            ->whereHas('room', function($q) use ($roomType) {
+                if ($roomType) {
+                    $q->where('type', $roomType);
+                }
+            })
             ->where(function ($query) use ($start, $end) {
                 $query->where('start_time', '<', $end)
                       ->where('end_time', '>', $start);
@@ -91,11 +104,13 @@ class ReservationController extends Controller
             return false;
         }
 
-        // Check Machine Availability (Heuristic: If menu name contains 'レーザー', need 'laser' machine)
-        if ($menu && str_contains($menu->name, 'レーザー')) {
-             $totalMachines = Machine::where('type', 'laser')->count();
-             $busyMachines = Reservation::whereHas('machine', function($q) {
-                 $q->where('type', 'laser');
+        // Check Machine Availability
+        $machineType = $menu->required_machine_type;
+        if ($machineType) {
+             $totalMachines = Machine::where('type', $machineType)->count();
+             $busyMachines = Reservation::whereNotNull('machine_id')
+             ->whereHas('machine', function($q) use ($machineType) {
+                 $q->where('type', $machineType);
              })
              ->where(function ($query) use ($start, $end) {
                 $query->where('start_time', '<', $end)
@@ -125,11 +140,11 @@ class ReservationController extends Controller
         
         // Find available staff
         $staffId = $this->findAvailableStaff($start, $end);
-        $roomId = $this->findAvailableRoom($start, $end);
+        $roomId = $this->findAvailableRoom($start, $end, $menu->required_room_type);
         
         $machineId = null;
-        if (str_contains($menu->name, 'レーザー')) {
-            $machineId = $this->findAvailableMachine($start, $end, 'laser');
+        if ($menu->required_machine_type) {
+            $machineId = $this->findAvailableMachine($start, $end, $menu->required_machine_type);
             if (!$machineId) {
                  return back()->withErrors(['message' => 'Selected slot is no longer available (Machine).']);
             }
@@ -168,8 +183,13 @@ class ReservationController extends Controller
         return $staffWithShift->diff($busyStaff)->first();
     }
 
-    private function findAvailableRoom($start, $end) {
-        $allRooms = Room::pluck('id');
+    private function findAvailableRoom($start, $end, $type = null) {
+        $roomQuery = Room::query();
+        if ($type) {
+            $roomQuery->where('type', $type);
+        }
+        $allRooms = $roomQuery->pluck('id');
+
         $busyRooms = Reservation::whereNotNull('room_id')
              ->where(function ($query) use ($start, $end) {
                 $query->where('start_time', '<', $end)

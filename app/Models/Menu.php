@@ -11,6 +11,8 @@ class Menu extends Model
         'description',
         'price',
         'duration_minutes',
+        'required_room_type',
+        'required_machine_type',
         'is_active',
     ];
 
