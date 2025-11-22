@@ -1,12 +1,12 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Index({ auth, templates }) {
     const { flash } = usePage().props;
 
     return (
-        <AuthenticatedLayout
+        <StaffLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">書類テンプレート管理</h2>}
         >
@@ -73,6 +73,6 @@ export default function Index({ auth, templates }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </StaffLayout>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 
 export default function Create({ auth }) {
@@ -16,7 +16,7 @@ export default function Create({ auth }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <StaffLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">テンプレート新規作成</h2>}
         >
@@ -104,6 +104,6 @@ export default function Create({ auth }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </StaffLayout>
     );
 }

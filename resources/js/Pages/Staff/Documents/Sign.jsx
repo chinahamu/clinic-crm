@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 import SignatureCanvas from 'react-signature-canvas';
 
@@ -81,7 +81,7 @@ export default function Sign({ auth, patient, templates }) {
     // router.post を使って実装する。
 
     return (
-        <AuthenticatedLayout
+        <StaffLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">電子署名</h2>}
         >
@@ -171,6 +171,6 @@ export default function Sign({ auth, patient, templates }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </StaffLayout>
     );
 }

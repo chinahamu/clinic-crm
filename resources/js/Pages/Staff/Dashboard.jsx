@@ -46,6 +46,10 @@ export default function Dashboard() {
                                     <h3 className="font-bold text-lg mb-2">商品管理</h3>
                                     <p>物販商品・オプションの登録・編集</p>
                                 </a>
+                                <a href={route('staff.documents.index')} className="block p-6 bg-teal-50 rounded-lg hover:bg-teal-100">
+                                    <h3 className="font-bold text-lg mb-2">書類テンプレート</h3>
+                                    <p>同意書・契約書等のテンプレート管理</p>
+                                </a>
                             </div>
                         </div>
                     </div>
