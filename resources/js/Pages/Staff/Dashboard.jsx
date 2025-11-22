@@ -30,6 +30,18 @@ export default function Dashboard() {
                                     <h3 className="font-bold text-lg mb-2">メニュー管理</h3>
                                     <p>施術メニューとリソース設定の編集</p>
                                 </a>
+                                <a href={route('staff.patients.index')} className="block p-6 bg-yellow-50 rounded-lg hover:bg-yellow-100">
+                                    <h3 className="font-bold text-lg mb-2">患者管理</h3>
+                                    <p>患者情報の検索・閲覧・編集</p>
+                                </a>
+                                <a href={route('staff.members.index')} className="block p-6 bg-indigo-50 rounded-lg hover:bg-indigo-100">
+                                    <h3 className="font-bold text-lg mb-2">スタッフ管理</h3>
+                                    <p>スタッフアカウントと権限の管理</p>
+                                </a>
+                                <a href={route('staff.audit-logs.index')} className="block p-6 bg-gray-50 rounded-lg hover:bg-gray-100">
+                                    <h3 className="font-bold text-lg mb-2">操作ログ</h3>
+                                    <p>システム操作履歴と監査ログの確認</p>
+                                </a>
                             </div>
                         </div>
                     </div>

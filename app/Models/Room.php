@@ -11,7 +11,13 @@ class Room extends Model
         'type',
         'capacity',
         'is_active',
+        'clinic_id',
     ];
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
+    }
 
     public function reservations()
     {

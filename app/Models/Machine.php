@@ -10,7 +10,13 @@ class Machine extends Model
         'name',
         'type',
         'is_active',
+        'clinic_id',
     ];
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
+    }
 
     public function reservations()
     {

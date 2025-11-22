@@ -12,6 +12,7 @@ class Reservation extends Model
         'staff_id',
         'room_id',
         'machine_id',
+        'clinic_id',
         'start_time',
         'end_time',
         'reservation_type',
@@ -24,6 +25,11 @@ class Reservation extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
     ];
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
+    }
 
     public function user()
     {

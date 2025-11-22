@@ -8,6 +8,7 @@ class Shift extends Model
 {
     protected $fillable = [
         'staff_id',
+        'clinic_id',
         'start_time',
         'end_time',
         'status',
@@ -18,6 +19,11 @@ class Shift extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
     ];
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
+    }
 
     public function staff()
     {

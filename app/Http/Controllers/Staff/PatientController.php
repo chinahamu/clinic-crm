@@ -28,6 +28,11 @@ class PatientController extends Controller
      */
     public function show(User $patient)
     {
+        activity()
+            ->performedOn($patient)
+            ->causedBy(auth()->guard('staff')->user())
+            ->log('viewed_patient_chart');
+
         return Inertia::render('Staff/Patients/Show', [
             'patient' => $patient,
         ]);

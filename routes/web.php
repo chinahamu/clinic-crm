@@ -37,6 +37,8 @@ Route::prefix('staff')->name('staff.')->group(function () {
         })->name('dashboard');
 
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
+        Route::resource('members', \App\Http\Controllers\Staff\StaffMemberController::class);
+        Route::get('audit-logs', [\App\Http\Controllers\Staff\AuditLogController::class, 'index'])->name('audit-logs.index');
 
         Route::resource('menus', \App\Http\Controllers\Staff\MenuController::class);
         Route::resource('rooms', \App\Http\Controllers\Staff\RoomController::class);
