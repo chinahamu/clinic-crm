@@ -33,5 +33,15 @@ Route::prefix('staff')->name('staff.')->group(function () {
         })->name('dashboard');
 
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
+
+        Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservations.create');
+        Route::post('/reservations', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservations.store');
+        Route::get('/reservations/availability', [\App\Http\Controllers\ReservationController::class, 'availability'])->name('reservations.availability');
+
+        Route::resource('menus', \App\Http\Controllers\Staff\MenuController::class);
+        Route::resource('rooms', \App\Http\Controllers\Staff\RoomController::class);
+        Route::resource('machines', \App\Http\Controllers\Staff\MachineController::class);
+        Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
+        Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
     });
 });

@@ -57,4 +57,9 @@ class User extends Authenticatable
             'last_visit_at' => 'datetime',
         ];
     }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

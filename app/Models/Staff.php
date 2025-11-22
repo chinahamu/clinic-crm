@@ -28,4 +28,14 @@ class Staff extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function shifts()
+    {
+        return $this->hasMany(Shift::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }
