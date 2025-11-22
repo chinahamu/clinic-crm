@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,7 +19,9 @@ class MenuController extends Controller
 
     public function create()
     {
-        return Inertia::render('Staff/Menus/Create');
+        return Inertia::render('Staff/Menus/Create', [
+            'products' => Product::where('is_active', true)->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -29,17 +32,25 @@ class MenuController extends Controller
             'duration_minutes' => 'required|integer',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
         ]);
 
-        Menu::create($request->all());
+        $menu = Menu::create($request->except('product_ids'));
+
+        if ($request->has('product_ids')) {
+            $menu->products()->sync($request->product_ids);
+        }
 
         return redirect()->route('staff.menus.index')->with('success', 'Menu created successfully.');
     }
 
     public function edit(Menu $menu)
     {
+        $menu->load('products');
         return Inertia::render('Staff/Menus/Edit', [
             'menu' => $menu,
+            'products' => Product::where('is_active', true)->get(),
         ]);
     }
 
@@ -51,9 +62,15 @@ class MenuController extends Controller
             'duration_minutes' => 'required|integer',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
         ]);
 
-        $menu->update($request->all());
+        $menu->update($request->except('product_ids'));
+
+        if ($request->has('product_ids')) {
+            $menu->products()->sync($request->product_ids);
+        }
 
         return redirect()->route('staff.menus.index')->with('success', 'Menu updated successfully.');
     }

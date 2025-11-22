@@ -42,6 +42,10 @@ export default function Dashboard() {
                                     <h3 className="font-bold text-lg mb-2">操作ログ</h3>
                                     <p>システム操作履歴と監査ログの確認</p>
                                 </a>
+                                <a href={route('staff.products.index')} className="block p-6 bg-pink-50 rounded-lg hover:bg-pink-100">
+                                    <h3 className="font-bold text-lg mb-2">商品管理</h3>
+                                    <p>物販商品・オプションの登録・編集</p>
+                                </a>
                             </div>
                         </div>
                     </div>

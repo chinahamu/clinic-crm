@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Create() {
+export default function Create({ products }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
@@ -10,11 +10,21 @@ export default function Create() {
         duration_minutes: '',
         required_room_type: '',
         required_machine_type: '',
+        product_ids: [],
     });
 
     const submit = (e) => {
         e.preventDefault();
         post(route('staff.menus.store'));
+    };
+
+    const handleProductChange = (e) => {
+        const id = parseInt(e.target.value);
+        if (e.target.checked) {
+            setData('product_ids', [...data.product_ids, id]);
+        } else {
+            setData('product_ids', data.product_ids.filter((pid) => pid !== id));
+        }
     };
 
     return (
@@ -81,6 +91,28 @@ export default function Create() {
                                     onChange={(e) => setData('required_machine_type', e.target.value)}
                                     placeholder="例: laser"
                                 />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">関連商品 (オプション/物販)</label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border p-4 rounded bg-gray-50">
+                                    {products && products.length > 0 ? (
+                                        products.map((product) => (
+                                            <label key={product.id} className="flex items-center space-x-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    value={product.id}
+                                                    checked={data.product_ids.includes(product.id)}
+                                                    onChange={handleProductChange}
+                                                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                                />
+                                                <span className="text-sm text-gray-700">{product.name} (¥{product.price.toLocaleString()})</span>
+                                            </label>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-gray-500 col-span-3">登録されている商品がありません。</p>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="flex items-center justify-end mt-4">

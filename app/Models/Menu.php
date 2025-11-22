@@ -20,4 +20,9 @@ class Menu extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }

@@ -43,6 +43,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::get('audit-logs', [\App\Http\Controllers\Staff\AuditLogController::class, 'index'])->name('audit-logs.index');
 
         Route::resource('menus', \App\Http\Controllers\Staff\MenuController::class);
+        Route::resource('products', \App\Http\Controllers\Staff\ProductController::class);
         Route::resource('rooms', \App\Http\Controllers\Staff\RoomController::class);
         Route::resource('machines', \App\Http\Controllers\Staff\MachineController::class);
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
