@@ -45,6 +45,12 @@ export default function Show({ patient }) {
                     <h1 className="text-2xl font-semibold text-gray-900">患者詳細: {patient.name}</h1>
                     <div className="flex">
                         <Link
+                            href={route('staff.documents.sign', patient.id)}
+                            className="mr-3 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150"
+                        >
+                            電子署名
+                        </Link>
+                        <Link
                             href={route('staff.patients.contracts.index', patient.id)}
                             className="mr-3 inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150"
                         >

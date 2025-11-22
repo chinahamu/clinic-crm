@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menu_product', function (Blueprint $table) {
+        Schema::create('document_templates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('content');
+            $table->string('type')->default('general');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
-            $table->unique(['menu_id', 'product_id']);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menu_product');
+        Schema::dropIfExists('document_templates');
     }
 };

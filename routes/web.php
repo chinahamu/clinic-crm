@@ -48,5 +48,9 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('machines', \App\Http\Controllers\Staff\MachineController::class);
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
         Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
+
+        Route::resource('documents', \App\Http\Controllers\Staff\DocumentController::class);
+        Route::get('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'sign'])->name('documents.sign');
+        Route::post('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'storeSignature'])->name('documents.storeSignature');
     });
 });
