@@ -43,12 +43,20 @@ export default function Show({ patient }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-semibold text-gray-900">患者詳細: {patient.name}</h1>
-                    <Link
-                        href={route('staff.patients.edit', patient.id)}
-                        className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150"
-                    >
-                        編集
-                    </Link>
+                    <div className="flex">
+                        <Link
+                            href={route('staff.patients.contracts.index', patient.id)}
+                            className="mr-3 inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150"
+                        >
+                            契約管理
+                        </Link>
+                        <Link
+                            href={route('staff.patients.edit', patient.id)}
+                            className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150"
+                        >
+                            編集
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
