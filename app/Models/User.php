@@ -21,6 +21,15 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'birthday',
+        'gender',
+        'address',
+        'referral_source',
+        'consent_status',
+        'caution_flag',
+        'caution_details',
+        'last_visit_at',
     ];
 
     /**
@@ -43,6 +52,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birthday' => 'date',
+            'caution_flag' => 'boolean',
+            'last_visit_at' => 'datetime',
         ];
     }
 }
