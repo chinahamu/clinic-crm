@@ -6,7 +6,10 @@ use App\Http\Controllers\Staff\Auth\AuthenticatedSessionController as StaffAuthe
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
 });
 
 Route::middleware(['auth:web'])->group(function () {
