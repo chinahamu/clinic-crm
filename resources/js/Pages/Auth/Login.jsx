@@ -35,6 +35,7 @@ export default function Login() {
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
                                 autoFocus
+                                autoComplete="username"
                             />
                             {errors.email && <div className="text-red-500 text-xs italic mt-2">{errors.email}</div>}
                         </div>
@@ -51,6 +52,7 @@ export default function Login() {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 required
+                                autoComplete="current-password"
                             />
                             {errors.password && <div className="text-red-500 text-xs italic mt-2">{errors.password}</div>}
                         </div>
