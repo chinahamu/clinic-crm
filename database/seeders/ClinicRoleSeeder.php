@@ -18,13 +18,25 @@ class ClinicRoleSeeder extends Seeder
         $clinics = Clinic::all();
         $roles = Role::where('guard_name', 'staff')->get();
 
+        // ロール名 -> 日本語ラベルのマッピング（必要に応じて追加してください）
+        $labelMap = [
+            'owner' => 'オーナー',
+            'admin' => '管理者',
+            'manager' => 'マネージャー',
+            'doctor' => '医師',
+            'reception' => '受付',
+            'nurse' => '看護師',
+            'staff' => 'スタッフ',
+        ];
+
         foreach ($clinics as $clinic) {
             foreach ($roles as $role) {
-                ClinicRole::firstOrCreate([
+                // 既存レコードがあればラベルを上書きして日本語にする
+                ClinicRole::updateOrCreate([
                     'clinic_id' => $clinic->id,
                     'role_id' => $role->id,
                 ], [
-                    'label' => $role->name,
+                    'label' => $labelMap[$role->name] ?? $role->name,
                 ]);
             }
         }
