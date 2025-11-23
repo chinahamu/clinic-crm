@@ -85,10 +85,19 @@ class PatientReservationController extends Controller
     {
         // Check Staff Availability
         // Must have a shift covering this time
-        $staffWithShift = Shift::where('clinic_id', $clinicId)
+        $requiredRole = $menu->required_role;
+
+        $staffQuery = Shift::where('clinic_id', $clinicId)
             ->where('start_time', '<=', $start)
-            ->where('end_time', '>=', $end)
-            ->pluck('staff_id');
+            ->where('end_time', '>=', $end);
+
+        if ($requiredRole) {
+            $staffQuery->whereHas('staff', function ($q) use ($requiredRole) {
+                $q->role($requiredRole);
+            });
+        }
+
+        $staffWithShift = $staffQuery->pluck('staff_id');
 
         if ($staffWithShift->isEmpty()) {
             return false;
