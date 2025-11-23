@@ -12,6 +12,8 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
+
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', function () {
         return Inertia::render('Dashboard');
