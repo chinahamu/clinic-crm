@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Edit({ menu, products }) {
+export default function Edit({ menu, products, roomTypes, machineTypes }) {
     const { auth } = usePage().props;
     const { data, setData, put, processing, errors } = useForm({
         name: menu.name,
@@ -73,24 +73,34 @@ export default function Edit({ menu, products }) {
 
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2">必須部屋タイプ (任意)</label>
-                                <input
-                                    type="text"
+                                <select
                                     className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     value={data.required_room_type}
                                     onChange={(e) => setData('required_room_type', e.target.value)}
-                                    placeholder="例: consultation, treatment"
-                                />
+                                >
+                                    <option value="">指定なし</option>
+                                    {roomTypes.map((type) => (
+                                        <option key={type} value={type}>
+                                            {type}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2">必須機械タイプ (任意)</label>
-                                <input
-                                    type="text"
+                                <select
                                     className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     value={data.required_machine_type}
                                     onChange={(e) => setData('required_machine_type', e.target.value)}
-                                    placeholder="例: laser"
-                                />
+                                >
+                                    <option value="">指定なし</option>
+                                    {machineTypes.map((type) => (
+                                        <option key={type} value={type}>
+                                            {type}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="mb-4">

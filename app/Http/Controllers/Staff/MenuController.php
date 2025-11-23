@@ -21,6 +21,8 @@ class MenuController extends Controller
     {
         return Inertia::render('Staff/Menus/Create', [
             'products' => Product::where('is_active', true)->get(),
+            'roomTypes' => \App\Models\Room::select('type')->distinct()->whereNotNull('type')->pluck('type'),
+            'machineTypes' => \App\Models\Machine::select('type')->distinct()->whereNotNull('type')->pluck('type'),
         ]);
     }
 
@@ -51,6 +53,8 @@ class MenuController extends Controller
         return Inertia::render('Staff/Menus/Edit', [
             'menu' => $menu,
             'products' => Product::where('is_active', true)->get(),
+            'roomTypes' => \App\Models\Room::select('type')->distinct()->whereNotNull('type')->pluck('type'),
+            'machineTypes' => \App\Models\Machine::select('type')->distinct()->whereNotNull('type')->pluck('type'),
         ]);
     }
 
