@@ -46,6 +46,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);
         Route::post('patients/{patient}/contracts/{contract}/usage', [\App\Http\Controllers\Staff\ContractController::class, 'storeUsage'])->name('patients.contracts.usage.store');
         Route::resource('members', \App\Http\Controllers\Staff\StaffMemberController::class);
+        Route::resource('clinic-roles', \App\Http\Controllers\Staff\ClinicRoleController::class);
         Route::get('audit-logs', [\App\Http\Controllers\Staff\AuditLogController::class, 'index'])->name('audit-logs.index');
 
         Route::resource('menus', \App\Http\Controllers\Staff\MenuController::class);

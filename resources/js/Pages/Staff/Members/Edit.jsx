@@ -2,14 +2,14 @@ import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Edit({ member, roles, clinics }) {
+export default function Edit({ member, clinicRoles, clinics }) {
     const { auth } = usePage().props;
     const { data, setData, put, processing, errors } = useForm({
         name: member.name,
         email: member.email,
         password: '',
         password_confirmation: '',
-        role: member.roles.length > 0 ? member.roles[0].name : '',
+        clinic_role_id: member.clinic_role_id || '',
         clinic_id: member.clinic_id || '',
     });
 
@@ -66,6 +66,7 @@ export default function Edit({ member, roles, clinics }) {
                                         id="password"
                                         type="password"
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        autoComplete="new-password"
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
                                     />
@@ -80,29 +81,30 @@ export default function Edit({ member, roles, clinics }) {
                                         id="password_confirmation"
                                         type="password"
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        autoComplete="new-password"
                                         value={data.password_confirmation}
                                         onChange={(e) => setData('password_confirmation', e.target.value)}
                                     />
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="clinic_role_id">
                                         役割
                                     </label>
                                     <select
-                                        id="role"
+                                        id="clinic_role_id"
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        value={data.role}
-                                        onChange={(e) => setData('role', e.target.value)}
+                                        value={data.clinic_role_id}
+                                        onChange={(e) => setData('clinic_role_id', e.target.value)}
                                     >
                                         <option value="">選択してください</option>
-                                        {roles.map((role) => (
-                                            <option key={role.id} value={role.name}>
-                                                {role.name}
+                                        {clinicRoles.map((cr) => (
+                                            <option key={cr.id} value={cr.id}>
+                                                {cr.label ? cr.label : cr.role.name}
                                             </option>
                                         ))}
                                     </select>
-                                    {errors.role && <div className="text-red-500 text-xs mt-1">{errors.role}</div>}
+                                    {errors.clinic_role_id && <div className="text-red-500 text-xs mt-1">{errors.clinic_role_id}</div>}
                                 </div>
 
                                 <div className="mb-4">

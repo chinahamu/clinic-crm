@@ -7,7 +7,7 @@ use App\Models\Staff;
 use App\Models\Clinic;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
+use App\Models\ClinicRole;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
@@ -33,7 +33,11 @@ class StaffMemberController extends Controller
     public function create()
     {
         return Inertia::render('Staff/Members/Create', [
-            'roles' => Role::where('guard_name', 'staff')->get(),
+            // 画面にはクリニック別のロールマスタを渡す
+            'clinicRoles' => ClinicRole::with('role')
+                ->when(!auth()->guard('staff')->user()->hasRole('hq'), function ($q) {
+                    $q->where('clinic_id', auth()->guard('staff')->user()->clinic_id);
+                })->get(),
             'clinics' => Clinic::all(),
         ]);
     }
@@ -44,7 +48,7 @@ class StaffMemberController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:staff',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|exists:roles,name',
+            'clinic_role_id' => 'required|exists:clinic_roles,id',
             'clinic_id' => 'required|exists:clinics,id',
         ]);
 
@@ -55,16 +59,32 @@ class StaffMemberController extends Controller
             'clinic_id' => $request->clinic_id,
         ]);
 
-        $staff->assignRole($request->role);
+        $clinicRole = ClinicRole::with('role')->findOrFail($request->clinic_role_id);
+        // Spatie のロール名で割り当て
+        $staff->assignRole($clinicRole->role->name);
 
         return redirect()->route('staff.members.index');
     }
 
     public function edit(Staff $member)
     {
+        // 編集時は該当クリニックの clinic_role を特定して画面へ渡す
+        $member->load(['roles', 'clinic']);
+        $selectedClinicRoleId = null;
+        if (count($member->roles) > 0) {
+            $roleName = $member->roles[0]->name;
+            $selectedClinicRoleId = ClinicRole::where('clinic_id', $member->clinic_id)
+                ->whereHas('role', function ($q) use ($roleName) {
+                    $q->where('name', $roleName);
+                })->value('id');
+        }
+
         return Inertia::render('Staff/Members/Edit', [
-            'member' => $member->load(['roles', 'clinic']),
-            'roles' => Role::where('guard_name', 'staff')->get(),
+            'member' => $member->setAttribute('clinic_role_id', $selectedClinicRoleId),
+            'clinicRoles' => ClinicRole::with('role')
+                ->when(!auth()->guard('staff')->user()->hasRole('hq'), function ($q) {
+                    $q->where('clinic_id', auth()->guard('staff')->user()->clinic_id);
+                })->get(),
             'clinics' => Clinic::all(),
         ]);
     }
@@ -74,7 +94,7 @@ class StaffMemberController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:staff,email,' . $member->id,
-            'role' => 'required|exists:roles,name',
+            'clinic_role_id' => 'required|exists:clinic_roles,id',
             'clinic_id' => 'required|exists:clinics,id',
         ]);
 
@@ -91,7 +111,8 @@ class StaffMemberController extends Controller
             $member->update(['password' => Hash::make($request->password)]);
         }
 
-        $member->syncRoles([$request->role]);
+        $clinicRole = ClinicRole::with('role')->findOrFail($request->clinic_role_id);
+        $member->syncRoles([$clinicRole->role->name]);
 
         return redirect()->route('staff.members.index');
     }

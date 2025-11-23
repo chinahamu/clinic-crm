@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function StaffLayout({ user, header, children }) {
+    const { auth } = usePage().props;
+    const currentUser = user ?? (auth ? auth.user : null);
     return (
         <div className="flex min-h-screen bg-gray-100">
             <nav className="w-64 bg-white border-r border-gray-200 flex-shrink-0">
@@ -49,6 +51,18 @@ export default function StaffLayout({ user, header, children }) {
                         >
                             メニュー管理
                         </Link>
+                        {/* クリニック別ロール管理（HQ またはクリニック所属スタッフに表示） */}
+                        {user && ( (user.roles && user.roles.some(r => r.name === 'hq')) || user.clinic_id ) && (
+                            <Link
+                                href={route('staff.clinic-roles.index')}
+                                className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.clinic-roles.*')
+                                        ? 'bg-green-50 text-green-700'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
+                            >
+                                クリニック別ロール
+                            </Link>
+                        )}
                         <Link
                             href={route('staff.documents.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.documents.*')
@@ -80,7 +94,7 @@ export default function StaffLayout({ user, header, children }) {
 
                     <div className="p-4 border-t border-gray-200">
                         <div className="flex items-center mb-4">
-                            <div className="text-sm font-medium text-gray-700">{user.name}</div>
+                            <div className="text-sm font-medium text-gray-700">{currentUser ? currentUser.name : ''}</div>
                         </div>
                         <Link
                             href={route('staff.logout')}

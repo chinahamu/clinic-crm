@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // \App\Models\User::factory(10)->create();
+
         $this->call([
             ClinicSeeder::class,
             MasterDataSeeder::class,
@@ -23,6 +25,8 @@ class DatabaseSeeder extends Seeder
             ContractSeeder::class,
             ReservationSeeder::class,
             ShiftSeeder::class,
+            // 追加シーダー
+            \Database\Seeders\ClinicRoleSeeder::class,
         ]);
     }
 }
