@@ -21,7 +21,14 @@ Route::post('/patient/reservation', [\App\Http\Controllers\PatientReservationCon
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', function () {
-        return Inertia::render('Dashboard');
+        $reservations = \App\Models\Reservation::with(['menu', 'clinic'])
+            ->where('user_id', auth()->id())
+            ->orderBy('start_time', 'desc')
+            ->get();
+
+        return Inertia::render('Dashboard', [
+            'reservations' => $reservations,
+        ]);
     })->name('home');
 
     Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservations.create');
