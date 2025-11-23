@@ -15,53 +15,66 @@ export default function StaffLayout({ user, header, children }) {
                     <div className="flex-1 overflow-y-auto py-4 px-4 space-y-2">
                         <Link
                             href={route('staff.dashboard')}
-                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
-                                route().current('staff.dashboard')
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.dashboard')
                                     ? 'bg-green-50 text-green-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             ダッシュボード
                         </Link>
                         <Link
                             href={route('staff.reservations.index')}
-                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
-                                route().current('staff.reservations.*')
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.reservations.*')
                                     ? 'bg-green-50 text-green-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             予約管理
                         </Link>
                         <Link
                             href={route('staff.shifts.index')}
-                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
-                                route().current('staff.shifts.*')
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.shifts.*')
                                     ? 'bg-green-50 text-green-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             シフト管理
                         </Link>
                         <Link
                             href={route('staff.menus.index')}
-                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
-                                route().current('staff.menus.*')
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.menus.*')
                                     ? 'bg-green-50 text-green-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             メニュー管理
                         </Link>
                         <Link
                             href={route('staff.documents.index')}
-                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${
-                                route().current('staff.documents.*')
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.documents.*')
                                     ? 'bg-green-50 text-green-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             書類管理
+                        </Link>
+                        <Link
+                            href={route('staff.rooms.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.rooms.*')
+                                    ? 'bg-green-50 text-green-700'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            部屋管理
+                        </Link>
+                        <Link
+                            href={route('staff.machines.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.machines.*')
+                                    ? 'bg-green-50 text-green-700'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            機器管理
                         </Link>
                     </div>
 
