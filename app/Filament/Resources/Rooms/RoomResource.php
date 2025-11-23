@@ -20,6 +20,21 @@ class RoomResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return '部屋';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return '部屋';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return '部屋';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return RoomForm::configure($schema);

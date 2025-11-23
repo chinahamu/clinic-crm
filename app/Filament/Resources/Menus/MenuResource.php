@@ -20,6 +20,21 @@ class MenuResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return 'メニュー';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'メニュー';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'メニュー';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return MenuForm::configure($schema);

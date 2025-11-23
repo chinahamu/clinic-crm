@@ -20,6 +20,21 @@ class MachineResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return '機器';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return '機器';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return '機器';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return MachineForm::configure($schema);

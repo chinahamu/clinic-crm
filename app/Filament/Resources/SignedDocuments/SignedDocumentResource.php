@@ -20,6 +20,21 @@ class SignedDocumentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return '署名済み書類';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return '署名済み書類';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return '署名済み書類';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SignedDocumentForm::configure($schema);

@@ -20,6 +20,21 @@ class StaffResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return 'スタッフ';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'スタッフ';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'スタッフ';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return StaffForm::configure($schema);

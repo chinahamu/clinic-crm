@@ -20,6 +20,21 @@ class ContractUsageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return '契約使用';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return '契約使用';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return '契約使用';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ContractUsageForm::configure($schema);

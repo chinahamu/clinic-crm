@@ -20,6 +20,21 @@ class DocumentTemplateResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return '書類テンプレート';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return '書類テンプレート';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return '書類テンプレート';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return DocumentTemplateForm::configure($schema);

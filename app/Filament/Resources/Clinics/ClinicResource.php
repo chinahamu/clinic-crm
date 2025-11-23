@@ -20,6 +20,21 @@ class ClinicResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return 'クリニック';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'クリニック';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'クリニック';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ClinicForm::configure($schema);

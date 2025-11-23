@@ -20,6 +20,21 @@ class ShiftResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return 'シフト';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'シフト';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'シフト';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ShiftForm::configure($schema);
