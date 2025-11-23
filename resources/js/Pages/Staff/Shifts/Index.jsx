@@ -27,6 +27,14 @@ export default function Index({ shifts, staffList, currentStart, currentEnd }) {
         d.setDate(d.getDate() + 1);
     }
 
+    // ページング用の日付計算
+    const formatDate = (dt) => dt.toISOString().slice(0, 10);
+    const startDate = new Date(currentStart);
+    const prevStart = new Date(startDate);
+    prevStart.setDate(prevStart.getDate() - 7);
+    const nextStart = new Date(startDate);
+    nextStart.setDate(nextStart.getDate() + 7);
+
     return (
         <StaffLayout
             user={auth.user}
@@ -93,6 +101,31 @@ export default function Index({ shifts, staffList, currentStart, currentEnd }) {
 
                     {/* シフト一覧（簡易カレンダー） */}
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        {/* カレンダーページング */}
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex gap-2">
+                                <Link
+                                    href={route('staff.shifts.index', { start: formatDate(prevStart) })}
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+                                >
+                                    前週
+                                </Link>
+                                <Link
+                                    href={route('staff.shifts.index', { start: formatDate(new Date()) })}
+                                    className="bg-white border hover:bg-gray-50 text-gray-800 font-semibold py-1 px-3 rounded"
+                                >
+                                    今日
+                                </Link>
+                                <Link
+                                    href={route('staff.shifts.index', { start: formatDate(nextStart) })}
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+                                >
+                                    翌週
+                                </Link>
+                            </div>
+                            <div className="text-sm text-gray-600">期間: {currentStart} ～ {currentEnd}</div>
+                        </div>
+
                         <div className="grid grid-cols-7 gap-4">
                             {days.map((day) => (
                                 <div key={day.toISOString()} className="border p-2 min-h-[200px]">
