@@ -14,8 +14,21 @@ class ShiftController extends Controller
     public function index(Request $request)
     {
         // デフォルトで今週のシフトを表示
-        $start = $request->input('start') ? Carbon::parse($request->input('start')) : Carbon::now()->startOfWeek();
-        $end = $request->input('end') ? Carbon::parse($request->input('end')) : Carbon::now()->endOfWeek();
+        // デフォルトを「本日から1週間（本日 + 6日）」に変更
+        if ($request->input('start')) {
+            $start = Carbon::parse($request->input('start'));
+        } else {
+            $start = Carbon::today();
+        }
+
+        if ($request->input('end')) {
+            $end = Carbon::parse($request->input('end'));
+        } elseif ($request->input('start')) {
+            // start が指定されているが end が無ければ start から1週間表示
+            $end = Carbon::parse($request->input('start'))->addDays(6);
+        } else {
+            $end = Carbon::today()->addDays(6);
+        }
 
         $shifts = Shift::with('staff')
             ->whereBetween('start_time', [$start, $end])
