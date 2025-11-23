@@ -30,6 +30,8 @@ class MasterDataSeeder extends Seeder
         // Create Machines
         Machine::factory()->count(5)->create(['clinic_id' => $clinic->id]);
 
+        
+
         // Create Products
         Product::factory()->count(20)->create();
     }
