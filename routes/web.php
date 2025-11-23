@@ -15,6 +15,10 @@ Route::get('/', function () {
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
 Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 
+Route::post('/patient/login', [\App\Http\Controllers\PatientAuthController::class, 'login'])->name('patient.login');
+Route::post('/patient/register', [\App\Http\Controllers\PatientAuthController::class, 'register'])->name('patient.register');
+Route::post('/patient/reservation', [\App\Http\Controllers\PatientReservationController::class, 'store'])->name('patient.reservation.store');
+
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', function () {
         return Inertia::render('Dashboard');

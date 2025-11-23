@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 
-export default function DateSelection({ clinic, menu, onBack }) {
+export default function DateSelection({ clinic, menu, onBack, onSelect }) {
     const [loading, setLoading] = useState(true);
     const [availabilityData, setAvailabilityData] = useState(null);
     const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -30,12 +30,7 @@ export default function DateSelection({ clinic, menu, onBack }) {
 
     const handleSlotClick = (date, time, isAvailable) => {
         if (!isAvailable) return;
-
-        if (confirm(`${date} ${time} で予約しますか？`)) {
-            // Proceed to next step (e.g., confirmation or submit)
-            // For now, just alert
-            alert('予約機能はまだ実装されていません。');
-        }
+        onSelect(date, time);
     };
 
     if (!menu) return null;
@@ -91,8 +86,8 @@ export default function DateSelection({ clinic, menu, onBack }) {
                                                     onClick={() => handleSlotClick(date, time, isAvailable)}
                                                     disabled={!isAvailable}
                                                     className={`w-full h-10 rounded-lg flex items-center justify-center transition-all ${isAvailable
-                                                            ? 'text-indigo-600 hover:bg-indigo-50 hover:scale-110 font-bold cursor-pointer'
-                                                            : 'text-slate-300 cursor-not-allowed'
+                                                        ? 'text-indigo-600 hover:bg-indigo-50 hover:scale-110 font-bold cursor-pointer'
+                                                        : 'text-slate-300 cursor-not-allowed'
                                                         }`}
                                                 >
                                                     {isAvailable ? '◎' : 'ー'}
