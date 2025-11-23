@@ -166,12 +166,20 @@ export default function Index({ clinic, menus }) {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="text-indigo-600 font-bold hover:underline"
-                            >
-                                トップに戻る
-                            </button>
+                            <div className="flex flex-col gap-3 max-w-xs mx-auto">
+                                <a
+                                    href={route('home')}
+                                    className="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors"
+                                >
+                                    マイページへ移動
+                                </a>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="text-indigo-600 font-bold hover:underline text-sm"
+                                >
+                                    トップに戻る
+                                </button>
+                            </div>
                         </div>
                     )}
                 </main>
