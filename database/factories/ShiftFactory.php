@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Clinic;
 use App\Models\Staff;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Shift>
@@ -18,7 +19,8 @@ class ShiftFactory extends Factory
      */
     public function definition(): array
     {
-        $startTime = fake()->dateTimeBetween('now', '+1 month');
+        $ja = FakerFactory::create('ja_JP');
+        $startTime = $ja->dateTimeBetween('now', '+1 month');
         $endTime = (clone $startTime)->modify('+9 hours');
 
         return [
@@ -27,7 +29,7 @@ class ShiftFactory extends Factory
             'start_time' => $startTime,
             'end_time' => $endTime,
             'status' => 'scheduled',
-            'location' => '東京本院', // Default location
+            'location' => $ja->randomElement(['東京本院', '大阪院', '名古屋院']),
         ];
     }
 }

@@ -14,10 +14,11 @@ return new class extends Migration
         if (!Schema::hasTable('menu_product')) {
             Schema::create('menu_product', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('menu_id')->constrained()->onDelete('cascade');
-                $table->foreignId('product_id')->constrained()->onDelete('cascade');
+                // 外部キー制約はテーブル作成順序の影響を受けるため、ここでは単純な unsignedBigInteger を使う
+                $table->unsignedBigInteger('menu_id');
+                $table->unsignedBigInteger('product_id');
                 $table->timestamps();
-                
+
                 $table->unique(['menu_id', 'product_id']);
             });
         }

@@ -6,6 +6,7 @@ use App\Models\Clinic;
 use App\Models\Menu;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contract>
@@ -19,9 +20,10 @@ class ContractFactory extends Factory
      */
     public function definition(): array
     {
-        $totalCount = fake()->randomElement([1, 3, 5, 8, 10]);
-        $remainingCount = fake()->numberBetween(0, $totalCount);
-        $contractDate = fake()->dateTimeBetween('-1 year', 'now');
+        $ja = FakerFactory::create('ja_JP');
+        $totalCount = $ja->randomElement([1, 3, 5, 8, 10]);
+        $remainingCount = $ja->numberBetween(0, $totalCount);
+        $contractDate = $ja->dateTimeBetween('-1 year', 'now');
         
         return [
             'user_id' => User::factory(),
@@ -30,9 +32,9 @@ class ContractFactory extends Factory
             'contract_date' => $contractDate,
             'total_count' => $totalCount,
             'remaining_count' => $remainingCount,
-            'total_price' => fake()->numberBetween(10000, 500000),
-            'expiration_date' => fake()->dateTimeBetween('now', '+1 year'),
-            'status' => fake()->randomElement(['active', 'completed', 'cancelled']),
+            'total_price' => $ja->numberBetween(10000, 500000),
+            'expiration_date' => $ja->dateTimeBetween('now', '+1 year'),
+            'status' => $ja->randomElement(['active', 'completed', 'cancelled']),
         ];
     }
 }

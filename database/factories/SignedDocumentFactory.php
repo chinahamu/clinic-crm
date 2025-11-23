@@ -8,6 +8,7 @@ use App\Models\Reservation;
 use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SignedDocument>
@@ -21,17 +22,18 @@ class SignedDocumentFactory extends Factory
      */
     public function definition(): array
     {
+        $ja = FakerFactory::create('ja_JP');
         return [
             'user_id' => User::factory(),
             'document_template_id' => DocumentTemplate::factory(),
             'staff_id' => Staff::factory(),
             'reservation_id' => Reservation::factory(),
             'contract_id' => Contract::factory(),
-            'signed_content' => fake()->realText(500),
+            'signed_content' => $ja->realText(500),
             'signature_image_path' => 'signatures/demo.png',
-            'signed_at' => fake()->dateTimeBetween('-1 year', 'now'),
-            'ip_address' => fake()->ipv4(),
-            'user_agent' => fake()->userAgent(),
+            'signed_at' => $ja->dateTimeBetween('-1 year', 'now'),
+            'ip_address' => $ja->ipv4(),
+            'user_agent' => $ja->userAgent(),
         ];
     }
 }

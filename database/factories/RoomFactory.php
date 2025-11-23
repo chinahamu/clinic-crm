@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Clinic;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Room>
@@ -25,8 +26,9 @@ class RoomFactory extends Factory
             'waiting' => ['待合室'],
         ];
 
-        $type = fake()->randomElement($types);
-        $name = fake()->randomElement($names[$type]);
+        $ja = FakerFactory::create('ja_JP');
+        $type = $ja->randomElement($types);
+        $name = $ja->randomElement($names[$type]);
 
         return [
             'name' => $name,

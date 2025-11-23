@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reservation>
@@ -22,7 +23,8 @@ class ReservationFactory extends Factory
      */
     public function definition(): array
     {
-        $startTime = fake()->dateTimeBetween('-1 month', '+1 month');
+        $ja = FakerFactory::create('ja_JP');
+        $startTime = $ja->dateTimeBetween('-1 month', '+1 month');
         $endTime = (clone $startTime)->modify('+1 hour');
 
         return [
@@ -34,10 +36,10 @@ class ReservationFactory extends Factory
             'clinic_id' => Clinic::factory(),
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'reservation_type' => fake()->randomElement(['consultation', 'treatment']),
-            'status' => fake()->randomElement(['confirmed', 'cancelled', 'completed']),
-            'reception_status' => fake()->randomElement(['waiting', 'checked_in', 'checked_out']),
-            'notes' => fake()->realText(50),
+            'reservation_type' => $ja->randomElement(['consultation', 'treatment']),
+            'status' => $ja->randomElement(['confirmed', 'cancelled', 'completed']),
+            'reception_status' => $ja->randomElement(['waiting', 'checked_in', 'checked_out']),
+            'notes' => $ja->realText(50),
         ];
     }
 }

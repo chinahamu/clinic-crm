@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as FakerFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DocumentTemplate>
@@ -23,12 +24,13 @@ class DocumentTemplateFactory extends Factory
             'questionnaire' => ['問診票', 'アンケート'],
         ];
 
-        $type = fake()->randomElement($types);
-        $title = fake()->randomElement($titles[$type]);
+        $ja = FakerFactory::create('ja_JP');
+        $type = $ja->randomElement($types);
+        $title = $ja->randomElement($titles[$type]);
 
         return [
             'title' => $title,
-            'content' => fake()->realText(500),
+            'content' => $ja->realText(500),
             'type' => $type,
             'is_active' => true,
         ];
