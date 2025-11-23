@@ -40,3 +40,8 @@
 - **URL**: `/staff/login`
 - **Email**: `staff@example.com`
 - **Password**: `password`
+
+### Filament用
+- **URL**: `/NE4SxGSnkpzQB/login`
+- **Email**: `kento.takamatsu@meta-alchemist.co.jp`
+- **Password**: `ChangeMe123!`
