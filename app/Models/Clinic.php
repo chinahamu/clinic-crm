@@ -3,10 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Clinic extends Model
 {
-    protected $fillable = ['name', 'address', 'phone', 'is_active'];
+    protected $fillable = ['name', 'address', 'phone', 'is_active', 'code'];
+
+    protected static function booted()
+    {
+        static::creating(function ($clinic) {
+            $clinic->code = Str::random(10);
+        });
+    }
 
     public function staff()
     {
