@@ -13,6 +13,7 @@ Route::get('/', function () {
 });
 
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
+Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', function () {
