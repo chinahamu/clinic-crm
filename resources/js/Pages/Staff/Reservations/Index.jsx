@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Index({ reservations, currentStart, currentEnd }) {
+export default function Index({ reservations, patientList, currentStart, currentEnd, filters }) {
     const { auth } = usePage().props;
     const [selectedReservation, setSelectedReservation] = useState(null);
     const { data, setData, put, processing } = useForm({
@@ -43,6 +43,24 @@ export default function Index({ reservations, currentStart, currentEnd }) {
         { value: 'cancelled', label: 'キャンセル' },
     ];
 
+    // ページング用の日付計算
+    const formatDate = (dt) => dt.toISOString().slice(0, 10);
+    const startDate = new Date(currentStart);
+    const prevStart = new Date(startDate);
+    prevStart.setDate(prevStart.getDate() - 7);
+    const nextStart = new Date(startDate);
+    nextStart.setDate(nextStart.getDate() + 7);
+
+    const handlePatientChange = (e) => {
+        router.get(route('staff.reservations.index'), {
+            start: currentStart,
+            patient_id: e.target.value,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     return (
         <StaffLayout
             user={auth.user}
@@ -52,6 +70,51 @@ export default function Index({ reservations, currentStart, currentEnd }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {/* フィルタとページング */}
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="flex items-center gap-4">
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">患者絞り込み</label>
+                                    <select
+                                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        value={filters.patient_id || ''}
+                                        onChange={handlePatientChange}
+                                    >
+                                        <option value="">全員</option>
+                                        {patientList.map((patient) => (
+                                            <option key={patient.id} value={patient.id}>{patient.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <div className="flex gap-2">
+                                    <Link
+                                        href={route('staff.reservations.index', { start: formatDate(prevStart), patient_id: filters.patient_id })}
+                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+                                    >
+                                        前週
+                                    </Link>
+                                    <Link
+                                        href={route('staff.reservations.index', { start: formatDate(new Date()), patient_id: filters.patient_id })}
+                                        className="bg-white border hover:bg-gray-50 text-gray-800 font-semibold py-1 px-3 rounded"
+                                    >
+                                        今日
+                                    </Link>
+                                    <Link
+                                        href={route('staff.reservations.index', { start: formatDate(nextStart), patient_id: filters.patient_id })}
+                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+                                    >
+                                        翌週
+                                    </Link>
+                                </div>
+                                <div className="text-sm text-gray-600">期間: {currentStart} ～ {currentEnd}</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div className="grid grid-cols-7 gap-4">
                             {days.map((day) => (
@@ -65,11 +128,10 @@ export default function Index({ reservations, currentStart, currentEnd }) {
                                             .map((res) => (
                                                 <div
                                                     key={res.id}
-                                                    className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 ${
-                                                        res.reception_status === 'completed' ? 'bg-gray-200' :
+                                                    className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 ${res.reception_status === 'completed' ? 'bg-gray-200' :
                                                         res.reception_status === 'checked_in' ? 'bg-green-200' :
-                                                        'bg-blue-100'
-                                                    }`}
+                                                            'bg-blue-100'
+                                                        }`}
                                                     onClick={() => openModal(res)}
                                                 >
                                                     <div className="font-semibold">{new Date(res.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>

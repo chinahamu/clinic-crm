@@ -12,12 +12,31 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
-        $start = $request->input('start') ? Carbon::parse($request->input('start')) : Carbon::now()->startOfWeek();
-        $end = $request->input('end') ? Carbon::parse($request->input('end')) : Carbon::now()->endOfWeek();
+        // デフォルトで今週のシフトを表示
+        // デフォルトを「本日から1週間（本日 + 6日）」に変更
+        if ($request->input('start')) {
+            $start = Carbon::parse($request->input('start'));
+        } else {
+            $start = Carbon::today();
+        }
 
-        $reservations = Reservation::with(['user', 'menu', 'staff', 'room', 'machine'])
-            ->whereBetween('start_time', [$start, $end])
-            ->get()
+        if ($request->input('end')) {
+            $end = Carbon::parse($request->input('end'));
+        } elseif ($request->input('start')) {
+            // start が指定されているが end が無ければ start から1週間表示
+            $end = Carbon::parse($request->input('start'))->addDays(6);
+        } else {
+            $end = Carbon::today()->addDays(6);
+        }
+
+        $query = Reservation::with(['user', 'menu', 'staff', 'room', 'machine'])
+            ->whereBetween('start_time', [$start, $end]);
+
+        if ($request->filled('patient_id')) {
+            $query->where('user_id', $request->input('patient_id'));
+        }
+
+        $reservations = $query->get()
             ->map(function ($reservation) {
                 return [
                     'id' => $reservation->id,
@@ -34,10 +53,16 @@ class ReservationController extends Controller
                 ];
             });
 
+        // 患者リスト（全ユーザーまたは患者ロールを持つユーザー）
+        // ここでは全ユーザーを取得していますが、必要に応じてロールで絞り込んでください
+        $patientList = \App\Models\User::all();
+
         return Inertia::render('Staff/Reservations/Index', [
             'reservations' => $reservations,
+            'patientList' => $patientList,
             'currentStart' => $start->toDateString(),
             'currentEnd' => $end->toDateString(),
+            'filters' => $request->only(['patient_id']),
         ]);
     }
 
