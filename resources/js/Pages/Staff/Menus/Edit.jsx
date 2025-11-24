@@ -11,6 +11,8 @@ export default function Edit({ menu, products, roomTypes, machineTypes, roles })
         required_role: menu.required_role || '',
         required_room_type: menu.required_room_type || '',
         required_machine_type: menu.required_machine_type || '',
+        num_tickets: menu.num_tickets || 1,
+        validity_period_days: menu.validity_period_days || '',
         product_ids: menu.products ? menu.products.map(p => p.id) : [],
     });
 
@@ -70,6 +72,32 @@ export default function Edit({ menu, products, roomTypes, machineTypes, roles })
                                     onChange={(e) => setData('duration_minutes', e.target.value)}
                                 />
                                 {errors.duration_minutes && <div className="text-red-500 text-xs mt-1">{errors.duration_minutes}</div>}
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">回数 (チケット枚数)</label>
+                                <input
+                                    type="number"
+                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    value={data.num_tickets}
+                                    onChange={(e) => setData('num_tickets', e.target.value)}
+                                    min="1"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">通常は1回。コースの場合は回数を指定してください。</p>
+                                {errors.num_tickets && <div className="text-red-500 text-xs mt-1">{errors.num_tickets}</div>}
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">有効期限 (日数)</label>
+                                <input
+                                    type="number"
+                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    value={data.validity_period_days}
+                                    onChange={(e) => setData('validity_period_days', e.target.value)}
+                                    placeholder="例: 90 (90日間)"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">空欄の場合は無期限となります。</p>
+                                {errors.validity_period_days && <div className="text-red-500 text-xs mt-1">{errors.validity_period_days}</div>}
                             </div>
 
                             <div className="mb-4">

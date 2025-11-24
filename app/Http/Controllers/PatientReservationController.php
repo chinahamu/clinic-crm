@@ -292,6 +292,22 @@ class PatientReservationController extends Controller
             'status' => 'confirmed', // or pending
         ]);
 
+        // Check for active contract and consume ticket
+        $contract = \App\Models\Contract::where('user_id', $user->id)
+            ->where('menu_id', $menu->id)
+            ->where('status', 'active')
+            ->where('remaining_count', '>', 0)
+            ->where(function($q) {
+                $q->whereNull('expiration_date')
+                  ->orWhere('expiration_date', '>=', now());
+            })
+            ->orderBy('expiration_date', 'asc') // Use earliest expiring first
+            ->first();
+
+        if ($contract) {
+            $contract->consume($reservation->id);
+        }
+
         return response()->json(['reservation' => $reservation]);
     }
 }

@@ -165,6 +165,22 @@ class ReservationController extends Controller
             'status' => 'confirmed',
         ]);
 
+        // Check for active contract and consume ticket
+        $contract = \App\Models\Contract::where('user_id', auth()->id())
+            ->where('menu_id', $menu->id)
+            ->where('status', 'active')
+            ->where('remaining_count', '>', 0)
+            ->where(function($q) {
+                $q->whereNull('expiration_date')
+                  ->orWhere('expiration_date', '>=', now());
+            })
+            ->orderBy('expiration_date', 'asc')
+            ->first();
+
+        if ($contract) {
+            $contract->consume($reservation->id);
+        }
+
         return redirect()->route('home')->with('success', 'Reservation created!');
     }
 

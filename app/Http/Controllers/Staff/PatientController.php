@@ -33,8 +33,12 @@ class PatientController extends Controller
             ->causedBy(auth()->guard('staff')->user())
             ->log('viewed_patient_chart');
 
+        $patient->load(['contracts.menu']);
+        $menus = \App\Models\Menu::where('is_active', true)->get();
+
         return Inertia::render('Staff/Patients/Show', [
             'patient' => $patient,
+            'menus' => $menus,
         ]);
     }
 

@@ -36,6 +36,8 @@ class MenuController extends Controller
             'required_role' => 'nullable|string|exists:roles,name',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
+            'num_tickets' => 'nullable|integer|min:1',
+            'validity_period_days' => 'nullable|integer|min:1',
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id',
         ]);
@@ -70,6 +72,8 @@ class MenuController extends Controller
             'required_role' => 'nullable|string|exists:roles,name',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
+            'num_tickets' => 'nullable|integer|min:1',
+            'validity_period_days' => 'nullable|integer|min:1',
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id',
         ]);

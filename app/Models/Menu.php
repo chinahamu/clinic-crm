@@ -17,6 +17,8 @@ class Menu extends Model
         'required_role',
         'required_room_type',
         'required_machine_type',
+        'num_tickets',
+        'validity_period_days',
         'is_active',
     ];
 
