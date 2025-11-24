@@ -54,6 +54,26 @@ class MenuFactory extends Factory
                 'duration_minutes' => 60,
                 'price' => 30000,
             ],
+            [
+                'name' => '全身脱毛 5回コース',
+                'required_role' => 'nurse',
+                'required_room_type' => 'treatment',
+                'required_machine_type' => 'laser',
+                'duration_minutes' => 120,
+                'price' => 200000,
+                'num_tickets' => 5,
+                'validity_period_days' => 365,
+            ],
+            [
+                'name' => 'フェイシャル 10回コース',
+                'required_role' => 'nurse',
+                'required_room_type' => 'treatment',
+                'required_machine_type' => null,
+                'duration_minutes' => 60,
+                'price' => 80000,
+                'num_tickets' => 10,
+                'validity_period_days' => 180,
+            ],
         ];
 
         $selected = $ja->randomElement($menuTypes);
@@ -66,6 +86,8 @@ class MenuFactory extends Factory
             'required_role' => $selected['required_role'],
             'required_room_type' => $selected['required_room_type'],
             'required_machine_type' => $selected['required_machine_type'],
+            'num_tickets' => $selected['num_tickets'] ?? null,
+            'validity_period_days' => $selected['validity_period_days'] ?? null,
         ];
     }
 }
