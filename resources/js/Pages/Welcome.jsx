@@ -120,8 +120,17 @@ export default function Welcome({ auth }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                             {[
                                 {
-                                    title: "スマート予約管理",
-                                    description: "予約とリマインダーを自動化し、無断キャンセルを削減します。",
+                                    title: "患者ポータル機能",
+                                    description: "ログイン・新規登録から、予約履歴の確認まで。患者様のための専用マイページを提供します。",
+                                    icon: (
+                                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    )
+                                },
+                                {
+                                    title: "スマート予約システム",
+                                    description: "スタッフ、部屋、機器の空き状況をリアルタイムで判定。最適な日時を自動で提案します。",
                                     icon: (
                                         <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -129,20 +138,38 @@ export default function Welcome({ auth }) {
                                     )
                                 },
                                 {
-                                    title: "患者カルテ管理",
-                                    description: "安全かつ簡単にアクセスできる、デジタル患者カルテ。",
+                                    title: "包括的なスタッフ管理",
+                                    description: "シフト管理からパフォーマンス追跡まで、スタッフ業務を一元管理。",
                                     icon: (
                                         <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                         </svg>
                                     )
                                 },
                                 {
-                                    title: "スタッフ管理",
-                                    description: "シフト、パフォーマンス、給与をひとつのダッシュボードで管理。",
+                                    title: "リソース管理",
+                                    description: "施術メニュー、販売商品、部屋、医療機器。クリニックの全リソースを効率的に管理します。",
                                     icon: (
                                         <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                        </svg>
+                                    )
+                                },
+                                {
+                                    title: "契約・消化管理",
+                                    description: "コース契約の作成から、日々の消化状況の追跡まで。複雑な契約管理をシンプルに。",
+                                    icon: (
+                                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                        </svg>
+                                    )
+                                },
+                                {
+                                    title: "日本語対応・監査ログ",
+                                    description: "完全な日本語インターフェースと、安心の操作ログ記録機能で、安全な運用をサポート。",
+                                    icon: (
+                                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                         </svg>
                                     )
                                 }
