@@ -49,9 +49,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         ->name('logout');
 
     Route::middleware(['auth:staff'])->group(function () {
-        Route::get('dashboard', function () {
-            return Inertia::render('Staff/Dashboard');
-        })->name('dashboard');
+        Route::get('dashboard', [\App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);

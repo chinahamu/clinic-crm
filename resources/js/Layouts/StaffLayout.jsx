@@ -18,8 +18,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.dashboard')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.dashboard')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             ダッシュボード
@@ -27,8 +27,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.reservations.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.reservations.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             予約管理
@@ -36,8 +36,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.shifts.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.shifts.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             シフト管理
@@ -45,19 +45,55 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.menus.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.menus.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             メニュー管理
                         </Link>
+                        <Link
+                            href={route('staff.patients.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.patients.*')
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            患者管理
+                        </Link>
+                        <Link
+                            href={route('staff.members.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.members.*')
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            スタッフ管理
+                        </Link>
+                        <Link
+                            href={route('staff.audit-logs.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.audit-logs.*')
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            操作ログ
+                        </Link>
+                        <Link
+                            href={route('staff.products.index')}
+                            className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.products.*')
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                        >
+                            商品管理
+                        </Link>
                         {/* クリニック別ロール管理（HQ またはクリニック所属スタッフに表示） */}
-                        {user && ( (user.roles && user.roles.some(r => r.name === 'hq')) || user.clinic_id ) && (
+                        {user && ((user.roles && user.roles.some(r => r.name === 'hq')) || user.clinic_id) && (
                             <Link
                                 href={route('staff.clinic-roles.index')}
                                 className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.clinic-roles.*')
-                                        ? 'bg-green-50 text-green-700'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-green-50 text-green-700'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                     }`}
                             >
                                 クリニック別ロール
@@ -66,8 +102,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.documents.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.documents.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             書類管理
@@ -75,8 +111,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.rooms.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.rooms.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             部屋管理
@@ -84,8 +120,8 @@ export default function StaffLayout({ user, header, children }) {
                         <Link
                             href={route('staff.machines.index')}
                             className={`block px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out ${route().current('staff.machines.*')
-                                    ? 'bg-green-50 text-green-700'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-green-50 text-green-700'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             機器管理

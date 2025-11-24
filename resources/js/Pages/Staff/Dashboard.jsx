@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Dashboard() {
+export default function Dashboard({ today_reservations_count, today_schedule }) {
     const { auth } = usePage().props;
 
     return (
@@ -17,39 +17,55 @@ export default function Dashboard() {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             スタッフ用管理画面へようこそ。
-                            <div className="mt-4 grid grid-cols-3 gap-4">
-                                <a href={route('staff.reservations.index')} className="block p-6 bg-blue-50 rounded-lg hover:bg-blue-100">
-                                    <h3 className="font-bold text-lg mb-2">予約管理</h3>
-                                    <p>本日の予約状況の確認・ステータス変更</p>
-                                </a>
-                                <a href={route('staff.shifts.index')} className="block p-6 bg-green-50 rounded-lg hover:bg-green-100">
-                                    <h3 className="font-bold text-lg mb-2">シフト管理</h3>
-                                    <p>スタッフのシフト登録・確認</p>
-                                </a>
-                                <a href={route('staff.menus.index')} className="block p-6 bg-purple-50 rounded-lg hover:bg-purple-100">
-                                    <h3 className="font-bold text-lg mb-2">メニュー管理</h3>
-                                    <p>施術メニューとリソース設定の編集</p>
-                                </a>
-                                <a href={route('staff.patients.index')} className="block p-6 bg-yellow-50 rounded-lg hover:bg-yellow-100">
-                                    <h3 className="font-bold text-lg mb-2">患者管理</h3>
-                                    <p>患者情報の検索・閲覧・編集</p>
-                                </a>
-                                <a href={route('staff.members.index')} className="block p-6 bg-indigo-50 rounded-lg hover:bg-indigo-100">
-                                    <h3 className="font-bold text-lg mb-2">スタッフ管理</h3>
-                                    <p>スタッフアカウントと権限の管理</p>
-                                </a>
-                                <a href={route('staff.audit-logs.index')} className="block p-6 bg-gray-50 rounded-lg hover:bg-gray-100">
-                                    <h3 className="font-bold text-lg mb-2">操作ログ</h3>
-                                    <p>システム操作履歴と監査ログの確認</p>
-                                </a>
-                                <a href={route('staff.products.index')} className="block p-6 bg-pink-50 rounded-lg hover:bg-pink-100">
-                                    <h3 className="font-bold text-lg mb-2">商品管理</h3>
-                                    <p>物販商品・オプションの登録・編集</p>
-                                </a>
-                                <a href={route('staff.documents.index')} className="block p-6 bg-teal-50 rounded-lg hover:bg-teal-100">
-                                    <h3 className="font-bold text-lg mb-2">書類テンプレート</h3>
-                                    <p>同意書・契約書等のテンプレート管理</p>
-                                </a>
+
+                            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-blue-50 p-6 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold text-blue-800 mb-2">本日の来院予定者数</h3>
+                                    <p className="text-4xl font-bold text-blue-600">{today_reservations_count}名</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-8">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">本日の施術スケジュール</h3>
+                                {today_schedule.length > 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">時間</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">患者名</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メニュー</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {today_schedule.map((reservation) => (
+                                                    <tr key={reservation.id}>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {new Date(reservation.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {reservation.user ? reservation.user.name : 'ゲスト'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {reservation.menu ? reservation.menu.name : '-'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                                ${reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                                                    reservation.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                                        'bg-yellow-100 text-yellow-800'}`}>
+                                                                {reservation.status}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500">本日の予定はありません。</p>
+                                )}
                             </div>
                         </div>
                     </div>
