@@ -2,12 +2,13 @@ import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Create({ products, roomTypes, machineTypes }) {
+export default function Create({ products, roomTypes, machineTypes, roles }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         price: '',
         duration_minutes: '',
+        required_role: '',
         required_room_type: '',
         required_machine_type: '',
         product_ids: [],
@@ -69,6 +70,22 @@ export default function Create({ products, roomTypes, machineTypes }) {
                                     onChange={(e) => setData('duration_minutes', e.target.value)}
                                 />
                                 {errors.duration_minutes && <div className="text-red-500 text-xs mt-1">{errors.duration_minutes}</div>}
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">必須スタッフロール (任意)</label>
+                                <select
+                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    value={data.required_role}
+                                    onChange={(e) => setData('required_role', e.target.value)}
+                                >
+                                    <option value="">指定なし</option>
+                                    {roles.map((role) => (
+                                        <option key={role} value={role}>
+                                            {role}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="mb-4">

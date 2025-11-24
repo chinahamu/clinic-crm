@@ -23,6 +23,7 @@ class MenuController extends Controller
             'products' => Product::where('is_active', true)->get(),
             'roomTypes' => \App\Models\Room::select('type')->distinct()->whereNotNull('type')->pluck('type'),
             'machineTypes' => \App\Models\Machine::select('type')->distinct()->whereNotNull('type')->pluck('type'),
+            'roles' => \Spatie\Permission\Models\Role::where('guard_name', 'staff')->pluck('name'),
         ]);
     }
 
@@ -32,6 +33,7 @@ class MenuController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|integer',
             'duration_minutes' => 'required|integer',
+            'required_role' => 'nullable|string|exists:roles,name',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
             'product_ids' => 'nullable|array',
@@ -55,6 +57,7 @@ class MenuController extends Controller
             'products' => Product::where('is_active', true)->get(),
             'roomTypes' => \App\Models\Room::select('type')->distinct()->whereNotNull('type')->pluck('type'),
             'machineTypes' => \App\Models\Machine::select('type')->distinct()->whereNotNull('type')->pluck('type'),
+            'roles' => \Spatie\Permission\Models\Role::where('guard_name', 'staff')->pluck('name'),
         ]);
     }
 
@@ -64,6 +67,7 @@ class MenuController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|integer',
             'duration_minutes' => 'required|integer',
+            'required_role' => 'nullable|string|exists:roles,name',
             'required_room_type' => 'nullable|string',
             'required_machine_type' => 'nullable|string',
             'product_ids' => 'nullable|array',
