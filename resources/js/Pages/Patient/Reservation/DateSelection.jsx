@@ -40,68 +40,76 @@ export default function DateSelection({ clinic, menu, onBack, onSelect }) {
             <div className="mb-6">
                 <button
                     onClick={onBack}
-                    className="text-sm text-slate-500 hover:text-indigo-600 flex items-center gap-1 mb-4"
+                    className="text-sm text-gray-500 hover:text-primary-600 flex items-center gap-1 mb-4 transition-colors"
                 >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                     メニュー選択に戻る
                 </button>
-                <h2 className="text-xl font-bold text-slate-900">日時を選択してください</h2>
-                <p className="text-slate-600 mt-1">
-                    選択中のメニュー: <span className="font-semibold text-indigo-600">{menu.name}</span> ({menu.duration_minutes}分)
+                <h2 className="text-xl font-bold text-gray-900">日時を選択してください</h2>
+                <p className="text-gray-500 mt-1">
+                    選択中のメニュー: <span className="font-semibold text-primary-600">{menu.name}</span> ({menu.duration_minutes}分)
                 </p>
             </div>
 
             {loading ? (
                 <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
                 </div>
             ) : availabilityData ? (
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-center text-sm">
-                        <thead>
-                            <tr>
-                                <th className="p-2 border-b border-slate-200 bg-slate-50 text-slate-500 font-medium sticky left-0 z-10">
-                                    時間
-                                </th>
-                                {availabilityData.dates.map(date => (
-                                    <th key={date} className="p-2 border-b border-slate-200 font-medium min-w-[80px]">
-                                        {new Date(date).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse text-center text-sm">
+                            <thead>
+                                <tr>
+                                    <th className="p-3 border-b border-gray-100 bg-gray-50 text-gray-500 font-medium sticky left-0 z-10 min-w-[80px]">
+                                        時間
                                     </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {availabilityData.slots.map(time => (
-                                <tr key={time} className="hover:bg-slate-50">
-                                    <td className="p-2 border-b border-slate-100 text-slate-500 font-mono sticky left-0 bg-white z-10">
-                                        {time}
-                                    </td>
-                                    {availabilityData.dates.map(date => {
-                                        const isAvailable = availabilityData.availability[date]?.[time];
-                                        return (
-                                            <td key={`${date}-${time}`} className="p-2 border-b border-slate-100">
-                                                <button
-                                                    onClick={() => handleSlotClick(date, time, isAvailable)}
-                                                    disabled={!isAvailable}
-                                                    className={`w-full h-10 rounded-lg flex items-center justify-center transition-all ${isAvailable
-                                                        ? 'text-indigo-600 hover:bg-indigo-50 hover:scale-110 font-bold cursor-pointer'
-                                                        : 'text-slate-300 cursor-not-allowed'
-                                                        }`}
-                                                >
-                                                    {isAvailable ? '◎' : 'ー'}
-                                                </button>
-                                            </td>
-                                        );
-                                    })}
+                                    {availabilityData.dates.map(date => (
+                                        <th key={date} className="p-3 border-b border-gray-100 font-medium min-w-[100px] text-gray-700">
+                                            {new Date(date).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
+                                        </th>
+                                    ))}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {availabilityData.slots.map(time => (
+                                    <tr key={time} className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-3 border-b border-gray-100 text-gray-500 font-mono sticky left-0 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                            {time}
+                                        </td>
+                                        {availabilityData.dates.map(date => {
+                                            const isAvailable = availabilityData.availability[date]?.[time];
+                                            return (
+                                                <td key={`${date}-${time}`} className="p-2 border-b border-gray-100">
+                                                    <button
+                                                        onClick={() => handleSlotClick(date, time, isAvailable)}
+                                                        disabled={!isAvailable}
+                                                        className={`w-full h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${isAvailable
+                                                            ? 'text-primary-600 hover:bg-primary-50 hover:scale-105 font-bold cursor-pointer border border-transparent hover:border-primary-200'
+                                                            : 'text-gray-300 cursor-not-allowed'
+                                                            }`}
+                                                    >
+                                                        {isAvailable ? (
+                                                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        ) : (
+                                                            <span className="text-xl">×</span>
+                                                        )}
+                                                    </button>
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             ) : (
-                <div className="text-center py-12 text-slate-500">
+                <div className="text-center py-12 text-gray-500 bg-white rounded-2xl border border-gray-100">
                     データを読み込めませんでした。
                 </div>
             )}

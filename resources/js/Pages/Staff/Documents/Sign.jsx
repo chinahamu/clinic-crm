@@ -22,11 +22,17 @@ export default function Sign({ auth, patient, templates }) {
             ...prev,
             document_template_id: templateId,
             signed_content: template ? template.content : '',
+            signature_image: '',
         }));
+        
+        if (sigCanvas.current && sigCanvas.current.clear) {
+            sigCanvas.current.clear();
+        }
     };
 
     const clearSignature = () => {
         sigCanvas.current.clear();
+        setData('signature_image', '');
     };
 
     const submit = (e) => {
@@ -37,137 +43,113 @@ export default function Sign({ auth, patient, templates }) {
             return;
         }
 
-        const signatureImage = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
-        
-        // setDataは非同期ではないが、state更新のタイミングの問題があるため、
-        // ここでは直接postのdataに含めるか、setDataしてからuseEffectで送信するなどの工夫が必要。
-        // InertiaのuseFormのsetDataは即時反映されるが、post時のdataは現在のstateを使う。
-        // ここでは、setDataを呼んでから、postの第二引数でデータを渡すことはできない（useFormの仕様）。
-        // なので、transformを使うか、手動でデータを構築してrouter.postを使う手もあるが、
-        // useFormのsetDataを使って、再レンダリング後に送信ボタンを押させるフローにするのが安全だが、
-        // ここではsubmitハンドラ内で完結させたい。
-        
-        // useFormのdataを直接更新するのではなく、post時にデータをマージして送る機能はないため、
-        // 一旦setDataして、次のレンダリングサイクルを待つ必要があるが、
-        // ここではシンプルに、setDataを実行しつつ、postを実行する（ただし、Reactの状態更新は非同期なので注意）。
-        // 確実なのは、router.postを使うことだが、useFormのエラーハンドリングを使いたい。
-        
-        // 解決策: useFormのtransformメソッドを使う。
-        
-        post(route('staff.documents.storeSignature', patient.id), {
-            onBefore: () => {
-                // ここでデータをセットできればいいが、onBeforeはリクエスト直前。
-                // transformを使うのがベスト。
-            },
-        });
+        post(route('staff.documents.storeSignature', patient.id));
     };
-    
-    // transformを使って送信データを加工する
-    // しかし、sigCanvasへの参照はsubmit時しか確定しない。
-    // なので、submit時にsetDataして、その直後にpostすると古いデータが送られる可能性がある。
-    // したがって、署名データをstateに保存するタイミングを「署名終了時」にするか、
-    // あるいは router.post を使うのが無難。
-    
-    // ここでは router.post を使う形に書き換えるか、
-    // あるいは、署名確定ボタンを押してから送信ボタンを押すフローにする。
-    // ユーザビリティを考えると、送信ボタン一発でいきたい。
-    
-    // useFormのtransformを利用するパターン
-    // ただしtransformは初期化時に定義する必要がある。
-    
-    // 今回は、useFormのdataにsignature_imageを持たせ、
-    // 送信ボタン押下時に canvas からデータを取得して setData し、
-    // その後 post するのは非同期問題で難しいので、
-    // router.post を使って実装する。
 
     return (
         <StaffLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">電子署名</h2>}
+            header="電子署名"
         >
             <Head title="電子署名" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <div className="mb-6">
-                                <h3 className="text-lg font-medium mb-2">患者: {patient.name} 様</h3>
-                            </div>
+            <div className="max-w-4xl mx-auto">
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
+                    <div className="p-6 border-b border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            電子署名の作成
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                            患者様: <span className="font-medium text-gray-900">{patient.name} 様</span>
+                        </p>
+                    </div>
 
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="template">
-                                    書類テンプレート選択
-                                </label>
-                                <select
-                                    id="template"
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    value={selectedTemplateId}
-                                    onChange={handleTemplateChange}
-                                >
-                                    <option value="">選択してください</option>
-                                    {templates.map((template) => (
-                                        <option key={template.id} value={template.id}>
-                                            {template.title}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.document_template_id && <div className="text-red-500 text-xs italic">{errors.document_template_id}</div>}
-                            </div>
-
-                            {selectedTemplateId && (
-                                <>
-                                    <div className="mb-6 border p-4 rounded bg-gray-50 h-96 overflow-y-scroll">
-                                        <h4 className="font-bold mb-2">書類内容:</h4>
-                                        <div className="whitespace-pre-wrap">
-                                            {data.signed_content}
-                                        </div>
-                                    </div>
-
-                                    <div className="mb-6">
-                                        <label className="block text-gray-700 text-sm font-bold mb-2">
-                                            署名
-                                        </label>
-                                        <div className="border border-gray-300 rounded inline-block">
-                                            <SignatureCanvas 
-                                                penColor="black"
-                                                canvasProps={{width: 500, height: 200, className: 'sigCanvas'}}
-                                                ref={sigCanvas}
-                                                onEnd={() => {
-                                                    setData('signature_image', sigCanvas.current.getTrimmedCanvas().toDataURL('image/png'));
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="mt-2">
-                                            <button 
-                                                type="button" 
-                                                onClick={clearSignature}
-                                                className="text-sm text-gray-600 hover:text-gray-900 underline"
-                                            >
-                                                クリア
-                                            </button>
-                                        </div>
-                                        {errors.signature_image && <div className="text-red-500 text-xs italic">{errors.signature_image}</div>}
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                            onClick={submit}
-                                            disabled={processing}
-                                        >
-                                            署名を保存
-                                        </button>
-                                        <Link
-                                            href={route('staff.patients.show', patient.id)}
-                                            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                                        >
-                                            キャンセル
-                                        </Link>
-                                    </div>
-                                </>
-                            )}
+                    <div className="p-6 space-y-6">
+                        {/* テンプレート選択 */}
+                        <div>
+                            <label htmlFor="template" className="block text-sm font-medium text-gray-700 mb-1">
+                                書類テンプレート選択 <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                id="template"
+                                value={selectedTemplateId}
+                                onChange={handleTemplateChange}
+                                className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                            >
+                                <option value="">選択してください</option>
+                                {templates.map((template) => (
+                                    <option key={template.id} value={template.id}>
+                                        {template.title}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.document_template_id && <div className="mt-1 text-sm text-red-600">{errors.document_template_id}</div>}
                         </div>
+
+                        {selectedTemplateId && (
+                            <div className="space-y-6 animate-fade-in">
+                                {/* 書類内容プレビュー */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        書類内容確認
+                                    </label>
+                                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200 h-96 overflow-y-auto font-mono text-sm whitespace-pre-wrap">
+                                        {data.signed_content}
+                                    </div>
+                                </div>
+
+                                {/* 署名エリア */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        署名 <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 inline-block overflow-hidden">
+                                        <SignatureCanvas 
+                                            penColor="black"
+                                            canvasProps={{
+                                                width: 500, 
+                                                height: 200, 
+                                                className: 'cursor-crosshair bg-white'
+                                            }}
+                                            ref={sigCanvas}
+                                            onEnd={() => {
+                                                setData('signature_image', sigCanvas.current.getTrimmedCanvas().toDataURL('image/png'));
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex justify-start">
+                                        <button 
+                                            type="button" 
+                                            onClick={clearSignature}
+                                            className="text-sm text-gray-500 hover:text-red-600 underline transition-colors"
+                                        >
+                                            署名をクリア
+                                        </button>
+                                    </div>
+                                    {errors.signature_image && <div className="mt-1 text-sm text-red-600">{errors.signature_image}</div>}
+                                </div>
+
+                                {/* アクションボタン */}
+                                <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-100">
+                                    <Link
+                                        href={route('staff.patients.show', patient.id)}
+                                        className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+                                    >
+                                        キャンセル
+                                    </Link>
+                                    <button
+                                        onClick={submit}
+                                        disabled={processing}
+                                        className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:ring ring-primary-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm"
+                                    >
+                                        {processing ? '保存中...' : '署名を保存'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

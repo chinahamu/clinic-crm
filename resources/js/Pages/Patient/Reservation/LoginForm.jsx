@@ -30,35 +30,37 @@ export default function LoginForm({ onSuccess }) {
     };
 
     return (
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="space-y-5">
             <div>
-                <label className="block text-sm font-medium text-gray-700">メールアドレス</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
                     required
+                    placeholder="example@email.com"
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email[0]}</p>}
+                {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email[0]}</p>}
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700">パスワード</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">パスワード</label>
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
                     required
+                    placeholder="••••••••"
                 />
-                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password[0]}</p>}
+                {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password[0]}</p>}
             </div>
 
             <button
                 type="submit"
                 disabled={processing}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-colors"
             >
                 {processing ? 'ログイン中...' : 'ログインして予約'}
             </button>

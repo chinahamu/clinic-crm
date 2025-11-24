@@ -1,103 +1,79 @@
 import React from 'react';
 import { Head, usePage, Link } from '@inertiajs/react';
+import StaffLayout from '@/Layouts/StaffLayout';
 
 export default function Index({ patients }) {
     const { auth } = usePage().props;
 
     return (
-        <div className="bg-gray-100 min-h-screen">
+        <StaffLayout
+            user={auth.user}
+            header="患者管理"
+        >
             <Head title="患者管理" />
-            <nav className="bg-white shadow mb-8 border-b-4 border-green-500">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="flex-shrink-0 flex items-center">
-                                <Link href={route('staff.dashboard')} className="font-bold text-xl text-green-600">
-                                    Clinic CRM Staff
-                                </Link>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <Link
-                                    href={route('staff.patients.index')}
-                                    className="inline-flex items-center px-1 pt-1 border-b-2 border-green-500 text-sm font-medium text-gray-900"
-                                >
-                                    患者管理
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            <span className="text-gray-700 mr-4">{auth.user.name} (スタッフ)</span>
-                            <Link
-                                href={route('staff.logout')}
-                                method="post"
-                                as="button"
-                                className="text-red-600 hover:text-red-800"
-                            >
-                                ログアウト
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-semibold text-gray-900">患者一覧</h1>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-gray-900">患者一覧</h2>
+                    {/* 必要であれば新規登録ボタンなどをここに配置 */}
                 </div>
 
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                        <table className="min-w-full divide-y divide-gray-100">
+                            <thead className="bg-gray-50/50">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         ID
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         氏名
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        メールアドレス
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        連絡先
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        電話番号
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        ステータス
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        注意フラグ
-                                    </th>
-                                    <th scope="col" className="relative px-6 py-3">
+                                    <th scope="col" className="relative px-6 py-4">
                                         <span className="sr-only">操作</span>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-white divide-y divide-gray-100">
                                 {patients.data.map((patient) => (
-                                    <tr key={patient.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {patient.id}
+                                    <tr key={patient.id} className="hover:bg-gray-50/50 transition-colors duration-150">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                            #{patient.id}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{patient.name}</div>
+                                            <div className="flex items-center">
+                                                <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-xs mr-3">
+                                                    {patient.name.charAt(0)}
+                                                </div>
+                                                <div className="text-sm font-bold text-gray-900">{patient.name}</div>
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {patient.email}
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">{patient.email}</div>
+                                            <div className="text-xs text-gray-500">{patient.phone || '-'}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {patient.phone || '-'}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {patient.caution_flag ? (
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                <span className="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-700 border border-red-100">
                                                     注意
                                                 </span>
                                             ) : (
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    なし
+                                                <span className="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-700 border border-green-100">
+                                                    正常
                                                 </span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <Link href={route('staff.patients.show', patient.id)} className="text-indigo-600 hover:text-indigo-900">
+                                            <Link 
+                                                href={route('staff.patients.show', patient.id)} 
+                                                className="text-primary-600 hover:text-primary-900 font-bold hover:underline"
+                                            >
                                                 詳細
                                             </Link>
                                         </td>
@@ -107,12 +83,12 @@ export default function Index({ patients }) {
                         </table>
                     </div>
                     {patients.links && (
-                        <div className="px-6 py-4 border-t border-gray-200">
-                            {/* Pagination implementation omitted for brevity, but links are available in patients.links */}
+                        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                            {/* Pagination implementation would go here */}
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </StaffLayout>
     );
 }

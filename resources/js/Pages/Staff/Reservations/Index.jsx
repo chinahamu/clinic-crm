@@ -35,13 +35,23 @@ export default function Index({ reservations, patientList, currentStart, current
     }
 
     const statusOptions = [
-        { value: 'pending', label: '未受付' },
-        { value: 'checked_in', label: '来院済み' },
-        { value: 'consulting', label: '診察中' },
-        { value: 'accounting', label: '会計待ち' },
-        { value: 'completed', label: '完了' },
-        { value: 'cancelled', label: 'キャンセル' },
+        { value: 'pending', label: '未受付', color: 'bg-gray-100 text-gray-800' },
+        { value: 'checked_in', label: '来院済み', color: 'bg-blue-100 text-blue-800' },
+        { value: 'consulting', label: '診察中', color: 'bg-purple-100 text-purple-800' },
+        { value: 'accounting', label: '会計待ち', color: 'bg-yellow-100 text-yellow-800' },
+        { value: 'completed', label: '完了', color: 'bg-green-100 text-green-800' },
+        { value: 'cancelled', label: 'キャンセル', color: 'bg-red-100 text-red-800' },
     ];
+
+    const getStatusColor = (status) => {
+        const option = statusOptions.find(o => o.value === status);
+        return option ? option.color : 'bg-gray-100 text-gray-800';
+    };
+
+    const getStatusLabel = (status) => {
+        const option = statusOptions.find(o => o.value === status);
+        return option ? option.label : status;
+    };
 
     // ページング用の日付計算
     const formatDate = (dt) => dt.toISOString().slice(0, 10);
@@ -64,138 +74,206 @@ export default function Index({ reservations, patientList, currentStart, current
     return (
         <StaffLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">予約管理</h2>}
+            header="予約管理"
         >
             <Head title="予約管理" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {/* フィルタとページング */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
-                        <div className="flex items-center justify-between flex-wrap gap-4">
-                            <div className="flex items-center gap-4">
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">患者絞り込み</label>
+            <div className="space-y-6">
+                {/* フィルタとコントロール */}
+                <div className="bg-white shadow-sm rounded-2xl border border-gray-100 p-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-full md:w-64">
+                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">患者絞り込み</label>
+                                <div className="relative">
                                     <select
-                                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-lg"
                                         value={filters.patient_id || ''}
                                         onChange={handlePatientChange}
                                     >
-                                        <option value="">全員</option>
+                                        <option value="">全員表示</option>
                                         {patientList.map((patient) => (
                                             <option key={patient.id} value={patient.id}>{patient.name}</option>
                                         ))}
                                     </select>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="flex items-center gap-4">
-                                <div className="flex gap-2">
-                                    <Link
-                                        href={route('staff.reservations.index', { start: formatDate(prevStart), patient_id: filters.patient_id })}
-                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
-                                    >
-                                        前週
-                                    </Link>
-                                    <Link
-                                        href={route('staff.reservations.index', { start: formatDate(new Date()), patient_id: filters.patient_id })}
-                                        className="bg-white border hover:bg-gray-50 text-gray-800 font-semibold py-1 px-3 rounded"
-                                    >
-                                        今日
-                                    </Link>
-                                    <Link
-                                        href={route('staff.reservations.index', { start: formatDate(nextStart), patient_id: filters.patient_id })}
-                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
-                                    >
-                                        翌週
-                                    </Link>
-                                </div>
-                                <div className="text-sm text-gray-600">期間: {currentStart} ～ {currentEnd}</div>
+                        <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-xl">
+                            <Link
+                                href={route('staff.reservations.index', { start: formatDate(prevStart), patient_id: filters.patient_id })}
+                                className="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all"
+                            >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </Link>
+                            <div className="text-sm font-bold text-gray-900 min-w-[200px] text-center">
+                                {new Date(currentStart).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })} 
+                                <span className="mx-2 text-gray-400">～</span>
+                                {new Date(currentEnd).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })}
                             </div>
+                            <Link
+                                href={route('staff.reservations.index', { start: formatDate(nextStart), patient_id: filters.patient_id })}
+                                className="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all"
+                            >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                            <Link
+                                href={route('staff.reservations.index', { start: formatDate(new Date()), patient_id: filters.patient_id })}
+                                className="ml-2 px-3 py-1.5 bg-white border border-gray-200 text-xs font-bold text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-all"
+                            >
+                                今日
+                            </Link>
                         </div>
                     </div>
+                </div>
 
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <div className="grid grid-cols-7 gap-4">
-                            {days.map((day) => (
-                                <div key={day.toISOString()} className="border p-2 min-h-[200px]">
-                                    <div className="font-bold text-center mb-2">
-                                        {day.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', weekday: 'short' })}
-                                    </div>
-                                    <div className="space-y-2">
-                                        {reservations
-                                            .filter((res) => new Date(res.start).toDateString() === day.toDateString())
-                                            .map((res) => (
-                                                <div
-                                                    key={res.id}
-                                                    className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 ${res.reception_status === 'completed' ? 'bg-gray-200' :
-                                                        res.reception_status === 'checked_in' ? 'bg-green-200' :
-                                                            'bg-blue-100'
-                                                        }`}
-                                                    onClick={() => openModal(res)}
-                                                >
-                                                    <div className="font-semibold">{new Date(res.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                                                    <div>{res.user_name}</div>
-                                                    <div>{res.menu_name}</div>
-                                                    <div className="mt-1 font-bold text-gray-600">
-                                                        {statusOptions.find(o => o.value === res.reception_status)?.label || res.reception_status}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                    </div>
+                {/* カレンダーグリッド */}
+                <div className="bg-white shadow-sm rounded-2xl border border-gray-100 overflow-hidden">
+                    <div className="grid grid-cols-7 divide-x divide-gray-100 border-b border-gray-100 bg-gray-50">
+                        {days.map((day) => (
+                            <div key={day.toISOString()} className="py-3 text-center">
+                                <span className={`text-sm font-semibold ${
+                                    day.toDateString() === new Date().toDateString() ? 'text-primary-600' : 'text-gray-900'
+                                }`}>
+                                    {day.toLocaleDateString('ja-JP', { weekday: 'short' })}
+                                </span>
+                                <div className={`mt-1 mx-auto w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
+                                    day.toDateString() === new Date().toDateString() ? 'bg-primary-600 text-white shadow-md' : 'text-gray-900'
+                                }`}>
+                                    {day.getDate()}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-7 divide-x divide-gray-100 min-h-[600px]">
+                        {days.map((day) => (
+                            <div key={day.toISOString()} className="p-2 space-y-2 hover:bg-gray-50/50 transition-colors">
+                                {reservations
+                                    .filter((res) => new Date(res.start).toDateString() === day.toDateString())
+                                    .map((res) => (
+                                        <div
+                                            key={res.id}
+                                            onClick={() => openModal(res)}
+                                            className={`group p-3 rounded-xl border border-transparent hover:border-gray-200 hover:shadow-md cursor-pointer transition-all duration-200 ${
+                                                res.reception_status === 'completed' ? 'bg-gray-50 opacity-75' :
+                                                res.reception_status === 'checked_in' ? 'bg-blue-50 border-blue-100' :
+                                                res.reception_status === 'consulting' ? 'bg-purple-50 border-purple-100' :
+                                                'bg-white border-gray-100 shadow-sm'
+                                            }`}
+                                        >
+                                            <div className="flex justify-between items-start mb-1">
+                                                <span className="text-xs font-bold text-gray-900">
+                                                    {new Date(res.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getStatusColor(res.reception_status)}`}>
+                                                    {getStatusLabel(res.reception_status)}
+                                                </span>
+                                            </div>
+                                            <div className="text-sm font-bold text-gray-800 truncate mb-0.5">
+                                                {res.user_name}
+                                            </div>
+                                            <div className="text-xs text-gray-500 truncate">
+                                                {res.menu_name}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* 詳細モーダル */}
             {selectedReservation && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-                    <div className="bg-white p-5 rounded-lg shadow-xl w-96">
-                        <h3 className="text-lg font-bold mb-4">予約詳細</h3>
-                        <div className="mb-4 text-sm">
-                            <p><strong>患者:</strong> {selectedReservation.user_name}</p>
-                            <p><strong>メニュー:</strong> {selectedReservation.menu_name}</p>
-                            <p><strong>時間:</strong> {new Date(selectedReservation.start).toLocaleString()} - {new Date(selectedReservation.end).toLocaleTimeString()}</p>
-                            <p><strong>担当スタッフ:</strong> {selectedReservation.staff_name}</p>
-                            <p><strong>部屋:</strong> {selectedReservation.room_name}</p>
-                            <p><strong>機械:</strong> {selectedReservation.machine_name}</p>
-                        </div>
+                <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onClick={closeModal}></div>
 
-                        <form onSubmit={updateStatus}>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2">受付ステータス</label>
-                                <select
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    value={data.reception_status}
-                                    onChange={(e) => setData('reception_status', e.target.value)}
-                                >
-                                    {statusOptions.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                        <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <svg className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                        </svg>
+                                    </div>
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                        <h3 className="text-lg leading-6 font-bold text-gray-900" id="modal-title">
+                                            予約詳細
+                                        </h3>
+                                        <div className="mt-4 space-y-3">
+                                            <div className="bg-gray-50 p-4 rounded-xl space-y-2">
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">患者名</span>
+                                                    <span className="text-sm font-bold text-gray-900">{selectedReservation.user_name}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">日時</span>
+                                                    <span className="text-sm font-bold text-gray-900">
+                                                        {new Date(selectedReservation.start).toLocaleString('ja-JP', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">メニュー</span>
+                                                    <span className="text-sm font-bold text-gray-900">{selectedReservation.menu_name}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">担当スタッフ</span>
+                                                    <span className="text-sm font-bold text-gray-900">{selectedReservation.staff_name || '-'}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">部屋</span>
+                                                    <span className="text-sm font-bold text-gray-900">{selectedReservation.room_name || '-'}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-sm text-gray-500">機器</span>
+                                                    <span className="text-sm font-bold text-gray-900">{selectedReservation.machine_name || '-'}</span>
+                                                </div>
+                                            </div>
+
+                                            <form onSubmit={updateStatus} className="mt-4">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">受付ステータス変更</label>
+                                                <select
+                                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-lg"
+                                                    value={data.reception_status}
+                                                    onChange={(e) => setData('reception_status', e.target.value)}
+                                                >
+                                                    {statusOptions.map((option) => (
+                                                        <option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                
+                                                <div className="mt-6 flex flex-row-reverse gap-2">
+                                                    <button
+                                                        type="submit"
+                                                        className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                                        disabled={processing}
+                                                    >
+                                                        更新する
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                                        onClick={closeModal}
+                                                    >
+                                                        キャンセル
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex justify-end gap-2">
-                                <button
-                                    type="button"
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                                    onClick={closeModal}
-                                >
-                                    閉じる
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    disabled={processing}
-                                >
-                                    更新
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}
