@@ -1,61 +1,93 @@
 import React from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Dashboard({ auth, reservations }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">患者様ダッシュボード</h2>}
+            header="患者様ダッシュボード"
         >
             <Head title="患者様ダッシュボード" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            <h3 className="text-lg font-bold mb-4">予約一覧</h3>
-                            {reservations.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日時</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">クリニック</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メニュー</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {reservations.map((reservation) => (
-                                                <tr key={reservation.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {new Date(reservation.start_time).toLocaleString('ja-JP')}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {reservation.clinic?.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <div className="space-y-6">
+                {/* ウェルカムメッセージ */}
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
+                    <div className="p-8">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">ようこそ、{auth.user.name} 様</h3>
+                        <p className="text-gray-500">次回の予約確認や、新しい予約の取得が可能です。</p>
+                    </div>
+                </div>
+
+                {/* 予約一覧 */}
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
+                    <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 className="text-lg font-bold text-gray-900">予約一覧</h3>
+                        <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
+                            全 {reservations.length} 件
+                        </span>
+                    </div>
+                    
+                    <div className="p-0">
+                        {reservations.length > 0 ? (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-100">
+                                    <thead className="bg-gray-50/50">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">日時</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">クリニック</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">メニュー</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ステータス</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-100">
+                                        {reservations.map((reservation) => (
+                                            <tr key={reservation.id} className="hover:bg-gray-50/50 transition-colors duration-150">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {new Date(reservation.start_time).toLocaleString('ja-JP', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    {reservation.clinic?.name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-800">
                                                         {reservation.menu?.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                                                                reservation.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                                    'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                            {reservation.status === 'confirmed' ? '確定' :
-                                                                reservation.status === 'cancelled' ? 'キャンセル' : '確認中'}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                        reservation.status === 'confirmed' 
+                                                            ? 'bg-green-50 text-green-700 border border-green-100' 
+                                                            : reservation.status === 'cancelled' 
+                                                                ? 'bg-red-50 text-red-700 border border-red-100' 
+                                                                : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
+                                                    }`}>
+                                                        {reservation.status === 'confirmed' ? '確定' :
+                                                            reservation.status === 'cancelled' ? 'キャンセル' : '確認中'}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="p-12 text-center">
+                                <div className="mx-auto h-12 w-12 text-gray-300 mb-4">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
                                 </div>
-                            ) : (
-                                <p className="text-gray-500">予約履歴はありません。</p>
-                            )}
-                        </div>
+                                <h3 className="text-lg font-medium text-gray-900">予約はありません</h3>
+                                <p className="mt-1 text-gray-500">新しい予約を入れて、クリニックを利用しましょう。</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
