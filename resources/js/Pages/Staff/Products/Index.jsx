@@ -58,7 +58,11 @@ export default function Index({ products }) {
                                             </span>
                                         </div>
                                         {product.description && (
-                                            <div className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</div>
+                                            <div className="text-xs text-gray-500 mt-1 overflow-hidden" style={{
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                            }}>{product.description}</div>
                                         )}
                                         <div className="flex items-center gap-3 mt-2">
                                             <div className="text-lg font-bold text-primary-600">¥{product.price.toLocaleString()}</div>

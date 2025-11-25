@@ -65,7 +65,7 @@ export default function Index({ staffMembers }) {
                                         編集
                                     </Link>
                                 </div>
-                                <div className="mt-3 ml-13 space-y-2">
+                                <div className="mt-3 ml-[52px] space-y-2">
                                     <div className="flex flex-wrap gap-1">
                                         {member.roles.map((role, index) => (
                                             <span key={index} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
