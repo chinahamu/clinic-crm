@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             StaffSeeder::class,
             PatientSeeder::class,
             ContractSeeder::class,
+            DocumentTemplateSeeder::class,
             ReservationSeeder::class,
             ShiftSeeder::class,
             // 追加シーダー
