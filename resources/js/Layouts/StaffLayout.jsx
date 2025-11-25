@@ -83,12 +83,11 @@ const LogoutIcon = ({ className }) => (
 export default function StaffLayout({ user, header, children }) {
     const { auth } = usePage().props;
     const currentUser = user ?? (auth ? auth.user : null);
-    
-    const navLinkClass = (active) => `group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-        active
+
+    const navLinkClass = (active) => `group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${active
             ? 'bg-primary-50 text-primary-700 shadow-sm ring-1 ring-primary-200'
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:translate-x-1'
-    }`;
+        }`;
 
     const iconClass = (active) => `mr-3 h-5 w-5 ${active ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'}`;
 
@@ -203,6 +202,13 @@ export default function StaffLayout({ user, header, children }) {
                         >
                             <ClipboardListIcon className={iconClass(route().current('staff.audit-logs.*'))} />
                             操作ログ
+                        </Link>
+                        <Link
+                            href={route('staff.settings.clinic.edit')}
+                            className={navLinkClass(route().current('staff.settings.clinic.*'))}
+                        >
+                            <OfficeBuildingIcon className={iconClass(route().current('staff.settings.clinic.*'))} />
+                            クリニック設定
                         </Link>
                     </div>
 

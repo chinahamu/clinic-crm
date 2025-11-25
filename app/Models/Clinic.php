@@ -38,4 +38,14 @@ class Clinic extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(ClinicSchedule::class);
+    }
+
+    public function exceptions()
+    {
+        return $this->hasMany(ClinicScheduleException::class);
+    }
 }
