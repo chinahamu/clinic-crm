@@ -15,7 +15,7 @@ const ImagePlaceholder = ({ label, height = "h-64", className = "" }) => (
     </div>
 );
 
-const FeatureSection = ({ title, description, icon, imageLabel, reverse = false }) => (
+const FeatureSection = ({ title, description, icon, imageLabel, imageSrc, reverse = false }) => (
     <div className="py-20 lg:py-32 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className={`flex flex-col lg:flex-row items-center gap-16 ${reverse ? 'lg:flex-row-reverse' : ''}`}>
@@ -42,7 +42,11 @@ const FeatureSection = ({ title, description, icon, imageLabel, reverse = false 
                 <div className="flex-1 w-full relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${reverse ? 'from-purple-200 to-indigo-200' : 'from-indigo-200 to-purple-200'} rounded-3xl transform rotate-3 opacity-30 blur-2xl`}></div>
                     <div className="relative bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 p-2 border border-slate-100">
-                        <ImagePlaceholder label={imageLabel} height="h-80 md:h-96" />
+                        {imageSrc ? (
+                            <img src={imageSrc} alt={imageLabel} className="w-full h-80 md:h-96 object-cover rounded-xl" />
+                        ) : (
+                            <ImagePlaceholder label={imageLabel} height="h-80 md:h-96" />
+                        )}
                     </div>
                 </div>
             </div>
@@ -153,19 +157,7 @@ export default function Welcome({ auth }) {
                         <div className="relative mx-auto max-w-6xl">
                             <div className="relative rounded-2xl bg-slate-900/5 p-2 ring-1 ring-inset ring-slate-900/10 lg:rounded-3xl lg:p-4 backdrop-blur-sm">
                                 <div className="rounded-xl bg-white shadow-2xl ring-1 ring-slate-900/10 overflow-hidden">
-                                    <ImagePlaceholder label="ダッシュボードのスクリーンショット" height="h-[300px] md:h-[600px]" className="border-0 rounded-none" />
-                                </div>
-                            </div>
-                            {/* Floating Elements */}
-                            <div className="absolute -right-12 top-1/4 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 hidden lg:block animate-bounce-slow">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500">本日の予約</p>
-                                        <p className="text-lg font-bold text-slate-900">12件 完了</p>
-                                    </div>
+                                    <img src="/img/dashboard.png" alt="ダッシュボードのスクリーンショット" className="w-full h-auto border-0 rounded-none" />
                                 </div>
                             </div>
                         </div>
@@ -202,6 +194,7 @@ export default function Welcome({ auth }) {
                             </svg>
                         }
                         imageLabel="予約カレンダー画面"
+                        imageSrc="/img/reservation.png"
                     />
 
                     {/* Feature 2: Patient Portal */}
