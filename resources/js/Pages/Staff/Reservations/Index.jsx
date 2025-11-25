@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
@@ -11,7 +12,7 @@ export default function Index({ reservations, patientList, currentStart, current
 
     const openModal = (reservation) => {
         setSelectedReservation(reservation);
-        setData('reception_status', reservation.reception_status);
+        setData('reception_status', reservation.reception_status || '');
     };
 
     const closeModal = () => {
@@ -111,7 +112,7 @@ export default function Index({ reservations, patientList, currentStart, current
                             </Link>
                             <div className="text-xs lg:text-sm font-bold text-gray-900 text-center flex-1 lg:flex-none lg:min-w-[200px]">
                                 <span className="hidden sm:inline">
-                                    {new Date(currentStart).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })} 
+                                    {new Date(currentStart).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })}
                                     <span className="mx-2 text-gray-400">～</span>
                                     {new Date(currentEnd).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })}
                                 </span>
@@ -147,15 +148,13 @@ export default function Index({ reservations, patientList, currentStart, current
                             return (
                                 <div key={day.toISOString()}>
                                     {/* 日付ヘッダー */}
-                                    <div className={`px-4 py-3 sticky top-0 z-10 ${
-                                        day.toDateString() === new Date().toDateString() 
-                                            ? 'bg-primary-50 border-l-4 border-primary-500' 
-                                            : 'bg-gray-50'
-                                    }`}>
+                                    <div className={`px-4 py-3 sticky top-0 z-10 ${day.toDateString() === new Date().toDateString()
+                                        ? 'bg-primary-50 border-l-4 border-primary-500'
+                                        : 'bg-gray-50'
+                                        }`}>
                                         <div className="flex items-center gap-2">
-                                            <span className={`text-sm font-bold ${
-                                                day.toDateString() === new Date().toDateString() ? 'text-primary-700' : 'text-gray-900'
-                                            }`}>
+                                            <span className={`text-sm font-bold ${day.toDateString() === new Date().toDateString() ? 'text-primary-700' : 'text-gray-900'
+                                                }`}>
                                                 {day.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', weekday: 'short' })}
                                             </span>
                                             {dayReservations.length > 0 && (
@@ -208,14 +207,12 @@ export default function Index({ reservations, patientList, currentStart, current
                     <div className="grid grid-cols-7 divide-x divide-gray-100 border-b border-gray-100 bg-gray-50">
                         {days.map((day) => (
                             <div key={day.toISOString()} className="py-3 text-center">
-                                <span className={`text-sm font-semibold ${
-                                    day.toDateString() === new Date().toDateString() ? 'text-primary-600' : 'text-gray-900'
-                                }`}>
+                                <span className={`text-sm font-semibold ${day.toDateString() === new Date().toDateString() ? 'text-primary-600' : 'text-gray-900'
+                                    }`}>
                                     {day.toLocaleDateString('ja-JP', { weekday: 'short' })}
                                 </span>
-                                <div className={`mt-1 mx-auto w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${
-                                    day.toDateString() === new Date().toDateString() ? 'bg-primary-600 text-white shadow-md' : 'text-gray-900'
-                                }`}>
+                                <div className={`mt-1 mx-auto w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${day.toDateString() === new Date().toDateString() ? 'bg-primary-600 text-white shadow-md' : 'text-gray-900'
+                                    }`}>
                                     {day.getDate()}
                                 </div>
                             </div>
@@ -230,12 +227,11 @@ export default function Index({ reservations, patientList, currentStart, current
                                         <div
                                             key={res.id}
                                             onClick={() => openModal(res)}
-                                            className={`group p-3 rounded-xl border border-transparent hover:border-gray-200 hover:shadow-md cursor-pointer transition-all duration-200 ${
-                                                res.reception_status === 'completed' ? 'bg-gray-50 opacity-75' :
+                                            className={`group p-3 rounded-xl border border-transparent hover:border-gray-200 hover:shadow-md cursor-pointer transition-all duration-200 ${res.reception_status === 'completed' ? 'bg-gray-50 opacity-75' :
                                                 res.reception_status === 'checked_in' ? 'bg-blue-50 border-blue-100' :
-                                                res.reception_status === 'consulting' ? 'bg-purple-50 border-purple-100' :
-                                                'bg-white border-gray-100 shadow-sm'
-                                            }`}
+                                                    res.reception_status === 'consulting' ? 'bg-purple-50 border-purple-100' :
+                                                        'bg-white border-gray-100 shadow-sm'
+                                                }`}
                                         >
                                             <div className="flex justify-between items-start mb-1">
                                                 <span className="text-xs font-bold text-gray-900">
@@ -260,14 +256,14 @@ export default function Index({ reservations, patientList, currentStart, current
             </div>
 
             {/* 詳細モーダル */}
-            {selectedReservation && (
-                <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            {selectedReservation && createPortal(
+                <div className="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onClick={closeModal}></div>
 
                         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                        <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full mx-4 sm:mx-auto">
+                        <div className="relative z-50 inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full mx-4 sm:mx-auto">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div className="sm:flex sm:items-start">
                                     <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -322,7 +318,7 @@ export default function Index({ reservations, patientList, currentStart, current
                                                         </option>
                                                     ))}
                                                 </select>
-                                                
+
                                                 <div className="mt-6 flex flex-col-reverse sm:flex-row-reverse gap-2">
                                                     <button
                                                         type="submit"
@@ -346,7 +342,8 @@ export default function Index({ reservations, patientList, currentStart, current
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </StaffLayout>
     );
