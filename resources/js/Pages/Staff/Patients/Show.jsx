@@ -154,6 +154,44 @@ export default function Show({ patient, menus }) {
                 </div>
 
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                    <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">同意済書類</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">患者が同意した書類一覧</p>
+                    </div>
+                    <div className="border-t border-gray-200">
+                        {patient.signed_documents && patient.signed_documents.length > 0 ? (
+                            <ul className="divide-y divide-gray-200">
+                                {patient.signed_documents.map((doc) => (
+                                    <li key={doc.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-sm font-medium text-indigo-600 truncate">
+                                                {doc.document_template ? doc.document_template.title : '不明な書類'}
+                                            </div>
+                                            <div className="ml-2 flex-shrink-0 flex">
+                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    同意済
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 sm:flex sm:justify-between">
+                                            <div className="sm:flex">
+                                                <p className="flex items-center text-sm text-gray-500">
+                                                    署名日: {doc.signed_at ? new Date(doc.signed_at).toLocaleDateString('ja-JP') : '不明'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <div className="p-4 text-center text-gray-500 text-sm">
+                                同意済みの書類はありません。
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
                     <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
                         <div>
                             <h3 className="text-lg leading-6 font-medium text-gray-900">契約・役務情報</h3>

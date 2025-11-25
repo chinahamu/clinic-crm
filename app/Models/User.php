@@ -68,4 +68,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Contract::class);
     }
+
+    public function signedDocuments()
+    {
+        return $this->hasMany(SignedDocument::class);
+    }
 }
