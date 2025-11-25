@@ -12,6 +12,7 @@ class Machine extends Model
     protected $fillable = [
         'name',
         'type',
+        'quantity',
         'is_active',
         'clinic_id',
     ];

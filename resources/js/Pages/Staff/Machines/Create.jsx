@@ -6,6 +6,7 @@ export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         type: '',
+        quantity: 1,
         is_active: true,
     });
 
@@ -68,6 +69,23 @@ export default function Create({ auth }) {
                                     placeholder="例: 脱毛機"
                                 />
                                 {errors.type && <div className="mt-1 text-sm text-red-600">{errors.type}</div>}
+                            </div>
+
+                            {/* 台数 */}
+                            <div>
+                                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+                                    台数 <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="quantity"
+                                    type="number"
+                                    min="0"
+                                    value={data.quantity}
+                                    onChange={(e) => setData('quantity', e.target.value)}
+                                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                    required
+                                />
+                                {errors.quantity && <div className="mt-1 text-sm text-red-600">{errors.quantity}</div>}
                             </div>
 
                             {/* ステータス */}

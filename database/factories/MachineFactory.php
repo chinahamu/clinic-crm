@@ -33,6 +33,7 @@ class MachineFactory extends Factory
         return [
             'name' => $name,
             'type' => $type,
+            'quantity' => $this->faker->numberBetween(1, 5),
             'clinic_id' => Clinic::factory(),
         ];
     }

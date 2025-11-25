@@ -39,6 +39,7 @@ class MachineController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'nullable|string|max:255',
+            'quantity' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
@@ -74,6 +75,7 @@ class MachineController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'nullable|string|max:255',
+            'quantity' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
