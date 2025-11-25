@@ -12,6 +12,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/features', function () {
+    return Inertia::render('FeatureDetail');
+})->name('features');
+
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
 Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 

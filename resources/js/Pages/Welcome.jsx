@@ -30,12 +30,12 @@ const FeatureSection = ({ title, description, icon, imageLabel, imageSrc, revers
                     <p className="text-lg text-slate-600 leading-relaxed mb-8">
                         {description}
                     </p>
-                    <div className="flex items-center justify-center lg:justify-start gap-4 text-indigo-600 font-medium hover:text-indigo-700 transition-colors cursor-pointer group">
+                    <Link href={route('features')} className="flex items-center justify-center lg:justify-start gap-4 text-indigo-600 font-medium hover:text-indigo-700 transition-colors cursor-pointer group">
                         <span>詳しく見る</span>
                         <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Image Content */}
