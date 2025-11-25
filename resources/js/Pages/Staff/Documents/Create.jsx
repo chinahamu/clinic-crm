@@ -1,8 +1,9 @@
 import React from 'react';
 import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
+import RichTextEditor from '@/Components/RichTextEditor';
 
-export default function Create({ auth }) {
+export default function Create({ auth, variables }) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         content: '',
@@ -80,14 +81,11 @@ export default function Create({ auth }) {
                                 <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                                     内容 (HTML/Text) <span className="text-red-500">*</span>
                                 </label>
-                                <textarea
-                                    id="content"
+                                <RichTextEditor
                                     value={data.content}
-                                    onChange={(e) => setData('content', e.target.value)}
-                                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors font-mono text-sm"
-                                    rows="15"
+                                    onChange={(content) => setData('content', content)}
                                     placeholder="書類の本文を入力してください..."
-                                    required
+                                    variables={variables}
                                 />
                                 <p className="mt-1 text-xs text-gray-500">
                                     HTMLタグを使用できます。署名欄などは自動的に追加されません。

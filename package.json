@@ -19,6 +19,8 @@
     },
     "dependencies": {
         "@inertiajs/react": "^2.2.18",
+        "prop-types": "^15.8.1",
+        "react-quill-new": "^3.6.0",
         "react-signature-canvas": "^1.1.0-alpha.2"
     }
 }

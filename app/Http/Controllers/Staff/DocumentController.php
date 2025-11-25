@@ -13,6 +13,17 @@ use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
+    private function getAvailableVariables()
+    {
+        return [
+            ['key' => 'patient_name', 'label' => '患者名', 'description' => '患者の氏名'],
+            ['key' => 'patient_id', 'label' => '診察券番号', 'description' => '患者の診察券番号'],
+            ['key' => 'current_date', 'label' => '作成日', 'description' => '書類作成日（今日の日付）'],
+            ['key' => 'clinic_name', 'label' => 'クリニック名', 'description' => 'クリニックの名称'],
+            ['key' => 'staff_name', 'label' => '担当スタッフ', 'description' => '担当スタッフの氏名'],
+        ];
+    }
+
     public function index()
     {
         $templates = DocumentTemplate::all();
@@ -23,7 +34,9 @@ class DocumentController extends Controller
 
     public function create()
     {
-        return Inertia::render('Staff/Documents/Create');
+        return Inertia::render('Staff/Documents/Create', [
+            'variables' => $this->getAvailableVariables(),
+        ]);
     }
 
     public function store(Request $request)
@@ -44,6 +57,7 @@ class DocumentController extends Controller
     {
         return Inertia::render('Staff/Documents/Edit', [
             'document' => $document,
+            'variables' => $this->getAvailableVariables(),
         ]);
     }
 
@@ -64,9 +78,33 @@ class DocumentController extends Controller
     public function sign(User $user)
     {
         $templates = DocumentTemplate::where('is_active', true)->get();
+        
+        // テンプレートの内容を変数置換して渡す（またはフロントエンドで選択時に置換するが、
+        // ここではテンプレートリストを渡しているので、選択時に動的に置換するのが良い。
+        // しかし、Inertiaで渡すデータはJSONなので、テンプレート選択時にAJAXで取得するか、
+        // あるいは全テンプレートのコンテンツを事前に置換しておくか。
+        // テンプレート数が多いと重くなるが、現状は全件取得している。
+        // 簡易的に、フロントエンドで置換ロジックを持つか、APIを叩くか。
+        // 今回はシンプルに、テンプレートデータはそのまま渡し、署名画面で選択されたときに
+        // サーバーサイドで置換したコンテンツを取得するAPIを作るのがベストだが、
+        // 既存のSign.jsxは `templates` propから選んでいる。
+        // なので、Sign.jsxに渡すtemplatesの中身を、このユーザー向けに置換済みのものにしてしまうのが一番手っ取り早い。
+        
+        $replacedTemplates = $templates->map(function ($template) use ($user) {
+            $content = $template->content;
+            $content = str_replace('{{ patient_name }}', $user->name, $content);
+            $content = str_replace('{{ patient_id }}', $user->id, $content); // 診察券番号があればそれを使う
+            $content = str_replace('{{ current_date }}', now()->format('Y年m月d日'), $content);
+            $content = str_replace('{{ clinic_name }}', config('app.name', 'Clinic CRM'), $content);
+            $content = str_replace('{{ staff_name }}', Auth::guard('staff')->user()->name ?? '担当者', $content);
+            
+            $template->content = $content;
+            return $template;
+        });
+
         return Inertia::render('Staff/Documents/Sign', [
             'patient' => $user,
-            'templates' => $templates,
+            'templates' => $replacedTemplates,
         ]);
     }
 
