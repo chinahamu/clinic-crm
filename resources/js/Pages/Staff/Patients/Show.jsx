@@ -10,6 +10,23 @@ export default function Show({ patient, menus }) {
 
     const [showContractForm, setShowContractForm] = useState(false);
 
+    // 日付を日本時間（Asia/Tokyo）で表示するヘルパー関数
+    const formatJST = (value, { dateOnly = false } = {}) => {
+        if (value === null || value === undefined || value === '') return '-';
+        const s = String(value);
+        // 既に日付のみ (YYYY-MM-DD) の場合は日付として扱う（タイムゾーン変換で日付がずれるのを防ぐ）
+        if (dateOnly && /^\d{4}-\d{2}-\d{2}$/.test(s)) {
+            const [y, m, d] = s.split('-');
+            return `${y}/${m}/${d}`;
+        }
+        const d = new Date(s);
+        if (isNaN(d.getTime())) return value;
+        if (dateOnly) {
+            return new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+        }
+        return new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
+    };
+
     const submitContract = (e) => {
         e.preventDefault();
         post(route('staff.patients.contracts.store', patient.id), {
@@ -96,7 +113,7 @@ export default function Show({ patient, menus }) {
                             </div>
                             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">生年月日</dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{patient.birthday || '-'}</dd>
+                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{patient.birthday ? formatJST(patient.birthday, { dateOnly: true }) : '-'}</dd>
                             </div>
                             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">性別</dt>
@@ -147,7 +164,7 @@ export default function Show({ patient, menus }) {
                             )}
                             <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt className="text-sm font-medium text-gray-500">最終来院日</dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{patient.last_visit_at || '-'}</dd>
+                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{patient.last_visit_at ? formatJST(patient.last_visit_at) : '-'}</dd>
                             </div>
                         </dl>
                     </div>
@@ -176,7 +193,7 @@ export default function Show({ patient, menus }) {
                                         <div className="mt-2 sm:flex sm:justify-between">
                                             <div className="sm:flex">
                                                 <p className="flex items-center text-sm text-gray-500">
-                                                    署名日: {doc.signed_at ? new Date(doc.signed_at).toLocaleDateString('ja-JP') : '不明'}
+                                                    署名日: {doc.signed_at ? formatJST(doc.signed_at) : '不明'}
                                                 </p>
                                             </div>
                                         </div>
@@ -279,7 +296,7 @@ export default function Show({ patient, menus }) {
                                                 <span className="font-bold text-gray-900">{contract.remaining_count}</span> / {contract.total_count}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {contract.expiration_date || '無期限'}
+                                                {contract.expiration_date ? formatJST(contract.expiration_date, { dateOnly: true }) : '無期限'}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${contract.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
