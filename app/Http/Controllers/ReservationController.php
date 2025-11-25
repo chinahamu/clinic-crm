@@ -105,13 +105,14 @@ class ReservationController extends Controller
         }
 
         // Check Machine Availability
-        $machineType = $menu->required_machine_type;
-        if ($machineType) {
-             $totalMachines = Machine::where('type', $machineType)->count();
-             $busyMachines = Reservation::whereNotNull('machine_id')
-             ->whereHas('machine', function($q) use ($machineType) {
-                 $q->where('type', $machineType);
-             })
+        $machineId = $menu->required_machine_id;
+        if ($machineId) {
+             $machine = Machine::find($machineId);
+             if (!$machine) {
+                 return false;
+             }
+             $totalMachines = $machine->quantity;
+             $busyMachines = Reservation::where('machine_id', $machineId)
              ->where(function ($query) use ($start, $end) {
                 $query->where('start_time', '<', $end)
                       ->where('end_time', '>', $start);
@@ -143,10 +144,20 @@ class ReservationController extends Controller
         $roomId = $this->findAvailableRoom($start, $end, $menu->required_room_type);
         
         $machineId = null;
-        if ($menu->required_machine_type) {
-            $machineId = $this->findAvailableMachine($start, $end, $menu->required_machine_type);
-            if (!$machineId) {
-                 return back()->withErrors(['message' => 'Selected slot is no longer available (Machine).']);
+        if ($menu->required_machine_id) {
+            $machine = Machine::find($menu->required_machine_id);
+            if ($machine) {
+                $busyMachines = Reservation::where('machine_id', $menu->required_machine_id)
+                    ->where(function ($query) use ($start, $end) {
+                        $query->where('start_time', '<', $end)
+                              ->where('end_time', '>', $start);
+                    })->count();
+                
+                if ($busyMachines < $machine->quantity) {
+                    $machineId = $menu->required_machine_id;
+                } else {
+                     return back()->withErrors(['message' => 'Selected slot is no longer available (Machine).']);
+                }
             }
         }
 
@@ -214,20 +225,5 @@ class ReservationController extends Controller
             ->pluck('room_id');
         
         return $allRooms->diff($busyRooms)->first();
-    }
-
-    private function findAvailableMachine($start, $end, $type) {
-        $allMachines = Machine::where('type', $type)->pluck('id');
-        $busyMachines = Reservation::whereNotNull('machine_id')
-             ->whereHas('machine', function($q) use ($type) {
-                 $q->where('type', $type);
-             })
-             ->where(function ($query) use ($start, $end) {
-                $query->where('start_time', '<', $end)
-                      ->where('end_time', '>', $start);
-            })
-            ->pluck('machine_id');
-        
-        return $allMachines->diff($busyMachines)->first();
     }
 }

@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('menus', function (Blueprint $table) {
+            $table->dropColumn('required_machine_type');
+            $table->foreignId('required_machine_id')->nullable()->after('required_room_type')->constrained('machines')->nullOnDelete();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('menus', function (Blueprint $table) {
+            $table->dropForeign(['required_machine_id']);
+            $table->dropColumn('required_machine_id');
+            $table->string('required_machine_type')->nullable()->after('required_room_type');
+        });
+    }
+};

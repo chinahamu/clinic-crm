@@ -16,7 +16,7 @@ class Menu extends Model
         'duration_minutes',
         'required_role',
         'required_room_type',
-        'required_machine_type',
+        'required_machine_id',
         'num_tickets',
         'validity_period_days',
         'is_active',
@@ -27,8 +27,13 @@ class Menu extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    public function requiredMachine()
+    {
+        return $this->belongsTo(Machine::class, 'required_machine_id');
+    }
+
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'menu_product');
     }
 }

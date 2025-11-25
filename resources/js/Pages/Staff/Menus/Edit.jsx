@@ -2,14 +2,14 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Edit({ auth, menu, products, roomTypes, machineTypes, roles }) {
+export default function Edit({ auth, menu, products, roomTypes, machines, roles }) {
     const { data, setData, put, processing, errors } = useForm({
         name: menu.name,
         price: menu.price,
         duration_minutes: menu.duration_minutes,
         required_role: menu.required_role || '',
         required_room_type: menu.required_room_type || '',
-        required_machine_type: menu.required_machine_type || '',
+        required_machine_id: menu.required_machine_id || '',
         num_tickets: menu.num_tickets || 1,
         validity_period_days: menu.validity_period_days || '',
         product_ids: menu.products ? menu.products.map(p => p.id) : [],
@@ -196,21 +196,21 @@ export default function Edit({ auth, menu, products, roomTypes, machineTypes, ro
                                         </select>
                                     </div>
 
-                                    {/* 必須機械タイプ */}
+                                    {/* 必須機械 */}
                                     <div>
-                                        <label htmlFor="required_machine_type" className="block text-sm font-medium text-gray-700 mb-1">
-                                            必須機械タイプ
+                                        <label htmlFor="required_machine_id" className="block text-sm font-medium text-gray-700 mb-1">
+                                            必須機械名
                                         </label>
                                         <select
-                                            id="required_machine_type"
-                                            value={data.required_machine_type}
-                                            onChange={(e) => setData('required_machine_type', e.target.value)}
+                                            id="required_machine_id"
+                                            value={data.required_machine_id}
+                                            onChange={(e) => setData('required_machine_id', e.target.value)}
                                             className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
                                         >
                                             <option value="">指定なし</option>
-                                            {machineTypes.map((type) => (
-                                                <option key={type} value={type}>
-                                                    {type}
+                                            {machines.map((machine) => (
+                                                <option key={machine.id} value={machine.id}>
+                                                    {machine.name}
                                                 </option>
                                             ))}
                                         </select>

@@ -78,6 +78,12 @@ class MenuFactory extends Factory
 
         $selected = $ja->randomElement($menuTypes);
 
+        $machineId = null;
+        if ($selected['required_machine_type']) {
+            $machine = \App\Models\Machine::where('type', $selected['required_machine_type'])->inRandomOrder()->first();
+            $machineId = $machine ? $machine->id : null;
+        }
+
         return [
             'name' => $selected['name'],
             'description' => $ja->realText(50),
@@ -85,7 +91,7 @@ class MenuFactory extends Factory
             'duration_minutes' => $selected['duration_minutes'],
             'required_role' => $selected['required_role'],
             'required_room_type' => $selected['required_room_type'],
-            'required_machine_type' => $selected['required_machine_type'],
+            'required_machine_id' => $machineId,
             'num_tickets' => $selected['num_tickets'] ?? null,
             'validity_period_days' => $selected['validity_period_days'] ?? null,
         ];

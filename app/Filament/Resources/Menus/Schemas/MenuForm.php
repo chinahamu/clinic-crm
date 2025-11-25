@@ -25,7 +25,10 @@ class MenuForm
                     ->required()
                     ->numeric(),
                 TextInput::make('required_room_type'),
-                TextInput::make('required_machine_type'),
+                \Filament\Forms\Components\Select::make('required_machine_id')
+                    ->relationship('requiredMachine', 'name')
+                    ->searchable()
+                    ->preload(),
                 Toggle::make('is_active')
                     ->required(),
             ]);

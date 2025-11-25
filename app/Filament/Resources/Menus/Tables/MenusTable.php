@@ -25,7 +25,8 @@ class MenusTable
                     ->sortable(),
                 TextColumn::make('required_room_type')
                     ->searchable(),
-                TextColumn::make('required_machine_type')
+                TextColumn::make('requiredMachine.name')
+                    ->label('Required Machine')
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),

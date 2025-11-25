@@ -154,19 +154,16 @@ class PatientReservationController extends Controller
         }
 
         // Check Machine Availability
-        $machineType = $menu->required_machine_type;
-        if ($machineType) {
-             $totalMachines = Machine::where('clinic_id', $clinicId)->where('type', $machineType)->count();
-             
-             if ($totalMachines === 0) {
+        $machineId = $menu->required_machine_id;
+        if ($machineId) {
+             $machine = Machine::find($machineId);
+             if (!$machine) {
                  return false;
              }
-
+             $totalMachines = $machine->quantity;
+             
              $busyMachines = Reservation::where('clinic_id', $clinicId)
-             ->whereNotNull('machine_id')
-             ->whereHas('machine', function($q) use ($machineType) {
-                 $q->where('type', $machineType);
-             })
+             ->where('machine_id', $machineId)
              ->where(function ($query) use ($start, $end) {
                 $query->where('start_time', '<', $end)
                       ->where('end_time', '>', $start);
@@ -208,10 +205,7 @@ class PatientReservationController extends Controller
              return response()->json(['message' => 'Selected slot is no longer available.'], 422);
         }
 
-        // Assign resources (simplified logic for now, just pick first available)
-        // Ideally we should lock resources. 
-        // For this task, we will just create the reservation without specific resource assignment logic details 
-        // or we can reuse the logic to find *which* resource is free.
+        // Assign resources
         
         // Find a free staff
         $requiredRole = $menu->required_role;
@@ -263,21 +257,9 @@ class PatientReservationController extends Controller
 
         // Find Machine
         $machineId = null;
-        $machineType = $menu->required_machine_type;
-        if ($machineType) {
-             $potentialMachines = Machine::where('clinic_id', $clinic->id)->where('type', $machineType)->pluck('id');
-             $busyMachines = Reservation::whereIn('machine_id', $potentialMachines)
-                ->where(function ($query) use ($startDateTime, $endDateTime) {
-                    $query->where('start_time', '<', $endDateTime)
-                        ->where('end_time', '>', $startDateTime);
-                })
-                ->where('status', '!=', 'cancelled')
-                ->pluck('machine_id');
-            $machineId = $potentialMachines->diff($busyMachines)->first();
-            
-            if (!$machineId) {
-                 return response()->json(['message' => 'No machine available.'], 422);
-            }
+        if ($menu->required_machine_id) {
+            $machineId = $menu->required_machine_id;
+            // Availability already checked in isSlotAvailable
         }
 
         $reservation = Reservation::create([
