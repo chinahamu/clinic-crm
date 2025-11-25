@@ -44,63 +44,72 @@ export default function Create({ auth, menus }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">新規予約</h2>}
+            header="新規予約"
         >
             <Head title="新規予約" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <form onSubmit={submit}>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div className="space-y-4 lg:space-y-6">
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
+                    <div className="p-4 lg:p-6">
+                        <form onSubmit={submit} className="space-y-6">
+                            {/* メニュー選択 */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     メニュー選択
                                 </label>
                                 <select
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-base"
                                     value={data.menu_id}
                                     onChange={(e) => setData('menu_id', e.target.value)}
                                 >
                                     <option value="">選択してください</option>
                                     {menus.map((menu) => (
                                         <option key={menu.id} value={menu.id}>
-                                            {menu.name} ({menu.duration_minutes}分) - ¥{menu.price}
+                                            {menu.name} ({menu.duration_minutes}分) - ¥{menu.price.toLocaleString()}
                                         </option>
                                     ))}
                                 </select>
                                 {errors.menu_id && <div className="text-red-500 text-xs mt-1">{errors.menu_id}</div>}
                             </div>
 
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2">
+                            {/* 日付選択 */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     日付選択
                                 </label>
                                 <input
                                     type="date"
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-base"
                                     value={selectedDate}
                                     onChange={(e) => setSelectedDate(e.target.value)}
                                     min={new Date().toISOString().split('T')[0]}
                                 />
                             </div>
 
+                            {/* 時間選択 */}
                             {data.menu_id && selectedDate && (
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
                                         時間選択
                                     </label>
                                     {loadingSlots ? (
-                                        <p>空き状況を確認中...</p>
+                                        <div className="flex items-center justify-center p-4 text-gray-500">
+                                            <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            空き状況を確認中...
+                                        </div>
                                     ) : slots.length > 0 ? (
-                                        <div className="grid grid-cols-4 gap-2">
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                                             {slots.map((slot) => (
                                                 <button
                                                     key={slot}
                                                     type="button"
-                                                    className={`py-2 px-4 rounded border ${
+                                                    className={`py-3 px-3 rounded-lg border text-sm font-medium transition-all ${
                                                         data.start_time.includes(slot)
-                                                            ? 'bg-blue-500 text-white'
-                                                            : 'bg-white hover:bg-gray-100'
+                                                            ? 'bg-primary-600 text-white border-primary-600 shadow-md'
+                                                            : 'bg-white border-gray-200 hover:border-primary-300 hover:bg-primary-50'
                                                     }`}
                                                     onClick={() => setData('start_time', `${selectedDate} ${slot}`)}
                                                 >
@@ -109,18 +118,22 @@ export default function Create({ auth, menus }) {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-red-500">空き枠がありません。</p>
+                                        <div className="p-4 bg-red-50 border border-red-100 rounded-lg">
+                                            <p className="text-red-600 text-sm text-center">空き枠がありません。別の日付を選択してください。</p>
+                                        </div>
                                     )}
                                     {errors.start_time && <div className="text-red-500 text-xs mt-1">{errors.start_time}</div>}
                                 </div>
                             )}
 
-                            <div className="flex items-center justify-end mt-4">
+                            {/* 送信ボタン */}
+                            <div className="pt-4">
                                 <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    disabled={processing}
+                                    type="submit"
+                                    className="w-full sm:w-auto px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                                    disabled={processing || !data.menu_id || !data.start_time}
                                 >
-                                    予約する
+                                    {processing ? '予約中...' : '予約する'}
                                 </button>
                             </div>
                         </form>
