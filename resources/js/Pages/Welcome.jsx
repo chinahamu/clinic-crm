@@ -208,6 +208,7 @@ export default function Welcome({ auth }) {
                             </svg>
                         }
                         imageLabel="スマホ版患者マイページ"
+                        imageSrc="/img/patientdashboard.png"
                     />
 
                     {/* Feature 3: Staff Management */}
@@ -220,6 +221,7 @@ export default function Welcome({ auth }) {
                             </svg>
                         }
                         imageLabel="スタッフシフト管理画面"
+                        imageSrc="/img/staffschedule.png"
                     />
                 </div>
 
