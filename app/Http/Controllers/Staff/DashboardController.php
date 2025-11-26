@@ -24,6 +24,7 @@ class DashboardController extends Controller
         return Inertia::render('Staff/Dashboard', [
             'today_reservations_count' => $todayReservationsCount,
             'today_schedule' => $todaySchedule,
+            'low_stock_products' => \App\Models\Product::whereColumn('stock', '<=', 'threshold')->get(),
         ]);
     }
 }

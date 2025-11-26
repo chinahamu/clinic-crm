@@ -8,6 +8,7 @@ export default function Create({ auth }) {
         description: '',
         price: '',
         stock: '',
+        threshold: 0,
         is_active: true,
     });
 
@@ -110,6 +111,23 @@ export default function Create({ auth }) {
                                         required
                                     />
                                     {errors.stock && <div className="mt-1 text-sm text-red-600">{errors.stock}</div>}
+                                </div>
+
+                                {/* 閾値 */}
+                                <div>
+                                    <label htmlFor="threshold" className="block text-sm font-medium text-gray-700 mb-1">
+                                        在庫警告閾値 <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="threshold"
+                                        type="number"
+                                        value={data.threshold}
+                                        onChange={(e) => setData('threshold', e.target.value)}
+                                        className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                        placeholder="0"
+                                        required
+                                    />
+                                    {errors.threshold && <div className="mt-1 text-sm text-red-600">{errors.threshold}</div>}
                                 </div>
                             </div>
 

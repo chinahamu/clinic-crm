@@ -49,11 +49,10 @@ export default function Index({ products }) {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2">
                                             <div className="text-sm font-bold text-gray-900">{product.name}</div>
-                                            <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border ${
-                                                product.is_active 
-                                                    ? 'bg-green-50 text-green-700 border-green-100' 
+                                            <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border ${product.is_active
+                                                    ? 'bg-green-50 text-green-700 border-green-100'
                                                     : 'bg-gray-100 text-gray-600 border-gray-200'
-                                            }`}>
+                                                }`}>
                                                 {product.is_active ? '有効' : '無効'}
                                             </span>
                                         </div>
@@ -66,13 +65,13 @@ export default function Index({ products }) {
                                         )}
                                         <div className="flex items-center gap-3 mt-2">
                                             <div className="text-lg font-bold text-primary-600">¥{product.price.toLocaleString()}</div>
-                                            <div className={`text-sm ${product.stock < 10 ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
+                                            <div className={`text-sm ${product.stock <= product.threshold ? 'text-red-600 font-bold' : 'text-gray-500'}`}>
                                                 在庫: {product.stock}個
                                             </div>
                                         </div>
                                     </div>
-                                    <Link 
-                                        href={route('staff.products.edit', product.id)} 
+                                    <Link
+                                        href={route('staff.products.edit', product.id)}
                                         className="text-primary-600 hover:text-primary-900 transition-colors inline-flex items-center text-xs"
                                     >
                                         <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,22 +125,21 @@ export default function Index({ products }) {
                                             <div className="text-sm font-medium text-gray-900">¥{product.price.toLocaleString()}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className={`text-sm font-medium ${product.stock < 10 ? 'text-red-600' : 'text-gray-900'}`}>
+                                            <div className={`text-sm font-medium ${product.stock <= product.threshold ? 'text-red-600' : 'text-gray-900'}`}>
                                                 {product.stock} <span className="text-xs text-gray-500 font-normal">個</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border ${
-                                                product.is_active 
-                                                    ? 'bg-green-50 text-green-700 border-green-100' 
+                                            <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full border ${product.is_active
+                                                    ? 'bg-green-50 text-green-700 border-green-100'
                                                     : 'bg-gray-100 text-gray-600 border-gray-200'
-                                            }`}>
+                                                }`}>
                                                 {product.is_active ? '有効' : '無効'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <Link 
-                                                href={route('staff.products.edit', product.id)} 
+                                            <Link
+                                                href={route('staff.products.edit', product.id)}
                                                 className="text-primary-600 hover:text-primary-900 transition-colors inline-flex items-center"
                                             >
                                                 <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

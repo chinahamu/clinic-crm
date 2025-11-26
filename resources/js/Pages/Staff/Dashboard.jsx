@@ -1,8 +1,8 @@
 import React from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Dashboard({ today_reservations_count, today_schedule }) {
+export default function Dashboard({ today_reservations_count, today_schedule, low_stock_products }) {
     const { auth } = usePage().props;
 
     return (
@@ -31,6 +31,36 @@ export default function Dashboard({ today_reservations_count, today_schedule }) 
                     {/* 他の統計情報があればここに追加 */}
                 </div>
 
+                {/* 在庫警告 */}
+                {low_stock_products && low_stock_products.length > 0 && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4 lg:p-6">
+                        <h3 className="text-lg font-bold text-red-800 flex items-center gap-2 mb-4">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            在庫警告
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {low_stock_products.map((product) => (
+                                <div key={product.id} className="bg-white p-4 rounded-xl shadow-sm border border-red-100 flex justify-between items-center">
+                                    <div>
+                                        <div className="font-bold text-gray-900">{product.name}</div>
+                                        <div className="text-sm text-red-600 font-bold">
+                                            残り: {product.stock}個 <span className="text-xs text-gray-500 font-normal">(閾値: {product.threshold})</span>
+                                        </div>
+                                    </div>
+                                    <Link
+                                        href={route('staff.products.edit', product.id)}
+                                        className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200 transition-colors"
+                                    >
+                                        補充
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* 本日のスケジュール */}
                 <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
                     <div className="p-4 lg:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -39,7 +69,7 @@ export default function Dashboard({ today_reservations_count, today_schedule }) 
                             {new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}
                         </span>
                     </div>
-                    
+
                     <div className="p-0">
                         {today_schedule.length > 0 ? (
                             <>

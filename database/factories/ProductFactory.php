@@ -24,6 +24,7 @@ class ProductFactory extends Factory
             'name' => $ja->randomElement($products) . ' ' . $ja->word(),
             'price' => $ja->numberBetween(1000, 20000),
             'stock' => $ja->numberBetween(0, 100),
+            'threshold' => $ja->numberBetween(5, 20),
         ];
     }
 }
