@@ -289,7 +289,7 @@ export default function Welcome({ auth }) {
                                     <span className="text-slate-500">/月</span>
                                 </div>
                                 <p className="text-slate-600 mb-8 leading-relaxed">
-                                    予約管理、電子カルテ、在庫管理など、<br />
+                                    予約管理、在庫管理など、<br />
                                     クリニック運営に必要な全機能が含まれています。
                                 </p>
                                 <ul className="space-y-4 text-left mb-8">
