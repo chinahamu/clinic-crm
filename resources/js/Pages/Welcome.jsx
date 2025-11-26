@@ -268,6 +268,58 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
+
+                {/* Pricing Section */}
+                <div id="pricing" className="py-24 bg-slate-50 border-t border-slate-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                            料金プラン
+                        </h2>
+                        <p className="text-slate-600 max-w-2xl mx-auto mb-16">
+                            複雑なプラン設定はありません。<br />
+                            月額一律3,000円ですべての機能をご利用いただけます。
+                        </p>
+
+                        <div className="max-w-lg mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
+                            <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                            <div className="p-8 md:p-12">
+                                <h3 className="text-xl font-medium text-slate-500 mb-4">スタンダードプラン</h3>
+                                <div className="flex items-baseline justify-center gap-2 mb-6">
+                                    <span className="text-5xl font-bold text-slate-900">¥3,000</span>
+                                    <span className="text-slate-500">/月</span>
+                                </div>
+                                <p className="text-slate-600 mb-8 leading-relaxed">
+                                    予約管理、電子カルテ、在庫管理など、<br />
+                                    クリニック運営に必要な全機能が含まれています。
+                                </p>
+                                <ul className="space-y-4 text-left mb-8">
+                                    {[
+                                        "予約システム無制限利用",
+                                        "スタッフ・シフト管理",
+                                        "患者マイページ機能",
+                                        "電子カルテ・問診票",
+                                        "売上・在庫管理",
+                                        "メール・LINE通知連携"
+                                    ].map((item, i) => (
+                                        <li key={i} className="flex items-center text-slate-600">
+                                            <svg className="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Link href="#" className="block w-full py-4 px-6 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">
+                                    今すぐ申し込む
+                                </Link>
+                                <p className="mt-4 text-xs text-slate-400">
+                                    ※初期費用は無料です。いつでも解約可能です。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* CTA Section */}
                 <div className="bg-slate-900 py-24 relative overflow-hidden">
                     <div className="absolute inset-0">
