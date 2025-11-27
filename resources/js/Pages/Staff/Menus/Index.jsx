@@ -5,6 +5,13 @@ import StaffLayout from '@/Layouts/StaffLayout';
 export default function Index({ menus }) {
     const { flash = {}, auth } = usePage().props;
 
+    const roomTypeMap = {
+        'consultation': '診察室',
+        'treatment': '処置室',
+        'counseling': 'カウンセリングルーム',
+        'operating': '手術室',
+    };
+
     return (
         <StaffLayout
             user={auth.user}
@@ -53,18 +60,18 @@ export default function Index({ menus }) {
                                             <span className="bg-gray-100 px-2 py-0.5 rounded">{menu.duration_minutes}分</span>
                                             {menu.required_room_type && (
                                                 <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                                                    部屋: {menu.required_room_type}
+                                                    部屋: {roomTypeMap[menu.required_room_type] || menu.required_room_type}
                                                 </span>
                                             )}
-                                            {menu.required_machine_type && (
+                                            {menu.required_machine && (
                                                 <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded">
-                                                    機械: {menu.required_machine_type}
+                                                    機械: {menu.required_machine.name}
                                                 </span>
                                             )}
                                         </div>
                                     </div>
-                                    <Link 
-                                        href={route('staff.menus.edit', menu.id)} 
+                                    <Link
+                                        href={route('staff.menus.edit', menu.id)}
                                         className="text-primary-600 hover:text-primary-900 transition-colors inline-flex items-center text-xs"
                                     >
                                         <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,22 +130,22 @@ export default function Index({ menus }) {
                                             <div className="flex flex-col gap-1">
                                                 {menu.required_room_type && (
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
-                                                        部屋: {menu.required_room_type}
+                                                        部屋: {roomTypeMap[menu.required_room_type] || menu.required_room_type}
                                                     </span>
                                                 )}
-                                                {menu.required_machine_type && (
+                                                {menu.required_machine && (
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700">
-                                                        機械: {menu.required_machine_type}
+                                                        機械: {menu.required_machine.name}
                                                     </span>
                                                 )}
-                                                {!menu.required_room_type && !menu.required_machine_type && (
+                                                {!menu.required_room_type && !menu.required_machine && (
                                                     <span className="text-xs text-gray-400">-</span>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <Link 
-                                                href={route('staff.menus.edit', menu.id)} 
+                                            <Link
+                                                href={route('staff.menus.edit', menu.id)}
                                                 className="text-primary-600 hover:text-primary-900 transition-colors inline-flex items-center"
                                             >
                                                 <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
