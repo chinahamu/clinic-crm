@@ -128,17 +128,17 @@ export default function Welcome({ auth }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <div className="inline-flex items-center px-4 py-2 rounded-full bg-white border border-indigo-100 text-indigo-700 text-sm font-medium mb-8 shadow-sm animate-fade-in-up">
                             <span className="flex h-2 w-2 rounded-full bg-indigo-600 mr-2 animate-pulse"></span>
-                            AI搭載の予約管理システムが登場
+                            月額1万円で始める「育てるCRM」
                         </div>
 
                         <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1]">
-                            クリニック運営の<br className="hidden md:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 animate-gradient-x">すべてを、ひとつに。</span>
+                            現場の声で進化する、<br className="hidden md:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 animate-gradient-x">あなただけのCRM。</span>
                         </h1>
 
                         <p className="mt-6 max-w-2xl mx-auto text-xl text-slate-600 mb-10 leading-relaxed">
-                            予約、カルテ、会計、スタッフ管理。煩雑な業務を自動化し、<br className="hidden md:block" />
-                            患者様と向き合う時間を最大化する、次世代のCRMプラットフォーム。
+                            導入時は基本機能からスタート。日々の診療で感じる「もっとこうしたい」を教えてください。<br className="hidden md:block" />
+                            専任エンジニアがあなたのクリニックに合わせて機能を実装し、使いやすいシステムへと育てていきます。
                         </p>
 
                         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
@@ -164,21 +164,35 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
-                {/* Stats / Trust Section */}
-                <div className="border-y border-slate-100 bg-slate-50/50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            {[
-                                { label: "導入クリニック", value: "500+" },
-                                { label: "月間予約数", value: "10万+" },
-                                { label: "業務削減時間", value: "30%" },
-                                { label: "継続利用率", value: "99.8%" },
-                            ].map((stat, i) => (
-                                <div key={i}>
-                                    <div className="text-3xl md:text-4xl font-extrabold text-indigo-600 mb-1">{stat.value}</div>
-                                    <div className="text-sm font-medium text-slate-500">{stat.label}</div>
-                                </div>
-                            ))}
+                {/* Growing CRM Concept Section */}
+                <div className="border-y border-slate-100 bg-indigo-50/50 py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold text-slate-900 mb-4">なぜ「育てる」のか？</h2>
+                            <p className="text-slate-600 max-w-2xl mx-auto">
+                                一般的なSaaSは機能が多すぎて使いこなせない、あるいは帯に短し襷に長し。<br />
+                                私たちは、あなたのクリニックに必要な機能だけを、必要なタイミングで実装します。
+                            </p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                            {/* Step 1 */}
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">1</div>
+                                <h3 className="text-xl font-bold text-slate-900 mb-4">基本機能でスタート</h3>
+                                <p className="text-slate-600">まずは予約・顧客管理など、厳選された基本機能で運用を開始します。</p>
+                            </div>
+                            {/* Step 2 */}
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">2</div>
+                                <h3 className="text-xl font-bold text-slate-900 mb-4">要望をリクエスト</h3>
+                                <p className="text-slate-600">「ここの入力項目を変えたい」「こんな機能が欲しい」など、現場の声をチャットで送るだけ。</p>
+                            </div>
+                            {/* Step 3 */}
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">3</div>
+                                <h3 className="text-xl font-bold text-slate-900 mb-4">最短即日で実装</h3>
+                                <p className="text-slate-600">専任エンジニアが迅速に開発・実装。あなたのクリニック専用にシステムが進化します。</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -277,7 +291,7 @@ export default function Welcome({ auth }) {
                         </h2>
                         <p className="text-slate-600 max-w-2xl mx-auto mb-16">
                             複雑なプラン設定はありません。<br />
-                            月額一律3,000円ですべての機能をご利用いただけます。
+                            月額一律1万円で、基本機能の利用に加え、個別のカスタマイズ要望にも対応します。
                         </p>
 
                         <div className="max-w-lg mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
@@ -285,20 +299,20 @@ export default function Welcome({ auth }) {
                             <div className="p-8 md:p-12">
                                 <h3 className="text-xl font-medium text-slate-500 mb-4">スタンダードプラン</h3>
                                 <div className="flex items-baseline justify-center gap-2 mb-6">
-                                    <span className="text-5xl font-bold text-slate-900">¥3,000</span>
+                                    <span className="text-5xl font-bold text-slate-900">¥10,000</span>
                                     <span className="text-slate-500">/月</span>
                                 </div>
                                 <p className="text-slate-600 mb-8 leading-relaxed">
-                                    予約管理、在庫管理など、<br />
-                                    クリニック運営に必要な全機能が含まれています。
+                                    基本機能の利用はもちろん、<br />
+                                    クリニック独自の機能追加・改善も月額費用に含まれています。
                                 </p>
                                 <ul className="space-y-4 text-left mb-8">
                                     {[
                                         "予約システム無制限利用",
+                                        "機能追加・カスタマイズ依頼",
                                         "スタッフ・シフト管理",
                                         "患者マイページ機能",
-                                        "売上・在庫管理",
-                                        "メール・LINE通知連携"
+                                        "売上・在庫管理"
                                     ].map((item, i) => (
                                         <li key={i} className="flex items-center text-slate-600">
                                             <svg className="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
