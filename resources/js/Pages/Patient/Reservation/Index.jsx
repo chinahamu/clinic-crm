@@ -20,13 +20,7 @@ export default function Index({ clinic, menus }) {
     const handleDateSelect = (date, time) => {
         setSelectedDate(date);
         setSelectedTime(time);
-
-        if (auth.user) {
-            // If already logged in, proceed to reservation directly (or confirmation)
-            createReservation(auth.user, date, time);
-        } else {
-            setStep('auth');
-        }
+        setStep('auth');
     };
 
     const handleAuthenticated = (user) => {
@@ -147,6 +141,7 @@ export default function Index({ clinic, menus }) {
                             selectedTime={selectedTime}
                             onBack={() => setStep('date')}
                             onAuthenticated={handleAuthenticated}
+                            user={auth.user}
                         />
                     )}
 

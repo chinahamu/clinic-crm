@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
-export default function AuthSelection({ onAuthenticated, onBack, menu, selectedDate, selectedTime }) {
+export default function AuthSelection({ onAuthenticated, onBack, menu, selectedDate, selectedTime, user }) {
     const [mode, setMode] = useState('login'); // 'login' or 'register'
 
     return (
@@ -34,6 +34,34 @@ export default function AuthSelection({ onAuthenticated, onBack, menu, selectedD
                     </div>
                 </div>
             </div>
+
+            {user && (
+                <div className="mb-8 bg-white rounded-2xl shadow-sm border border-primary-200 p-6 animate-fade-in">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold text-xl">
+                            {user.name ? user.name.charAt(0) : 'U'}
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500">ログイン中</p>
+                            <p className="font-bold text-gray-900">{user.name} 様</p>
+                            <p className="text-xs text-gray-400">{user.email}</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => onAuthenticated(user)}
+                        className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
+                    >
+                        このアカウントで予約を確定する
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <div className="mt-6 text-center relative">
+                        <span className="text-xs text-gray-400 bg-gray-50 px-2 relative z-10">または別のアカウントで</span>
+                        <div className="absolute top-1/2 left-0 w-full border-t border-gray-200 -z-0"></div>
+                    </div>
+                </div>
+            )}
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="flex border-b border-gray-100">
