@@ -11,6 +11,9 @@ use App\Models\Machine;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationCompleted;
+use App\Mail\NewReservationNotification;
 
 class PatientReservationController extends Controller
 {
@@ -289,6 +292,11 @@ class PatientReservationController extends Controller
         if ($contract) {
             $contract->consume($reservation->id);
         }
+
+        // Send emails
+        Mail::to($user->email)->send(new ReservationCompleted($reservation));
+        // TODO: Replace with actual clinic admin email
+        Mail::to('kento.takamatsu@meta-alchemist.co.jp')->send(new NewReservationNotification($reservation));
 
         return response()->json(['reservation' => $reservation]);
     }
