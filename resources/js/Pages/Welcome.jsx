@@ -85,9 +85,7 @@ export default function Welcome({ auth }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2 cursor-pointer">
-                                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                                    <span className="text-white font-bold text-xl">C</span>
-                                </div>
+                                <img src="/img/logo.svg" alt="ClinicCRM Logo" className="w-10 h-10 shadow-lg shadow-indigo-500/20 rounded-xl" />
                                 <span className="font-bold text-2xl tracking-tight text-slate-900">Clinic<span className="text-indigo-600">CRM</span></span>
                             </div>
 
@@ -364,9 +362,7 @@ export default function Welcome({ auth }) {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                             <div className="col-span-2 md:col-span-1">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-lg">C</span>
-                                    </div>
+                                    <img src="/img/logo.svg" alt="ClinicCRM Logo" className="w-8 h-8 rounded-lg" />
                                     <span className="font-bold text-xl text-slate-900">Clinic<span className="text-indigo-600">CRM</span></span>
                                 </div>
                                 <p className="text-slate-500 text-sm leading-relaxed">
