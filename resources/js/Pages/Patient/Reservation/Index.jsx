@@ -23,7 +23,7 @@ export default function Index({ clinic, menus }) {
 
         if (auth.user) {
             // If already logged in, proceed to reservation directly (or confirmation)
-            createReservation(auth.user);
+            createReservation(auth.user, date, time);
         } else {
             setStep('auth');
         }
@@ -34,8 +34,8 @@ export default function Index({ clinic, menus }) {
         createReservation(user);
     };
 
-    const createReservation = async (user) => {
-        if (!confirm(`${selectedDate} ${selectedTime} で予約を確定しますか？`)) {
+    const createReservation = async (user, date = selectedDate, time = selectedTime) => {
+        if (!confirm(`${date} ${time} で予約を確定しますか？`)) {
             return;
         }
 
@@ -43,8 +43,8 @@ export default function Index({ clinic, menus }) {
             const response = await axios.post(route('patient.reservation.store'), {
                 clinic_code: clinic.code,
                 menu_id: selectedMenu.id,
-                start_date: selectedDate,
-                start_time: selectedTime,
+                start_date: date,
+                start_time: time,
             });
             setReservation(response.data.reservation);
             setStep('complete');
