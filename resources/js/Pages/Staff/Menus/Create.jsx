@@ -29,6 +29,25 @@ export default function Create({ auth, products, roomTypes, machines, roles }) {
         }
     };
 
+    const roleMap = {
+        'owner': 'オーナー',
+        'admin': '管理者',
+        'manager': 'マネージャー',
+        'doctor': '医師',
+        'reception': '受付',
+        'nurse': '看護師',
+        'staff': 'スタッフ',
+        'counselor': 'カウンセラー',
+        'hq': '本部',
+    };
+
+    const roomTypeMap = {
+        'consultation': '診察室',
+        'treatment': '処置室',
+        'counseling': 'カウンセリングルーム',
+        'operating': '手術室',
+    };
+
     return (
         <StaffLayout
             user={auth.user}
@@ -173,7 +192,7 @@ export default function Create({ auth, products, roomTypes, machines, roles }) {
                                             <option value="">指定なし</option>
                                             {roles.map((role) => (
                                                 <option key={role} value={role}>
-                                                    {role}
+                                                    {roleMap[role] || role}
                                                 </option>
                                             ))}
                                         </select>
@@ -193,7 +212,7 @@ export default function Create({ auth, products, roomTypes, machines, roles }) {
                                             <option value="">指定なし</option>
                                             {roomTypes.map((type) => (
                                                 <option key={type} value={type}>
-                                                    {type}
+                                                    {roomTypeMap[type] || type}
                                                 </option>
                                             ))}
                                         </select>

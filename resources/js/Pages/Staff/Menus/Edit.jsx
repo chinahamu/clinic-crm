@@ -29,6 +29,25 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
         }
     };
 
+    const roleMap = {
+        'owner': 'オーナー',
+        'admin': '管理者',
+        'manager': 'マネージャー',
+        'doctor': '医師',
+        'reception': '受付',
+        'nurse': '看護師',
+        'staff': 'スタッフ',
+        'counselor': 'カウンセラー',
+        'hq': '本部',
+    };
+
+    const roomTypeMap = {
+        'consultation': '診察室',
+        'treatment': '処置室',
+        'counseling': 'カウンセリングルーム',
+        'operating': '手術室',
+    };
+
     return (
         <StaffLayout
             user={auth.user}
@@ -43,10 +62,10 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                             <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            メニュー情報の編集
+                            メニュー編集
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
-                            メニュー情報を更新します。
+                            メニュー情報を編集してください。
                         </p>
                     </div>
 
@@ -63,6 +82,7 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                    placeholder="例: 全身脱毛コース"
                                     required
                                 />
                                 {errors.name && <div className="mt-1 text-sm text-red-600">{errors.name}</div>}
@@ -84,6 +104,7 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                                             value={data.price}
                                             onChange={(e) => setData('price', e.target.value)}
                                             className="w-full pl-7 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                            placeholder="0"
                                             required
                                         />
                                     </div>
@@ -102,6 +123,7 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                                             value={data.duration_minutes}
                                             onChange={(e) => setData('duration_minutes', e.target.value)}
                                             className="w-full pr-10 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                            placeholder="60"
                                             required
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -170,7 +192,7 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                                             <option value="">指定なし</option>
                                             {roles.map((role) => (
                                                 <option key={role} value={role}>
-                                                    {role}
+                                                    {roleMap[role] || role}
                                                 </option>
                                             ))}
                                         </select>
@@ -190,7 +212,7 @@ export default function Edit({ auth, menu, products, roomTypes, machines, roles 
                                             <option value="">指定なし</option>
                                             {roomTypes.map((type) => (
                                                 <option key={type} value={type}>
-                                                    {type}
+                                                    {roomTypeMap[type] || type}
                                                 </option>
                                             ))}
                                         </select>
