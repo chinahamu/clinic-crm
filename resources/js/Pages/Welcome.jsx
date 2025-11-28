@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
+import InquiryForm from '@/Components/InquiryForm';
 
 // --- Components ---
 
@@ -336,7 +337,10 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
-                {/* Footer */}
+                {/* Inquiry Form */}
+                <InquiryForm />
+
+
                 <footer className="bg-slate-50 pt-16 pb-8 border-t border-slate-200">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">

@@ -28,6 +28,8 @@ Route::get('/company', function () {
     return Inertia::render('Company/Profile');
 })->name('company.profile');
 
+Route::post('/inquiry', [\App\Http\Controllers\InquiryController::class, 'store'])->name('inquiry.store');
+
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
 Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 
