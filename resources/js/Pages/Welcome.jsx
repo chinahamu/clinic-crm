@@ -391,10 +391,10 @@ export default function Welcome({ auth }) {
                             <div>
                                 <h4 className="font-bold text-slate-900 mb-4">会社情報</h4>
                                 <ul className="space-y-2 text-sm text-slate-600">
-                                    <li><a href="#" className="hover:text-indigo-600">会社概要</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">プライバシーポリシー</a></li>
+                                    <li><Link href={route('company.profile')} className="hover:text-indigo-600">会社概要</Link></li>
+                                    <li><Link href={route('privacy.policy')} className="hover:text-indigo-600">プライバシーポリシー</Link></li>
                                     <li><a href="#" className="hover:text-indigo-600">利用規約</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">特定商取引法に基づく表記</a></li>
+                                    <li><Link href={route('legal.tokushoho')} className="hover:text-indigo-600">特定商取引法に基づく表記</Link></li>
                                 </ul>
                             </div>
                         </div>

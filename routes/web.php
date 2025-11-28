@@ -16,6 +16,18 @@ Route::get('/features', function () {
     return Inertia::render('FeatureDetail');
 })->name('features');
 
+Route::get('/legal/tokushoho', function () {
+    return Inertia::render('Legal/Tokushoho');
+})->name('legal.tokushoho');
+
+Route::get('/privacy-policy', function () {
+    return Inertia::render('Legal/PrivacyPolicy');
+})->name('privacy.policy');
+
+Route::get('/company', function () {
+    return Inertia::render('Company/Profile');
+})->name('company.profile');
+
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
 Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 
