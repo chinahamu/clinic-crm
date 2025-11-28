@@ -346,7 +346,7 @@ export default function Welcome({ auth }) {
                                     <span className="font-bold text-xl text-slate-900">Clinic<span className="text-indigo-600">CRM</span></span>
                                 </div>
                                 <p className="text-slate-500 text-sm leading-relaxed">
-                                    医療現場の声から生まれた、<br />
+                                    現場の声で使いやすくなる、<br />
                                     新しいクリニック管理システム。
                                 </p>
                             </div>
