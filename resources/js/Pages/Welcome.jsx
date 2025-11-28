@@ -94,23 +94,6 @@ export default function Welcome({ auth }) {
                                 <a href="#solutions" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">ソリューション</a>
                                 <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">料金</a>
                             </div>
-
-                            <div className="flex items-center space-x-4">
-                                {auth.user ? (
-                                    <Link href={route('home')} className="px-5 py-2.5 text-sm font-medium rounded-full text-white bg-slate-900 hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">
-                                        ダッシュボードへ
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link href={route('staff.login')} className="hidden sm:inline-block text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">
-                                            スタッフログイン
-                                        </Link>
-                                        <Link href="#" className="px-5 py-2.5 text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/30 hover:scale-105">
-                                            無料で試す
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
                         </div>
                     </div>
                 </nav>
@@ -349,9 +332,6 @@ export default function Welcome({ auth }) {
                             <Link href="#" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-indigo-900 bg-white hover:bg-indigo-50 shadow-xl transition-all hover:scale-105">
                                 無料デモを申し込む
                             </Link>
-                            <Link href="#" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white border border-white/30 hover:bg-white/10 transition-all">
-                                資料ダウンロード
-                            </Link>
                         </div>
                     </div>
                 </div>
@@ -376,16 +356,6 @@ export default function Welcome({ auth }) {
                                     <li><a href="#" className="hover:text-indigo-600">機能一覧</a></li>
                                     <li><a href="#" className="hover:text-indigo-600">料金プラン</a></li>
                                     <li><a href="#" className="hover:text-indigo-600">導入事例</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">アップデート情報</a></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-slate-900 mb-4">サポート</h4>
-                                <ul className="space-y-2 text-sm text-slate-600">
-                                    <li><a href="#" className="hover:text-indigo-600">ヘルプセンター</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">APIドキュメント</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">お問い合わせ</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">システム稼働状況</a></li>
                                 </ul>
                             </div>
                             <div>
