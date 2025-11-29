@@ -130,9 +130,9 @@ export default function Welcome({ auth }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                 </svg>
                             </a>
-                            <Link href="#" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-sm transition-all hover:border-slate-300">
+                            <a href="https://crm-demo.meta-alchemist.co.jp/staff/login" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-sm transition-all hover:border-slate-300">
                                 デモを見る
-                            </Link>
+                            </a>
                         </div>
 
                         {/* Dashboard Preview Hero Image */}
