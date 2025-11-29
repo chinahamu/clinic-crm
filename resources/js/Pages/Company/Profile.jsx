@@ -29,7 +29,7 @@ export default function Profile() {
                 <div className="pt-32 pb-20">
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold text-slate-900 mb-12 text-center">会社概要</h1>
-                        
+
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                             <table className="w-full text-left border-collapse">
                                 <tbody>
@@ -40,7 +40,7 @@ export default function Profile() {
                                             https://meta-alchemist.co.jp/
                                         </a>
                                     </TableRow>
-                                    <TableRow label="資本金">100,000 JPY</TableRow>
+                                    <TableRow label="資本金">1,000,000 JPY</TableRow>
                                     <TableRow label="設立年月">2024年1月</TableRow>
                                     <TableRow label="本社所在地">
                                         〒180-0004<br />
