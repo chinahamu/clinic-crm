@@ -12,7 +12,12 @@ export default function InquiryForm() {
     const submit = (e) => {
         e.preventDefault();
         post(route('inquiry.store'), {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                if (typeof window.gtag_report_conversion === 'function') {
+                    window.gtag_report_conversion();
+                }
+            },
         });
     };
 
