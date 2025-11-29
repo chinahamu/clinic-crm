@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $salesData = Reservation::where('reception_status', 'completed')
-            ->join('menus', 'reservations.menu_id', '=', 'menus.id')
+        $startDate = $request->input('start_date', now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', now()->endOfMonth()->toDateString());
+
+        $query = Reservation::where('reception_status', 'completed')
+            ->whereBetween('start_time', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+
+        $salesData = $query->join('menus', 'reservations.menu_id', '=', 'menus.id')
             ->select(
                 'menus.id',
                 'menus.name',
@@ -31,6 +36,10 @@ class SalesController extends Controller
             'salesData' => $salesData,
             'totalSales' => $totalSales,
             'totalCount' => $totalCount,
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ],
         ]);
     }
 }

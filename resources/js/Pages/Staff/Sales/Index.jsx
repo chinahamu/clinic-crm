@@ -1,12 +1,22 @@
 import React from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Index({ salesData, totalSales, totalCount }) {
+export default function Index({ salesData, totalSales, totalCount, filters }) {
     const { auth } = usePage().props;
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
+    };
+
+    const handleFilterChange = (key, value) => {
+        router.get(route('staff.sales.index'), {
+            ...filters,
+            [key]: value,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -14,6 +24,33 @@ export default function Index({ salesData, totalSales, totalCount }) {
             <Head title="売上管理" />
 
             <div className="space-y-6">
+                {/* Date Filter */}
+                <div className="bg-white shadow-sm rounded-2xl border border-gray-100 p-4">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+                        <div>
+                            <label htmlFor="start_date" className="block text-sm font-medium text-gray-700 mb-1">開始日</label>
+                            <input
+                                type="date"
+                                id="start_date"
+                                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                                value={filters.start_date}
+                                onChange={(e) => handleFilterChange('start_date', e.target.value)}
+                            />
+                        </div>
+                        <span className="text-gray-400 hidden sm:block">～</span>
+                        <div>
+                            <label htmlFor="end_date" className="block text-sm font-medium text-gray-700 mb-1">終了日</label>
+                            <input
+                                type="date"
+                                id="end_date"
+                                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                                value={filters.end_date}
+                                onChange={(e) => handleFilterChange('end_date', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-6">
