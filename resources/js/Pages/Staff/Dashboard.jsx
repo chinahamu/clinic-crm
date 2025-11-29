@@ -13,6 +13,39 @@ export default function Dashboard({ today_reservations_count, today_schedule, lo
             <Head title="スタッフダッシュボード" />
 
             <div className="space-y-4 lg:space-y-6">
+                {/* デモ用情報カード */}
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-4 lg:p-6 text-white shadow-lg">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                デモ用アカウント情報
+                            </h3>
+                            <div className="space-y-1 text-indigo-100 text-sm">
+                                <p>予約ページにて以下の情報でログインし、予約フローを確認できます。</p>
+                                <div className="flex flex-wrap gap-4 mt-2 font-mono bg-white/10 p-2 rounded-lg inline-flex">
+                                    <span>Email: <strong>patient@example.com</strong></span>
+                                    <span>Password: <strong>password</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                            <a
+                                href="/reservation/ABCD/"
+                                target="_blank"
+                                className="inline-flex items-center px-4 py-2 bg-white text-indigo-600 rounded-lg font-bold hover:bg-indigo-50 transition-colors shadow-sm"
+                            >
+                                予約ページ（デモ用）を開く
+                                <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 {/* 統計カード */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-4 lg:p-6">
