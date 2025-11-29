@@ -18,6 +18,8 @@ class Staff extends Authenticatable
         'email',
         'password',
         'clinic_id',
+        'last_login_ip',
+        'last_login_at',
     ];
 
     protected $hidden = [

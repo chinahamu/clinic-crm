@@ -37,6 +37,13 @@ class AuthenticatedSessionController extends Controller
         if (Auth::guard('staff')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            // IPアドレスとログイン日時を保存
+            $user = Auth::guard('staff')->user();
+            $user->update([
+                'last_login_ip' => $request->ip(),
+                'last_login_at' => now(),
+            ]);
+
             return redirect()->route('staff.dashboard');
         }
 
