@@ -58,4 +58,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Machine::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(ReservationItem::class);
+    }
 }

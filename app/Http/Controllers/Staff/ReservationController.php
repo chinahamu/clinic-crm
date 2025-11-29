@@ -29,7 +29,7 @@ class ReservationController extends Controller
             $end = Carbon::today()->addDays(6);
         }
 
-        $query = Reservation::with(['user', 'menu', 'staff', 'room', 'machine'])
+        $query = Reservation::with(['user', 'menu.items.item', 'staff', 'room', 'machine', 'items.item'])
             ->whereBetween('start_time', [$start, $end]);
 
         if ($request->filled('patient_id')) {
@@ -38,6 +38,28 @@ class ReservationController extends Controller
 
         $reservations = $query->get()
             ->map(function ($reservation) {
+                // メニューに紐付いたデフォルトアイテム
+                $defaultItems = $reservation->menu->items->map(function ($menuItem) {
+                    return [
+                        'id' => $menuItem->item_id,
+                        'type' => $menuItem->item_type === \App\Models\Medicine::class ? 'medicine' : 'consumable',
+                        'quantity' => $menuItem->quantity,
+                        'name' => $menuItem->item ? $menuItem->item->name : 'Unknown',
+                        'unit' => $menuItem->item ? $menuItem->item->unit : '',
+                    ];
+                });
+
+                // 既に保存されている予約アイテム
+                $reservationItems = $reservation->items->map(function ($resItem) {
+                    return [
+                        'id' => $resItem->item_id,
+                        'type' => $resItem->item_type === \App\Models\Medicine::class ? 'medicine' : 'consumable',
+                        'quantity' => $resItem->quantity,
+                        'name' => $resItem->item ? $resItem->item->name : 'Unknown',
+                        'unit' => $resItem->item ? $resItem->item->unit : '',
+                    ];
+                });
+
                 return [
                     'id' => $reservation->id,
                     'title' => $reservation->user->name . ' (' . $reservation->menu->name . ')',
@@ -50,6 +72,8 @@ class ReservationController extends Controller
                     'machine_name' => $reservation->machine ? $reservation->machine->name : 'なし',
                     'status' => $reservation->status,
                     'reception_status' => $reservation->reception_status,
+                    'default_items' => $defaultItems,
+                    'reservation_items' => $reservationItems,
                 ];
             });
 
@@ -63,6 +87,8 @@ class ReservationController extends Controller
             'currentStart' => $start->toDateString(),
             'currentEnd' => $end->toDateString(),
             'filters' => $request->only(['patient_id']),
+            'medicines' => \App\Models\Medicine::all(),
+            'consumables' => \App\Models\Consumable::all(),
         ]);
     }
 
@@ -70,11 +96,65 @@ class ReservationController extends Controller
     {
         $request->validate([
             'reception_status' => 'required|string',
+            'items' => 'nullable|array',
+            'items.*.id' => 'required|integer',
+            'items.*.type' => 'required|in:medicine,consumable',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $reservation->update([
-            'reception_status' => $request->reception_status,
-        ]);
+        $previousStatus = $reservation->reception_status;
+        $newStatus = $request->reception_status;
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($reservation, $request, $previousStatus, $newStatus) {
+            $reservation->update([
+                'reception_status' => $newStatus,
+            ]);
+
+            // ステータスが「完了」に変更された場合、または「完了」状態でアイテムが更新された場合
+            if ($newStatus === 'completed') {
+                // 既存の予約アイテムを取得して、在庫を戻す（更新の場合）
+                if ($reservation->items()->exists()) {
+                    foreach ($reservation->items as $existingItem) {
+                        $stock = $existingItem->item->stock;
+                        if ($stock) {
+                            $stock->increment('quantity', $existingItem->quantity);
+                        }
+                    }
+                    $reservation->items()->delete();
+                }
+
+                // 新しいアイテムを保存し、在庫を減らす
+                if ($request->has('items')) {
+                    foreach ($request->items as $itemData) {
+                        $modelClass = $itemData['type'] === 'medicine' ? \App\Models\Medicine::class : \App\Models\Consumable::class;
+                        
+                        // 予約アイテム保存
+                        $reservation->items()->create([
+                            'item_id' => $itemData['id'],
+                            'item_type' => $modelClass,
+                            'quantity' => $itemData['quantity'],
+                        ]);
+
+                        // 在庫減算
+                        $itemModel = $modelClass::find($itemData['id']);
+                        if ($itemModel && $itemModel->stock) {
+                            $itemModel->stock->decrement('quantity', $itemData['quantity']);
+                        }
+                    }
+                }
+            } elseif ($previousStatus === 'completed' && $newStatus !== 'completed') {
+                // 「完了」から別のステータスに戻った場合、在庫を戻す
+                if ($reservation->items()->exists()) {
+                    foreach ($reservation->items as $existingItem) {
+                        $stock = $existingItem->item->stock;
+                        if ($stock) {
+                            $stock->increment('quantity', $existingItem->quantity);
+                        }
+                    }
+                    $reservation->items()->delete();
+                }
+            }
+        });
 
         return redirect()->back()->with('success', 'Status updated.');
     }

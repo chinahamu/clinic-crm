@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Index({ reservations, patientList, currentStart, currentEnd, filters }) {
+export default function Index({ reservations, patientList, currentStart, currentEnd, filters, medicines, consumables }) {
     const { auth } = usePage().props;
     const [selectedReservation, setSelectedReservation] = useState(null);
     const { data, setData, put, processing } = useForm({
         reception_status: '',
+        items: [],
     });
 
     const openModal = (reservation) => {
         setSelectedReservation(reservation);
-        setData('reception_status', reservation.reception_status || '');
+        setData({
+            reception_status: reservation.reception_status || '',
+            items: reservation.reservation_items.length > 0 ? reservation.reservation_items : reservation.default_items,
+        });
     };
 
     const closeModal = () => {
@@ -24,6 +28,47 @@ export default function Index({ reservations, patientList, currentStart, current
         put(route('staff.reservations.update', selectedReservation.id), {
             onSuccess: () => closeModal(),
         });
+    };
+
+    // アイテム追加
+    const addItem = () => {
+        setData('items', [
+            ...data.items,
+            { id: '', type: 'medicine', quantity: 1, name: '', unit: '' } // 初期値
+        ]);
+    };
+
+    // アイテム削除
+    const removeItem = (index) => {
+        const newItems = [...data.items];
+        newItems.splice(index, 1);
+        setData('items', newItems);
+    };
+
+    // アイテム変更
+    const updateItem = (index, field, value) => {
+        const newItems = [...data.items];
+        newItems[index][field] = value;
+
+        // ID変更時に名前と単位を更新
+        if (field === 'id') {
+            const selectedItem = newItems[index].type === 'medicine'
+                ? medicines.find(m => m.id == value)
+                : consumables.find(c => c.id == value);
+
+            if (selectedItem) {
+                newItems[index].name = selectedItem.name;
+                newItems[index].unit = selectedItem.unit;
+            }
+        }
+        // タイプ変更時にIDリセット
+        if (field === 'type') {
+            newItems[index].id = '';
+            newItems[index].name = '';
+            newItems[index].unit = '';
+        }
+
+        setData('items', newItems);
     };
 
     // 簡易的なカレンダー表示用
@@ -314,6 +359,73 @@ export default function Index({ reservations, patientList, currentStart, current
                                                         </option>
                                                     ))}
                                                 </select>
+
+                                                {/* 完了ステータスの場合、使用した消耗品・薬剤を表示 */}
+                                                {data.reception_status === 'completed' && (
+                                                    <div className="mt-4">
+                                                        <label className="block text-sm font-medium text-gray-700 mb-2">使用した薬剤・消耗品</label>
+                                                        <div className="space-y-2">
+                                                            {data.items.map((item, index) => (
+                                                                <div key={index} className="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                                                    <div className="flex gap-2">
+                                                                        <select
+                                                                            value={item.type}
+                                                                            onChange={(e) => updateItem(index, 'type', e.target.value)}
+                                                                            className="block w-1/3 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-lg"
+                                                                        >
+                                                                            <option value="medicine">薬剤</option>
+                                                                            <option value="consumable">消耗品</option>
+                                                                        </select>
+                                                                        <select
+                                                                            value={item.id}
+                                                                            onChange={(e) => updateItem(index, 'id', e.target.value)}
+                                                                            className="block w-2/3 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-lg"
+                                                                        >
+                                                                            <option value="">選択してください</option>
+                                                                            {item.type === 'medicine' ? (
+                                                                                medicines.map(m => (
+                                                                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                                                                ))
+                                                                            ) : (
+                                                                                consumables.map(c => (
+                                                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                                                ))
+                                                                            )}
+                                                                        </select>
+                                                                    </div>
+                                                                    <div className="flex gap-2 items-center">
+                                                                        <input
+                                                                            type="number"
+                                                                            min="1"
+                                                                            value={item.quantity}
+                                                                            onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value))}
+                                                                            className="block w-24 pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-lg"
+                                                                            placeholder="数量"
+                                                                        />
+                                                                        <span className="text-sm text-gray-500">{item.unit}</span>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => removeItem(index)}
+                                                                            className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium"
+                                                                        >
+                                                                            削除
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            <button
+                                                                type="button"
+                                                                onClick={addItem}
+                                                                className="mt-2 w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                                            >
+                                                                <svg className="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                    <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                                                                </svg>
+                                                                アイテムを追加
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
 
                                                 <div className="mt-6 flex flex-col-reverse sm:flex-row-reverse gap-2">
                                                     <button
