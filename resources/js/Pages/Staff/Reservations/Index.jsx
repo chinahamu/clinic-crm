@@ -36,10 +36,7 @@ export default function Index({ reservations, patientList, currentStart, current
     }
 
     const statusOptions = [
-        { value: 'pending', label: '未受付', color: 'bg-gray-100 text-gray-800' },
-        { value: 'checked_in', label: '来院済み', color: 'bg-blue-100 text-blue-800' },
-        { value: 'consulting', label: '診察中', color: 'bg-purple-100 text-purple-800' },
-        { value: 'accounting', label: '会計待ち', color: 'bg-yellow-100 text-yellow-800' },
+        { value: 'pending', label: '受付済', color: 'bg-blue-100 text-blue-800' },
         { value: 'completed', label: '完了', color: 'bg-green-100 text-green-800' },
         { value: 'cancelled', label: 'キャンセル', color: 'bg-red-100 text-red-800' },
     ];
@@ -228,9 +225,8 @@ export default function Index({ reservations, patientList, currentStart, current
                                             key={res.id}
                                             onClick={() => openModal(res)}
                                             className={`group p-3 rounded-xl border border-transparent hover:border-gray-200 hover:shadow-md cursor-pointer transition-all duration-200 ${res.reception_status === 'completed' ? 'bg-gray-50 opacity-75' :
-                                                res.reception_status === 'checked_in' ? 'bg-blue-50 border-blue-100' :
-                                                    res.reception_status === 'consulting' ? 'bg-purple-50 border-purple-100' :
-                                                        'bg-white border-gray-100 shadow-sm'
+                                                res.reception_status === 'cancelled' ? 'bg-red-50 border-red-100' :
+                                                    'bg-white border-gray-100 shadow-sm'
                                                 }`}
                                         >
                                             <div className="flex justify-between items-start mb-1">

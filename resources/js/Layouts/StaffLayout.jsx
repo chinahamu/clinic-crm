@@ -94,14 +94,20 @@ const CloseIcon = ({ className }) => (
     </svg>
 );
 
+const ChartBarIcon = ({ className }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+);
+
 export default function StaffLayout({ user, header, children }) {
     const { auth } = usePage().props;
     const currentUser = user ?? (auth ? auth.user : null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const navLinkClass = (active) => `group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${active
-            ? 'bg-primary-50 text-primary-700 shadow-sm ring-1 ring-primary-200'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:translate-x-1'
+        ? 'bg-primary-50 text-primary-700 shadow-sm ring-1 ring-primary-200'
+        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:translate-x-1'
         }`;
 
     const iconClass = (active) => `mr-3 h-5 w-5 ${active ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'}`;
@@ -135,6 +141,14 @@ export default function StaffLayout({ user, header, children }) {
             >
                 <ClockIcon className={iconClass(route().current('staff.shifts.*'))} />
                 シフト管理
+            </Link>
+            <Link
+                href={route('staff.sales.index')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.sales.*'))}
+            >
+                <ChartBarIcon className={iconClass(route().current('staff.sales.*'))} />
+                売上管理
             </Link>
 
             <div className="px-4 mt-6 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -258,16 +272,15 @@ export default function StaffLayout({ user, header, children }) {
         <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
             {/* モバイルオーバーレイ */}
             {sidebarOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-gray-600 bg-opacity-50 z-40 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* モバイルサイドバー */}
-            <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden ${
-                sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}>
+            <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}>
                 <div className="h-full flex flex-col">
                     <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
                         <Link href={route('staff.dashboard')} className="flex items-center gap-2">
@@ -276,7 +289,7 @@ export default function StaffLayout({ user, header, children }) {
                             </div>
                             <span className="font-bold text-lg text-gray-800 tracking-tight">Clinic CRM</span>
                         </Link>
-                        <button 
+                        <button
                             onClick={() => setSidebarOpen(false)}
                             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                         >
@@ -312,7 +325,7 @@ export default function StaffLayout({ user, header, children }) {
                 {/* モバイルヘッダー */}
                 <header className="bg-white shadow-sm border-b border-gray-100 lg:hidden">
                     <div className="flex items-center justify-between h-16 px-4">
-                        <button 
+                        <button
                             onClick={() => setSidebarOpen(true)}
                             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                         >

@@ -69,6 +69,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
 
     Route::middleware(['auth:staff'])->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('sales', [\App\Http\Controllers\Staff\SalesController::class, 'index'])->name('sales.index');
 
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);

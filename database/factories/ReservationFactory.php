@@ -38,7 +38,7 @@ class ReservationFactory extends Factory
             'end_time' => $endTime,
             'reservation_type' => $ja->randomElement(['consultation', 'treatment']),
             'status' => $ja->randomElement(['confirmed', 'cancelled', 'completed']),
-            'reception_status' => $ja->randomElement(['waiting', 'checked_in', 'checked_out']),
+            'reception_status' => $ja->randomElement(['pending', 'completed', 'cancelled']),
             'notes' => $ja->realText(50),
         ];
     }
