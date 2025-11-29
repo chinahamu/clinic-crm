@@ -85,6 +85,10 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
         Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
 
+        Route::resource('medicines', \App\Http\Controllers\Staff\MedicineController::class);
+        Route::resource('consumables', \App\Http\Controllers\Staff\ConsumableController::class);
+        Route::resource('inventories', \App\Http\Controllers\Staff\InventoryController::class)->only(['index', 'create', 'store']);
+
         Route::resource('documents', \App\Http\Controllers\Staff\DocumentController::class);
         Route::get('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'sign'])->name('documents.sign');
         Route::post('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'storeSignature'])->name('documents.storeSignature');
