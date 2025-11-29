@@ -22,6 +22,7 @@ class ClinicSeeder extends Seeder
         ], [
             'address' => '東京都渋谷区...',
             'phone' => '03-1234-5678',
+            'code' => 'ABCD',
         ]);
 
         // Create Roles

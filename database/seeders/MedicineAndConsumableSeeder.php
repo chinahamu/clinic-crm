@@ -21,30 +21,35 @@ class MedicineAndConsumableSeeder extends Seeder
                 'description' => '鎮痛剤',
                 'unit' => '錠',
                 'stock' => 100,
+                'alert_threshold' => 20,
             ],
             [
                 'name' => 'カロナール',
                 'description' => '解熱鎮痛剤',
                 'unit' => '錠',
                 'stock' => 50,
+                'alert_threshold' => 10,
             ],
             [
                 'name' => 'ヒアルロン酸注射液',
                 'description' => '美容注射用',
                 'unit' => '本',
                 'stock' => 20,
+                'alert_threshold' => 5,
             ],
             [
                 'name' => 'ボトックス',
                 'description' => 'しわ取り用',
                 'unit' => '単位',
                 'stock' => 200,
+                'alert_threshold' => 50,
             ],
             [
                 'name' => 'ビタミンC点滴液',
                 'description' => '高濃度ビタミンC',
                 'unit' => '袋',
                 'stock' => 30,
+                'alert_threshold' => 5,
             ],
         ];
 
@@ -53,6 +58,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'name' => $data['name'],
                 'description' => $data['description'],
                 'unit' => $data['unit'],
+                'alert_threshold' => $data['alert_threshold'],
             ]);
 
             // 在庫登録
@@ -69,6 +75,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'category' => '衛生用品',
                 'unit' => '枚',
                 'stock' => 500,
+                'alert_threshold' => 100,
             ],
             [
                 'name' => '注射針 30G',
@@ -76,6 +83,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'category' => '医療機器',
                 'unit' => '本',
                 'stock' => 1000,
+                'alert_threshold' => 200,
             ],
             [
                 'name' => '使い捨て手袋 M',
@@ -83,6 +91,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'category' => '衛生用品',
                 'unit' => '箱',
                 'stock' => 50,
+                'alert_threshold' => 10,
             ],
             [
                 'name' => 'アルコール綿',
@@ -90,6 +99,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'category' => '衛生用品',
                 'unit' => '包',
                 'stock' => 300,
+                'alert_threshold' => 50,
             ],
             [
                 'name' => 'フェイスシート',
@@ -97,6 +107,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'category' => '備品',
                 'unit' => '枚',
                 'stock' => 200,
+                'alert_threshold' => 30,
             ],
         ];
 
@@ -106,6 +117,7 @@ class MedicineAndConsumableSeeder extends Seeder
                 'description' => $data['description'],
                 'category' => $data['category'],
                 'unit' => $data['unit'],
+                'alert_threshold' => $data['alert_threshold'],
             ]);
 
             // 在庫登録

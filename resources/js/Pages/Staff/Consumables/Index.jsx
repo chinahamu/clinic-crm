@@ -94,6 +94,9 @@ export default function Index({ consumables }) {
                                         単位
                                     </th>
                                     <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        アラート閾値
+                                    </th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         説明
                                     </th>
                                     <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -118,6 +121,9 @@ export default function Index({ consumables }) {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">{consumable.unit}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">{consumable.alert_threshold ?? '-'}</div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="text-sm text-gray-500 line-clamp-1">{consumable.description}</div>

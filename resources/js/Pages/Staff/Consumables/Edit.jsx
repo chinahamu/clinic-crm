@@ -8,6 +8,7 @@ export default function Edit({ auth, consumable }) {
         description: consumable.description || '',
         category: consumable.category || '',
         unit: consumable.unit || '',
+        alert_threshold: consumable.alert_threshold || 0,
     });
 
     const submit = (e) => {
@@ -110,6 +111,21 @@ export default function Edit({ auth, consumable }) {
                                 />
                                 {errors.description && <div className="mt-1 text-sm text-red-600">{errors.description}</div>}
                             </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="alert_threshold">
+                                アラート閾値
+                            </label>
+                            <input
+                                id="alert_threshold"
+                                type="number"
+                                min="0"
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                value={data.alert_threshold}
+                                onChange={(e) => setData('alert_threshold', e.target.value)}
+                            />
+                            {errors.alert_threshold && <div className="text-red-500 text-xs italic">{errors.alert_threshold}</div>}
                         </div>
 
                         <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-100">

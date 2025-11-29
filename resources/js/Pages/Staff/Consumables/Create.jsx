@@ -8,6 +8,7 @@ export default function Create({ auth }) {
         description: '',
         category: '',
         unit: '',
+        alert_threshold: 0,
     });
 
     const submit = (e) => {
@@ -98,6 +99,21 @@ export default function Create({ auth }) {
                                 />
                                 {errors.description && <div className="mt-1 text-sm text-red-600">{errors.description}</div>}
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="alert_threshold">
+                                アラート閾値
+                            </label>
+                            <input
+                                id="alert_threshold"
+                                type="number"
+                                min="0"
+                                className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                value={data.alert_threshold}
+                                onChange={(e) => setData('alert_threshold', e.target.value)}
+                            />
+                            {errors.alert_threshold && <div className="mt-1 text-sm text-red-600">{errors.alert_threshold}</div>}
                         </div>
 
                         <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-100">

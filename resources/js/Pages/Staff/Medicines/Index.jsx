@@ -86,6 +86,9 @@ export default function Index({ medicines }) {
                                     <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         説明
                                     </th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        アラート閾値
+                                    </th>
                                     <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         操作
                                     </th>
@@ -102,6 +105,9 @@ export default function Index({ medicines }) {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="text-sm text-gray-500 line-clamp-1">{medicine.description}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">{medicine.alert_threshold}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <Link

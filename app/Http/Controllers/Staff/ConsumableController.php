@@ -27,17 +27,24 @@ class ConsumableController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'nullable|string|max:50',
+            'category' => 'required|string|max:50',
             'unit' => 'required|string|max:50',
+            'alert_threshold' => 'required|integer|min:0',
         ]);
 
-        Consumable::create($validated);
+        Consumable::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category' => $request->category,
+            'unit' => $request->unit,
+            'alert_threshold' => $request->alert_threshold,
+            'clinic_id' => $request->user()->clinic_id,
+        ]);
 
-        return redirect()->route('staff.consumables.index')
-            ->with('success', '消耗品を登録しました。');
+        return redirect()->route('staff.consumables.index')->with('success', 'Consumable created successfully.');
     }
 
     public function edit(Consumable $consumable)
@@ -49,17 +56,17 @@ class ConsumableController extends Controller
 
     public function update(Request $request, Consumable $consumable)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'nullable|string|max:50',
+            'category' => 'required|string|max:50',
             'unit' => 'required|string|max:50',
+            'alert_threshold' => 'required|integer|min:0',
         ]);
 
-        $consumable->update($validated);
+        $consumable->update($request->all());
 
-        return redirect()->route('staff.consumables.index')
-            ->with('success', '消耗品情報を更新しました。');
+        return redirect()->route('staff.consumables.index')->with('success', 'Consumable updated successfully.');
     }
 
     public function destroy(Consumable $consumable)

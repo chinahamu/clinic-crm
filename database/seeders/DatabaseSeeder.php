@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
             ShiftSeeder::class,
             // 追加シーダー
             \Database\Seeders\ClinicRoleSeeder::class,
+            MedicineAndConsumableSeeder::class,
+            MenuItemSeeder::class,
         ]);
     }
 }

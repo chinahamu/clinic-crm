@@ -27,16 +27,22 @@ class MedicineController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'unit' => 'required|string|max:50',
+            'alert_threshold' => 'required|integer|min:0',
         ]);
 
-        Medicine::create($validated);
+        Medicine::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'unit' => $request->unit,
+            'alert_threshold' => $request->alert_threshold,
+            'clinic_id' => $request->user()->clinic_id,
+        ]);
 
-        return redirect()->route('staff.medicines.index')
-            ->with('success', '薬剤を登録しました。');
+        return redirect()->route('staff.medicines.index')->with('success', 'Medicine created successfully.');
     }
 
     public function edit(Medicine $medicine)
@@ -48,16 +54,16 @@ class MedicineController extends Controller
 
     public function update(Request $request, Medicine $medicine)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'unit' => 'required|string|max:50',
+            'alert_threshold' => 'required|integer|min:0',
         ]);
 
-        $medicine->update($validated);
+        $medicine->update($request->all());
 
-        return redirect()->route('staff.medicines.index')
-            ->with('success', '薬剤情報を更新しました。');
+        return redirect()->route('staff.medicines.index')->with('success', 'Medicine updated successfully.');
     }
 
     public function destroy(Medicine $medicine)

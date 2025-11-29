@@ -13,6 +13,7 @@ class Medicine extends Model
         'description',
         'unit',
         'clinic_id',
+        'alert_threshold',
     ];
 
     public function stock(): MorphOne

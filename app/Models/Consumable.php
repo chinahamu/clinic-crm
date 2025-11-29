@@ -14,6 +14,7 @@ class Consumable extends Model
         'category',
         'unit',
         'clinic_id',
+        'alert_threshold',
     ];
 
     public function stock(): MorphOne
