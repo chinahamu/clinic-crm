@@ -36,4 +36,9 @@ class Menu extends Model
     {
         return $this->belongsToMany(Product::class, 'menu_product');
     }
+
+    public function items()
+    {
+        return $this->hasMany(MenuItem::class);
+    }
 }

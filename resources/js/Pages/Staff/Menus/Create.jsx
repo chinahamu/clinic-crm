@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import StaffLayout from '@/Layouts/StaffLayout';
 
-export default function Create({ auth, products, roomTypes, machines, roles }) {
+export default function Create({ auth, products, roomTypes, machines, roles, medicines, consumables }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         price: '',
@@ -13,6 +13,7 @@ export default function Create({ auth, products, roomTypes, machines, roles }) {
         num_tickets: 1,
         validity_period_days: '',
         product_ids: [],
+        items: [],
     });
 
     const submit = (e) => {
@@ -267,6 +268,101 @@ export default function Create({ auth, products, roomTypes, machines, roles }) {
                                         </div>
                                     ) : (
                                         <p className="text-sm text-gray-500 text-center py-4">登録されている商品がありません。</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="border-t border-gray-100 pt-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <label className="block text-sm font-bold text-gray-900">
+                                        使用薬剤・消耗品
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData('items', [...data.items, { id: '', type: 'medicine', quantity: 1 }])}
+                                        className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        追加する
+                                    </button>
+                                </div>
+                                <div className="space-y-3">
+                                    {data.items.map((item, index) => (
+                                        <div key={index} className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                <div>
+                                                    <select
+                                                        value={item.type}
+                                                        onChange={(e) => {
+                                                            const newItems = [...data.items];
+                                                            newItems[index].type = e.target.value;
+                                                            newItems[index].id = ''; // Reset item selection on type change
+                                                            setData('items', newItems);
+                                                        }}
+                                                        className="w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500"
+                                                    >
+                                                        <option value="medicine">薬剤</option>
+                                                        <option value="consumable">消耗品</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <select
+                                                        value={item.id}
+                                                        onChange={(e) => {
+                                                            const newItems = [...data.items];
+                                                            newItems[index].id = e.target.value;
+                                                            setData('items', newItems);
+                                                        }}
+                                                        className="w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500"
+                                                        required
+                                                    >
+                                                        <option value="">選択してください</option>
+                                                        {(item.type === 'medicine' ? medicines : consumables).map((option) => (
+                                                            <option key={option.id} value={option.id}>
+                                                                {option.name} ({option.unit})
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        value={item.quantity}
+                                                        onChange={(e) => {
+                                                            const newItems = [...data.items];
+                                                            newItems[index].quantity = parseInt(e.target.value) || 1;
+                                                            setData('items', newItems);
+                                                        }}
+                                                        className="w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500"
+                                                        placeholder="数量"
+                                                        required
+                                                    />
+                                                    <span className="text-sm text-gray-500 whitespace-nowrap">
+                                                        {item.id && (item.type === 'medicine' ? medicines : consumables).find(i => i.id == item.id)?.unit}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newItems = data.items.filter((_, i) => i !== index);
+                                                    setData('items', newItems);
+                                                }}
+                                                className="text-gray-400 hover:text-red-500 p-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {data.items.length === 0 && (
+                                        <p className="text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                                            使用する薬剤・消耗品を追加してください
+                                        </p>
                                     )}
                                 </div>
                             </div>
