@@ -263,7 +263,13 @@ export default function Welcome({ auth }) {
                             <BentoItem
                                 title="公式ホームページとの連携"
                                 description="施術メニューや価格、医師出勤表などを公式ホームページと連携。"
-                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>}
+                            />
+                            <BentoItem
+                                title="独自ドメイン対応"
+                                description="クリニックの信頼性を高めるため、独自のドメイン（例: crm.your-clinic.com）でシステムを運用可能です。"
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-9 3-9m-3 9c-1.657 0-3-9-3-9m0 18c-1.657 0-3-9-3-9m3 9c1.657 0 3-9 3-9" /></svg>}
+                                className="md:col-span-2 bg-purple-50 border-purple-100"
                             />
                         </div>
                     </div>
