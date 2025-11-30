@@ -33,7 +33,7 @@ class MasterDataSeeder extends Seeder
         Machine::factory()->count(3)->create(['clinic_id' => $clinic->id]);
 
         // Create Menus
-        Menu::factory()->count(10)->create();
+        // Menu::factory()->count(10)->create();
 
         // Create Products
         Product::factory()->count(20)->create();

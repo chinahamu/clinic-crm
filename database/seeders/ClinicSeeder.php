@@ -31,22 +31,7 @@ class ClinicSeeder extends Seeder
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'staff']);
         }
 
-        // Menus
-        $consultation = Menu::firstOrCreate([
-            'name' => '初診カウンセリング',
-        ], [
-            'description' => '初めての方はこちら',
-            'price' => 3000,
-            'duration_minutes' => 30,
-        ]);
 
-        $laser = Menu::firstOrCreate([
-            'name' => 'レーザー治療',
-        ], [
-            'description' => 'シミ取りレーザー',
-            'price' => 10000,
-            'duration_minutes' => 60,
-        ]);
 
         // Rooms
         $room1 = Room::firstOrCreate(['name' => '診察室1', 'clinic_id' => $clinic->id], ['type' => 'consultation', 'clinic_id' => $clinic->id]);
