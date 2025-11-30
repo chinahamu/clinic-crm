@@ -68,6 +68,18 @@ export default function Index({ menus }) {
                                                     機械: {menu.required_machine.name}
                                                 </span>
                                             )}
+                                            {menu.campaign_flag && (
+                                                <div className="flex flex-col gap-1 mt-1 w-full">
+                                                    <span className="bg-red-50 text-red-700 px-2 py-0.5 rounded inline-block w-fit">
+                                                        キャンペーン
+                                                    </span>
+                                                    {(menu.publish_start_at || menu.publish_end_at) && (
+                                                        <span className="text-gray-500 text-[10px]">
+                                                            {menu.publish_start_at ? menu.publish_start_at.slice(0, 10) : ''} ~ {menu.publish_end_at ? menu.publish_end_at.slice(0, 10) : ''}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <Link
@@ -109,6 +121,9 @@ export default function Index({ menus }) {
                                     <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         必須条件
                                     </th>
+                                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        キャンペーン
+                                    </th>
                                     <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         操作
                                     </th>
@@ -142,6 +157,23 @@ export default function Index({ menus }) {
                                                     <span className="text-xs text-gray-400">-</span>
                                                 )}
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {menu.campaign_flag ? (
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 w-fit">
+                                                        対象
+                                                    </span>
+                                                    {(menu.publish_start_at || menu.publish_end_at) && (
+                                                        <span className="text-xs text-gray-500">
+                                                            {menu.publish_start_at ? menu.publish_start_at.slice(0, 10) : ''} ~<br />
+                                                            {menu.publish_end_at ? menu.publish_end_at.slice(0, 10) : ''}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">-</span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <Link
