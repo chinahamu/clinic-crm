@@ -348,6 +348,24 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
+                {/* Other Services Link */}
+                <div className="bg-slate-50 py-12 text-center border-t border-slate-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <p className="text-slate-600 mb-4 font-medium">クリニック運営以外の支援も行っています</p>
+                        <a
+                            href="https://meta-alchemist.co.jp/#services-overview"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-bold text-lg transition-colors group"
+                        >
+                            弊社その他サービス
+                            <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
                 {/* Inquiry Form */}
                 <InquiryForm />
 
