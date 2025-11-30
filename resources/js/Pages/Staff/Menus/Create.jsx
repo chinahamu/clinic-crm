@@ -12,6 +12,9 @@ export default function Create({ auth, products, roomTypes, machines, roles, med
         required_machine_id: '',
         num_tickets: 1,
         validity_period_days: '',
+        campaign_flag: false,
+        publish_start_at: '',
+        publish_end_at: '',
         product_ids: [],
         items: [],
     });
@@ -173,6 +176,56 @@ export default function Create({ auth, products, roomTypes, machines, roles, med
                                     </div>
                                     <p className="mt-1 text-xs text-gray-500">空欄の場合は無期限となります。</p>
                                     {errors.validity_period_days && <div className="mt-1 text-sm text-red-600">{errors.validity_period_days}</div>}
+                                </div>
+                            </div>
+
+                            <div className="border-t border-gray-100 pt-6">
+                                <h4 className="text-sm font-bold text-gray-900 mb-4">キャンペーン設定</h4>
+                                <div className="grid grid-cols-1 gap-6">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="campaign_flag"
+                                            type="checkbox"
+                                            checked={data.campaign_flag}
+                                            onChange={(e) => setData('campaign_flag', e.target.checked)}
+                                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded transition-colors"
+                                        />
+                                        <label htmlFor="campaign_flag" className="ml-2 block text-sm text-gray-900">
+                                            キャンペーン対象にする
+                                        </label>
+                                    </div>
+
+                                    {data.campaign_flag && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label htmlFor="publish_start_at" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    掲載開始日時
+                                                </label>
+                                                <input
+                                                    id="publish_start_at"
+                                                    type="datetime-local"
+                                                    value={data.publish_start_at}
+                                                    onChange={(e) => setData('publish_start_at', e.target.value)}
+                                                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                                />
+                                                {errors.publish_start_at && <div className="mt-1 text-sm text-red-600">{errors.publish_start_at}</div>}
+                                            </div>
+
+                                            <div>
+                                                <label htmlFor="publish_end_at" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    掲載終了日時
+                                                </label>
+                                                <input
+                                                    id="publish_end_at"
+                                                    type="datetime-local"
+                                                    value={data.publish_end_at}
+                                                    onChange={(e) => setData('publish_end_at', e.target.value)}
+                                                    className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
+                                                />
+                                                {errors.publish_end_at && <div className="mt-1 text-sm text-red-600">{errors.publish_end_at}</div>}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
