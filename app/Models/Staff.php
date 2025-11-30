@@ -55,4 +55,9 @@ class Staff extends Authenticatable
     {
         return $this->belongsTo(Clinic::class);
     }
+
+    public function constraints()
+    {
+        return $this->hasOne(StaffConstraint::class);
+    }
 }

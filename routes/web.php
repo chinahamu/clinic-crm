@@ -82,6 +82,8 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('products', \App\Http\Controllers\Staff\ProductController::class);
         Route::resource('rooms', \App\Http\Controllers\Staff\RoomController::class);
         Route::resource('machines', \App\Http\Controllers\Staff\MachineController::class);
+        Route::post('shifts/requests', [\App\Http\Controllers\Staff\ShiftController::class, 'storeRequests'])->name('shifts.requests.store');
+        Route::post('shifts/generate', [\App\Http\Controllers\Staff\ShiftController::class, 'generate'])->name('shifts.generate');
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
         Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
 
