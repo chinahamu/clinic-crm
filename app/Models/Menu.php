@@ -20,6 +20,15 @@ class Menu extends Model
         'num_tickets',
         'validity_period_days',
         'is_active',
+        'campaign_flag',
+        'publish_start_at',
+        'publish_end_at',
+    ];
+
+    protected $casts = [
+        'campaign_flag' => 'boolean',
+        'publish_start_at' => 'datetime',
+        'publish_end_at' => 'datetime',
     ];
 
     public function reservations()
