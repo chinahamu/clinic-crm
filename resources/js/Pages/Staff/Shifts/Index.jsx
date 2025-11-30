@@ -113,15 +113,18 @@ export default function Index({ shifts, shiftRequests, staffList, currentStart, 
                         </button>
                     </div>
                     {activeTab === 'list' && (
-                        <button
-                            onClick={generateShifts}
-                            className="text-sm text-primary-600 hover:text-primary-800 font-medium flex items-center gap-1"
-                        >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                            AI自動生成
-                        </button>
+                        <div className="flex flex-col items-end">
+                            <button
+                                onClick={() => alert('デモ環境のため、AI自動生成機能は無効化されています。')}
+                                className="text-sm text-gray-400 font-medium flex items-center gap-1 cursor-not-allowed"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                AI自動生成
+                            </button>
+                            <span className="text-[10px] text-red-500 mt-1">※デモ環境のため動作しません</span>
+                        </div>
                     )}
                 </div>
 
