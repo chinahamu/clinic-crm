@@ -74,6 +74,17 @@ class MenuFactory extends Factory
                 'num_tickets' => 10,
                 'validity_period_days' => 180,
             ],
+            [
+                'name' => '【期間限定】春の美肌キャンペーン',
+                'required_role' => 'nurse',
+                'required_room_type' => 'treatment',
+                'required_machine_type' => 'laser',
+                'duration_minutes' => 90,
+                'price' => 15000,
+                'campaign_flag' => true,
+                'publish_start_at' => now(),
+                'publish_end_at' => now()->addMonth(),
+            ],
         ];
 
         $selected = $ja->randomElement($menuTypes);
@@ -94,6 +105,9 @@ class MenuFactory extends Factory
             'required_machine_id' => $machineId,
             'num_tickets' => $selected['num_tickets'] ?? null,
             'validity_period_days' => $selected['validity_period_days'] ?? null,
+            'campaign_flag' => $selected['campaign_flag'] ?? false,
+            'publish_start_at' => $selected['publish_start_at'] ?? null,
+            'publish_end_at' => $selected['publish_end_at'] ?? null,
         ];
     }
 }
