@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ShiftGenerationService
 {
     protected $apiKey;
-    protected $model = 'gemini-2.5-flash';
+    protected $model = 'gemini-2.0-flash';
 
     public function __construct()
     {
