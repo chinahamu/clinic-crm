@@ -110,7 +110,7 @@ export default function Welcome({ auth }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <div className="inline-flex items-center px-4 py-2 rounded-full bg-white border border-indigo-100 text-indigo-700 text-sm font-medium mb-8 shadow-sm animate-fade-in-up">
                             <span className="flex h-2 w-2 rounded-full bg-indigo-600 mr-2 animate-pulse"></span>
-                            月額1万円で始める「育てるCRM」
+                            月額2万円で始める「育てるCRM」
                         </div>
 
                         <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1]">
@@ -284,7 +284,7 @@ export default function Welcome({ auth }) {
                         </h2>
                         <p className="text-slate-600 max-w-2xl mx-auto mb-16">
                             複雑なプラン設定はありません。<br />
-                            月額一律1万円で、基本機能の利用に加え、個別のカスタマイズ要望にも対応します。
+                            月額一律2万円で、基本機能の利用に加え、個別のカスタマイズ要望にも対応します。
                         </p>
 
                         <div className="max-w-lg mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 relative">
@@ -292,7 +292,7 @@ export default function Welcome({ auth }) {
                             <div className="p-8 md:p-12">
                                 <h3 className="text-xl font-medium text-slate-500 mb-4">スタンダードプラン</h3>
                                 <div className="flex items-baseline justify-center gap-2 mb-6">
-                                    <span className="text-5xl font-bold text-slate-900">¥10,000</span>
+                                    <span className="text-5xl font-bold text-slate-900">¥20,000</span>
                                     <span className="text-slate-500">/月</span>
                                 </div>
                                 <p className="text-slate-600 mb-8 leading-relaxed">
