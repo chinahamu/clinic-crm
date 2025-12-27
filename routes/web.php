@@ -73,6 +73,8 @@ Route::prefix('staff')->name('staff.')->group(function () {
 
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);
+        Route::get('patients/{patient}/contracts/create-new', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'create'])->name('patients.contracts.create_new');
+        Route::post('patients/{patient}/contracts/store-new', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'store'])->name('patients.contracts.store_new');
         Route::post('patients/{patient}/contracts/{contract}/usage', [\App\Http\Controllers\Staff\ContractController::class, 'storeUsage'])->name('patients.contracts.usage.store');
         Route::resource('members', \App\Http\Controllers\Staff\StaffMemberController::class);
         Route::resource('clinic-roles', \App\Http\Controllers\Staff\ClinicRoleController::class);

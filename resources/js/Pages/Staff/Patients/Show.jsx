@@ -290,7 +290,12 @@ export default function Show({ patient, menus }) {
                                     {patient.contracts.map((contract) => (
                                         <tr key={contract.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {contract.menu ? contract.menu.name : '不明なメニュー'}
+                                                <Link
+                                                    href={route('staff.patients.contracts.show', [patient.id, contract.id])}
+                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                >
+                                                    {contract.menu ? contract.menu.name : '不明なメニュー'}
+                                                </Link>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 <span className="font-bold text-gray-900">{contract.remaining_count}</span> / {contract.total_count}

@@ -1,230 +1,269 @@
-import React, { useState } from 'react';
+import React from 'react';
 import StaffLayout from '@/Layouts/StaffLayout';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
-export default function Show({ auth, patient, contract }) {
-    const [showUsageForm, setShowUsageForm] = useState(false);
+export default function Show({ auth, patient, contract, clinic, staff }) {
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        used_count: 1,
-        used_date: new Date().toISOString().split('T')[0],
-        notes: '',
-    });
-
-    const handleDelete = () => {
-        if (confirm('本当にこの契約を削除しますか？')) {
-            router.delete(route('staff.patients.contracts.destroy', [patient.id, contract.id]));
-        }
+    // Helper to format currency
+    const formatCurrency = (amount) => {
+        return parseInt(amount || 0).toLocaleString() + '円';
     };
 
-    const handleUsageSubmit = (e) => {
-        e.preventDefault();
-        post(route('staff.patients.contracts.usage.store', [patient.id, contract.id]), {
-            onSuccess: () => {
-                reset();
-                setShowUsageForm(false);
-            },
-        });
+    // Helper to format date
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        const d = new Date(dateStr);
+        return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
     };
+
+    // Find signed documents
+    const outlineDoc = contract.signed_documents?.find(d => d.document_template?.title === '概要書面');
+    const contractDoc = contract.signed_documents?.find(d => d.document_template?.title === '契約書');
+
+    const outlineSignature = outlineDoc ? `/storage/${outlineDoc.signature_image_path}` : null;
+    const contractSignature = contractDoc ? `/storage/${contractDoc.signature_image_path}` : null;
+
+    const grandTotal = (parseInt(contract.total_price) || 0) +
+        contract.products.reduce((acc, p) => acc + (parseInt(p.amount) || 0), 0) -
+        (parseInt(contract.discount_amount) || 0);
 
     return (
-        <StaffLayout
-            user={auth.user}
-            header={
-                <div className="flex justify-between items-center">
-                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                        契約詳細
-                    </h2>
-                    <button
-                        onClick={handleDelete}
-                        className="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm"
-                    >
-                        削除
+        <StaffLayout user={auth.user} header="契約詳細">
+            <Head title="契約詳細" />
+
+            <div className="max-w-5xl mx-auto py-6 space-y-8">
+
+                {/* Print/Back Actions */}
+                <div className="flex justify-between items-center print:hidden">
+                    <Link href={route('staff.patients.show', patient.id)} className="text-indigo-600 hover:text-indigo-900">
+                        &larr; 患者詳細に戻る
+                    </Link>
+                    <button onClick={() => window.print()} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                        印刷する
                     </button>
                 </div>
-            }
-        >
-            <Head title={`契約詳細: ${patient.name}`} />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    
-                    {/* パンくずリスト */}
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-                        <Link href={route('staff.patients.index')} className="hover:text-primary-600">患者一覧</Link>
-                        <span>&gt;</span>
-                        <Link href={route('staff.patients.show', patient.id)} className="hover:text-primary-600">{patient.name}</Link>
-                        <span>&gt;</span>
-                        <Link href={route('staff.patients.contracts.index', patient.id)} className="hover:text-primary-600">契約管理</Link>
-                        <span>&gt;</span>
-                        <span className="text-gray-900 font-medium">詳細</span>
+                {/* 1. 概要書面 (Outline Document) */}
+                <div className="bg-white shadow-lg p-8 text-xs leading-relaxed print:shadow-none print:w-full print:break-after-page">
+                    <h1 className="text-xl font-bold text-center mb-6">美容医療施術提供 概要書面</h1>
+
+                    <div className="flex border border-black mb-4">
+                        <div className="bg-gray-100 p-1 w-24 border-r border-black font-bold flex items-center justify-center">御氏名</div>
+                        <div className="p-1 flex-grow font-bold text-lg">{patient.name} 様</div>
                     </div>
 
-                    {/* 契約情報カード */}
-                    <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-                        <div className="px-6 py-5 border-b border-gray-100">
-                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                契約情報
-                            </h3>
-                        </div>
-                        <div className="p-6">
-                            <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">メニュー</dt>
-                                    <dd className="mt-1 text-sm text-gray-900 font-semibold">{contract.menu?.name}</dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">契約日</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{new Date(contract.contract_date).toLocaleDateString()}</dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">残回数 / 総回数</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">
-                                        <span className="font-bold text-primary-600 text-lg">{contract.remaining_count}</span> 
-                                        <span className="text-gray-400 mx-1">/</span> 
-                                        {contract.total_count}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">金額</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{contract.total_price.toLocaleString()}円</dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">有効期限</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">
-                                        {contract.expiration_date ? new Date(contract.expiration_date).toLocaleDateString() : '-'}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">ステータス</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">
-                                        <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                            contract.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                                        }`}>
-                                            {contract.status === 'active' ? '有効' : contract.status}
-                                        </span>
-                                    </dd>
-                                </div>
-                            </dl>
-                        </div>
-                    </div>
+                    <div className="mb-2 font-bold">1. 施術(美容医療)提供メニューについて</div>
+                    <p className="mb-4 text-xs">施術名・時間・料金等の詳しい内容は当院の料金表をご覧ください。</p>
 
-                    {/* 消化履歴セクション */}
-                    <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-                        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                消化履歴
-                            </h3>
-                            <button
-                                onClick={() => setShowUsageForm(!showUsageForm)}
-                                className="inline-flex items-center px-3 py-1.5 border border-primary-100 text-xs font-medium rounded-lg text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-                            >
-                                {showUsageForm ? 'キャンセル' : '手動消化登録'}
-                            </button>
-                        </div>
-                        
-                        {showUsageForm && (
-                            <div className="p-6 bg-gray-50 border-b border-gray-100 animate-fade-in">
-                                <form onSubmit={handleUsageSubmit}>
-                                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                                        <div>
-                                            <label htmlFor="used_date" className="block text-sm font-medium text-gray-700 mb-1">消化日 <span className="text-red-500">*</span></label>
-                                            <input
-                                                type="date"
-                                                id="used_date"
-                                                value={data.used_date}
-                                                onChange={e => setData('used_date', e.target.value)}
-                                                className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
-                                            />
-                                            {errors.used_date && <div className="mt-1 text-sm text-red-600">{errors.used_date}</div>}
-                                        </div>
-                                        <div>
-                                            <label htmlFor="used_count" className="block text-sm font-medium text-gray-700 mb-1">消化回数 <span className="text-red-500">*</span></label>
-                                            <input
-                                                type="number"
-                                                id="used_count"
-                                                value={data.used_count}
-                                                onChange={e => setData('used_count', e.target.value)}
-                                                className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
-                                            />
-                                            {errors.used_count && <div className="mt-1 text-sm text-red-600">{errors.used_count}</div>}
-                                        </div>
-                                        <div>
-                                            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">備考</label>
-                                            <input
-                                                type="text"
-                                                id="notes"
-                                                value={data.notes}
-                                                onChange={e => setData('notes', e.target.value)}
-                                                className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 shadow-sm transition-colors"
-                                                placeholder="メモなど"
-                                            />
-                                            {errors.notes && <div className="mt-1 text-sm text-red-600">{errors.notes}</div>}
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 flex justify-end">
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:ring ring-primary-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm"
-                                        >
-                                            {processing ? '登録中...' : '登録する'}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
+                    <div className="mb-2 font-bold">2. ご希望の役務内容と概算額</div>
+                    <div className="mb-1">(1) 役務提供</div>
+                    <table className="w-full border-collapse border border-black mb-4 text-center">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border border-black p-1">施術名</th>
+                                <th className="border border-black p-1">役務提供期間</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border border-black p-1">{contract.total_count}回 : {contract.menu?.name}</td>
+                                <td className="border border-black p-1">{formatDate(contract.contract_date)} 〜 {formatDate(contract.expiration_date)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">消化日</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">消化回数</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">予約ID</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">備考</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {contract.usages && contract.usages.length > 0 ? (
-                                        contract.usages.map((usage) => (
-                                            <tr key={usage.id} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(usage.used_date).toLocaleDateString()}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                                    {usage.used_count}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {usage.reservation_id ? (
-                                                        <Link href={route('staff.reservations.show', usage.reservation_id)} className="text-primary-600 hover:text-primary-900 hover:underline">
-                                                            #{usage.reservation_id}
-                                                        </Link>
-                                                    ) : '-'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {usage.notes || '-'}
-                                                </td>
-                                            </tr>
-                                        ))
+                    <div className="mb-1">(2) 役務の内容</div>
+                    <table className="w-full border-collapse border border-black mb-4 text-center text-xs">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border border-black p-1">運用キャンペーン</th>
+                                <th className="border border-black p-1">施術名</th>
+                                <th className="border border-black p-1">時間</th>
+                                <th className="border border-black p-1">単価</th>
+                                <th className="border border-black p-1">回数</th>
+                                <th className="border border-black p-1">数量</th>
+                                <th className="border border-black p-1">総時間数</th>
+                                <th className="border border-black p-1">金額(消費税含む)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border border-black p-1">{contract.campaign_name || '-'}</td>
+                                <td className="border border-black p-1">{contract.total_count}回 : {contract.menu?.name}</td>
+                                <td className="border border-black p-1">{contract.menu?.duration_minutes}分</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.total_price)}</td>
+                                <td className="border border-black p-1">{contract.total_count}</td>
+                                <td className="border border-black p-1">1</td>
+                                <td className="border border-black p-1">{(contract.menu?.duration_minutes * contract.total_count / 60).toFixed(1)}時間</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.total_price)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="7" className="border border-black p-1 text-right bg-gray-50">割引</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.discount_amount)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="7" className="border border-black p-1 text-right bg-gray-50">合計①</td>
+                                <td className="border border-black p-1">{formatCurrency(parseInt(contract.total_price) - parseInt(contract.discount_amount))}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="mb-1">(3) 関連商品</div>
+                    <table className="w-full border-collapse border border-black mb-4 text-center">
+                        <thead>
+                            <tr className="border border-black">
+                                <th className="border border-black p-1 w-1/2">商品名</th>
+                                <th className="border border-black p-1">単価</th>
+                                <th className="border border-black p-1">数量</th>
+                                <th className="border border-black p-1">金額(消費税含む)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {contract.products.map((p, i) => (
+                                <tr key={i}>
+                                    <td className="border border-black p-1 text-left">{p.product?.name}</td>
+                                    <td className="border border-black p-1">{formatCurrency(p.amount / p.quantity)}</td>
+                                    <td className="border border-black p-1">{p.quantity}</td>
+                                    <td className="border border-black p-1">{formatCurrency(p.amount)}</td>
+                                </tr>
+                            ))}
+                            {contract.products.length === 0 && <tr><td colSpan="4" className="border border-black p-1 py-4 text-gray-300">なし</td></tr>}
+                            <tr>
+                                <td colSpan="3" className="border border-black p-1 text-right bg-gray-50">合計②</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.products.reduce((acc, p) => acc + parseInt(p.amount), 0))}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="3" className="border border-black p-1 text-right bg-gray-100 font-bold">総合計金額①+②</td>
+                                <td className="border border-black p-1 font-bold">{formatCurrency(grandTotal)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="mb-1">お支払方法及びお支払時期</div>
+                    <table className="w-full border-collapse border border-black mb-4 text-center">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border border-black p-1">ご利用チェック</th>
+                                <th className="border border-black p-1">支払種別</th>
+                                <th className="border border-black p-1">支払時期</th>
+                                <th className="border border-black p-1">支払金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {contract.payments.map((pay, i) => (
+                                <tr key={i}>
+                                    <td className="border border-black p-1">✓</td>
+                                    <td className="border border-black p-1">{pay.payment_method}</td>
+                                    <td className="border border-black p-1">{formatDate(contract.contract_date)}</td>
+                                    <td className="border border-black p-1">{formatCurrency(pay.amount)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div className="flex border border-black">
+                        <div className="w-1/2 p-2 border-r border-black">
+                            <div className="text-center font-bold mb-2">支払合計金額<br />(分割手数料及び消費税込)</div>
+                            <div className="text-right text-xl font-bold mt-4">{formatCurrency(grandTotal)}</div>
+                        </div>
+                        <div className="w-1/2 p-0 flex flex-col">
+                            <div className="border-b border-black p-1 bg-gray-100 text-center font-bold text-xs">概要書面受領確認</div>
+                            <div className="flex-grow flex p-2 items-center justify-between">
+                                <div>{formatDate(contract.contract_date)}</div>
+                                <div className="w-48 h-20 flex items-center justify-center">
+                                    {outlineSignature ? (
+                                        <img src={outlineSignature} alt="signature" className="max-w-full max-h-full" />
                                     ) : (
-                                        <tr>
-                                            <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
-                                                消化履歴はありません。
-                                            </td>
-                                        </tr>
+                                        <span className="text-gray-400">署名なし</span>
                                     )}
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {/* 2. 契約書 (Contract Document) */}
+                <div className="bg-white shadow-lg p-8 text-xs leading-relaxed print:shadow-none print:w-full">
+                    <h1 className="text-xl font-bold text-center mb-6">美容医療施術提供契約書</h1>
+                    <div className="text-center mb-6">別紙の約款に基づき以下の通り契約を締結します。</div>
+
+                    <table className="w-full border-collapse border border-black mb-4">
+                        <tbody>
+                            <tr>
+                                <td className="border border-black p-1 bg-gray-100 w-24 text-center font-bold">契約日</td>
+                                <td colSpan="3" className="border border-black p-1">{formatDate(contract.contract_date)}</td>
+                            </tr>
+                            <tr>
+                                <td className="border border-black p-1 bg-gray-100 text-center font-bold">氏名</td>
+                                <td className="border border-black p-1">{patient.name}</td>
+                                <td className="border border-black p-1 bg-gray-100 text-center font-bold">生年月日</td>
+                                <td className="border border-black p-1">{patient.birthday}</td>
+                            </tr>
+                            <tr>
+                                <td className="border border-black p-1 bg-gray-100 text-center font-bold">住所</td>
+                                <td colSpan="3" className="border border-black p-1">{patient.address || '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    {/* Reusing contract details table logic for brevity, in real app refactor to components */}
+                    <div className="mb-2 font-bold">1. 〈役務提供の内容〉 ※役務1回コースは特定商取引法適応外となります。</div>
+                    <table className="w-full border-collapse border border-black mb-4 text-center text-xs">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border border-black p-1">運用キャンペーン</th>
+                                <th className="border border-black p-1">施術名</th>
+                                <th className="border border-black p-1">時間</th>
+                                <th className="border border-black p-1">単価</th>
+                                <th className="border border-black p-1">回数</th>
+                                <th className="border border-black p-1">数量</th>
+                                <th className="border border-black p-1">総時間数</th>
+                                <th className="border border-black p-1">金額(消費税含む)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border border-black p-1">{contract.campaign_name || '-'}</td>
+                                <td className="border border-black p-1">{contract.total_count}回 : {contract.menu?.name}</td>
+                                <td className="border border-black p-1">{contract.menu?.duration_minutes}分</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.total_price)}</td>
+                                <td className="border border-black p-1">{contract.total_count}</td>
+                                <td className="border border-black p-1">1</td>
+                                <td className="border border-black p-1">{(contract.menu?.duration_minutes * contract.total_count / 60).toFixed(1)}時間</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.total_price)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="7" className="border border-black p-1 text-right bg-gray-50">割引</td>
+                                <td className="border border-black p-1">{formatCurrency(contract.discount_amount)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="7" className="border border-black p-1 text-right bg-gray-50">合計①</td>
+                                <td className="border border-black p-1">{formatCurrency(parseInt(contract.total_price) - parseInt(contract.discount_amount))}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="flex border border-black mt-8">
+                        <div className="w-1/2 p-2 border-r border-black">
+                            <div className="text-center font-bold mb-2">支払合計金額<br />(分割手数料及び消費税込)</div>
+                            <div className="text-right text-xl font-bold mt-4">{formatCurrency(grandTotal)}</div>
+                        </div>
+                        <div className="w-1/2 p-0 flex flex-col">
+                            <div className="border-b border-black p-1 bg-gray-100 text-center font-bold text-xs">施術契約書受領確認 (署名)</div>
+                            <div className="flex-grow flex p-2 items-center justify-between">
+                                <div>{formatDate(contract.contract_date)}</div>
+                                <div className="w-48 h-20 flex items-center justify-center">
+                                    {contractSignature ? (
+                                        <img src={contractSignature} alt="signature" className="max-w-full max-h-full" />
+                                    ) : (
+                                        <span className="text-gray-400">署名なし</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </StaffLayout>
     );

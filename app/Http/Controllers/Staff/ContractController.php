@@ -52,6 +52,21 @@ class ContractController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(User $patient, Contract $contract)
+    {
+        $contract->load(['menu', 'products', 'products.product', 'payments', 'signedDocuments', 'signedDocuments.documentTemplate']);
+
+        return \Inertia\Inertia::render('Staff/Contracts/Show', [
+            'patient' => $patient,
+            'contract' => $contract,
+            'clinic' => \App\Models\Clinic::find($contract->clinic_id),
+            'staff' => auth()->guard('staff')->user(),
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Contract $contract)

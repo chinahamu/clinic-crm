@@ -21,6 +21,9 @@ class Contract extends Model
         'total_price',
         'expiration_date',
         'status',
+        'campaign_name',
+        'discount_amount',
+        'notes',
     ];
 
     protected $casts = [
@@ -46,6 +49,21 @@ class Contract extends Model
     public function usages(): HasMany
     {
         return $this->hasMany(ContractUsage::class);
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(ContractProduct::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(ContractPayment::class);
+    }
+
+    public function signedDocuments(): HasMany
+    {
+        return $this->hasMany(SignedDocument::class);
     }
 
     /**
