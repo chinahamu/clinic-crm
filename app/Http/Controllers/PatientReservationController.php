@@ -293,8 +293,24 @@ class PatientReservationController extends Controller
             $contract->consume($reservation->id);
         }
 
-        // Send emails
-        Mail::to($user->email)->send(new ReservationCompleted($reservation));
+        // Send notifications
+        $lineService = app(\App\Services\LineMessagingService::class);
+        $notificationSent = false;
+
+        if ($user->line_id) {
+            // Send to LINE
+            $notificationSent = $lineService->sendReservationConfirmation($user->line_id, $reservation);
+        } 
+        
+        // If LINE is not linked, or LINE sending failed (optional fallback logic, but here strict 'else' requested)
+        // The request says "If LINE linked, send to LINE. Otherwise send to email."
+        // We will strictly follow "If LINE linked -> LINE", "Else -> Email".
+        
+        if (!$user->line_id) {
+            Mail::to($user->email)->send(new ReservationCompleted($reservation));
+        }
+
+        // Always notify admin
         // TODO: Replace with actual clinic admin email
         Mail::to('kento.takamatsu@meta-alchemist.co.jp')->send(new NewReservationNotification($reservation));
 
