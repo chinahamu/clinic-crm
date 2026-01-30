@@ -39,6 +39,23 @@ export default function Form({ segment }) {
             <Head title={isEdit ? 'セグメント編集' : '新規セグメント作成'} />
 
             <div className="space-y-6">
+                {/* Demo Hints Alert */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                    <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <h4 className="font-bold text-blue-900 text-sm">デモ用データのご案内</h4>
+                        <p className="text-sm text-blue-800 mt-1">以下の条件でテストデータが作成されています。組み合わせの参考にしてください。</p>
+                        <ul className="mt-2 text-sm text-blue-800 space-y-1 list-disc list-inside">
+                            <li><b>休眠顧客</b>: 最終来院日が6ヶ月以上前（約15名）</li>
+                            <li><b>VIP顧客</b>: 売上30万円以上 かつ 来院回数10回以上（約10名）</li>
+                            <li><b>新規登録</b>: 今月登録されたユーザー（約20名）</li>
+                            <li><b>翌月誕生日</b>: 来月が誕生日のユーザー（約8名）</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-6">
                     <form onSubmit={submit} className="space-y-6">
                         <div>
