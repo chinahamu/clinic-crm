@@ -45,18 +45,8 @@ Route::get('auth/line', [\App\Http\Controllers\Auth\LineAuthController::class, '
 Route::get('auth/line/callback', [\App\Http\Controllers\Auth\LineAuthController::class, 'handleProviderCallback']);
 
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/home', function () {
-        $reservations = \App\Models\Reservation::with(['menu', 'clinic'])
-            ->where('user_id', auth()->id())
-            ->orderBy('start_time', 'desc')
-            ->get();
-
-        return Inertia::render('Dashboard', [
-            'reservations' => $reservations,
-        ]);
-    })->name('home');
-
-    Route::post('/reservations', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('/home', [\App\Http\Controllers\Patient\MyPageController::class, 'index'])->name('home');
+    Route::get('/my-page/documents/{document}', [\App\Http\Controllers\Patient\MyPageController::class, 'downloadDocument'])->name('my-page.documents.download');
 });
 
 Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservations.create');

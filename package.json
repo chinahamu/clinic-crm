@@ -18,7 +18,9 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@headlessui/react": "^2.2.9",
         "@inertiajs/react": "^2.2.18",
+        "date-fns": "^4.1.0",
         "prop-types": "^15.8.1",
         "react-quill-new": "^3.6.0",
         "react-signature-canvas": "^1.1.0-alpha.2"

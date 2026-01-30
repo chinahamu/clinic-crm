@@ -1,140 +1,231 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Tab } from '@headlessui/react';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 
-export default function Dashboard({ auth, reservations }) {
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
+
+export default function Dashboard({ auth, reservations, contracts, documents }) {
+    const categories = {
+        '予約管理': 'appointments',
+        '契約・コース': 'plans',
+        '書類・同意書': 'documents',
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header="患者様ダッシュボード"
+            header="マイページ"
         >
-            <Head title="患者様ダッシュボード" />
+            <Head title="マイページ" />
 
-            <div className="space-y-4 lg:space-y-6">
-                {/* ウェルカムメッセージ */}
-                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-                    <div className="p-4 lg:p-8">
-                        <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">ようこそ、{auth.user.name} 様</h3>
-                        <p className="text-sm lg:text-base text-gray-500">次回の予約確認や、新しい予約の取得が可能です。</p>
-                    </div>
+            <div className="space-y-6">
+                {/* Welcome Message */}
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">ようこそ、{auth.user.name} 様</h3>
+                    <p className="text-gray-500">各種履歴や契約状況をご確認いただけます。</p>
                 </div>
 
-                {/* 予約一覧 */}
-                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
-                    <div className="p-4 lg:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <h3 className="text-lg font-bold text-gray-900">予約一覧</h3>
-                        <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
-                            全 {reservations.length} 件
-                        </span>
-                    </div>
-                    
-                    <div className="p-0">
-                        {reservations.length > 0 ? (
-                            <>
-                                {/* モバイル向けカードビュー */}
-                                <div className="block lg:hidden divide-y divide-gray-100">
-                                    {reservations.map((reservation) => (
-                                        <div key={reservation.id} className="p-4 hover:bg-gray-50/50 transition-colors duration-150">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    {new Date(reservation.start_time).toLocaleString('ja-JP', {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
-                                                </div>
-                                                <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                    reservation.status === 'confirmed' 
-                                                        ? 'bg-green-50 text-green-700 border border-green-100' 
-                                                        : reservation.status === 'cancelled' 
-                                                            ? 'bg-red-50 text-red-700 border border-red-100' 
-                                                            : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
-                                                }`}>
-                                                    {reservation.status === 'confirmed' ? '確定' :
-                                                        reservation.status === 'cancelled' ? 'キャンセル' : '確認中'}
-                                                </span>
+                {/* Tabs */}
+                <div className="w-full px-2 sm:px-0">
+                    <Tab.Group>
+                        <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/10 p-1">
+                            {Object.keys(categories).map((category) => (
+                                <Tab
+                                    key={category}
+                                    className={({ selected }) =>
+                                        classNames(
+                                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                            'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                                            selected
+                                                ? 'bg-white text-blue-700 shadow'
+                                                : 'text-gray-600 hover:bg-white/[0.12] hover:text-blue-800'
+                                        )
+                                    }
+                                >
+                                    {category}
+                                </Tab>
+                            ))}
+                        </Tab.List>
+                        <Tab.Panels className="mt-4 text-left">
+                            {/* Appointments Tab */}
+                            <Tab.Panel className={classNames('rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2')}>
+                                <div className="space-y-8 p-4">
+                                    {/* Future Reservations */}
+                                    <section>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                            <span className="bg-blue-100 text-blue-600 p-2 rounded-lg mr-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            </span>
+                                            次回の予約
+                                        </h4>
+                                        {reservations.future && reservations.future.length > 0 ? (
+                                            <div className="grid gap-4 md:grid-cols-2">
+                                                {reservations.future.map((reservation) => (
+                                                    <div key={reservation.id} className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <div className="text-lg font-bold text-blue-900">
+                                                                {format(new Date(reservation.start_time), 'yyyy年M月d日(EEE) HH:mm', { locale: ja })}
+                                                            </div>
+                                                            <span className="px-2.5 py-1 bg-white text-blue-700 text-xs font-bold rounded-full border border-blue-100 shadow-sm">
+                                                                確定
+                                                            </span>
+                                                        </div>
+                                                        <div className="space-y-2 text-sm text-gray-600">
+                                                            <div className="flex items-center">
+                                                                <span className="w-20 text-gray-400">クリニック</span>
+                                                                <span className="font-medium text-gray-700">{reservation.clinic?.name}</span>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <span className="w-20 text-gray-400">メニュー</span>
+                                                                <span className="font-medium text-gray-700">{reservation.menu?.name}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="space-y-1">
-                                                <div className="flex items-center text-xs text-gray-500">
-                                                    <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                                    </svg>
-                                                    {reservation.clinic?.name || '-'}
-                                                </div>
-                                                <div className="flex items-center text-xs text-gray-500">
-                                                    <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                                    </svg>
-                                                    {reservation.menu?.name || '-'}
-                                                </div>
+                                        ) : (
+                                            <div className="text-center py-8 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                                現在、予約はありません。
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                        )}
+                                    </section>
 
-                                {/* デスクトップ向けテーブルビュー */}
-                                <div className="hidden lg:block overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-100">
-                                        <thead className="bg-gray-50/50">
-                                            <tr>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">日時</th>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">クリニック</th>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">メニュー</th>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ステータス</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-100">
-                                            {reservations.map((reservation) => (
-                                                <tr key={reservation.id} className="hover:bg-gray-50/50 transition-colors duration-150">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        {new Date(reservation.start_time).toLocaleString('ja-JP', {
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        })}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                        {reservation.clinic?.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-800">
-                                                            {reservation.menu?.name}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                            reservation.status === 'confirmed' 
-                                                                ? 'bg-green-50 text-green-700 border border-green-100' 
-                                                                : reservation.status === 'cancelled' 
-                                                                    ? 'bg-red-50 text-red-700 border border-red-100' 
-                                                                    : 'bg-yellow-50 text-yellow-700 border border-yellow-100'
-                                                        }`}>
-                                                            {reservation.status === 'confirmed' ? '確定' :
-                                                                reservation.status === 'cancelled' ? 'キャンセル' : '確認中'}
-                                                        </span>
-                                                    </td>
-                                                </tr>
+                                    {/* Past Reservations */}
+                                    <section>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                            <span className="bg-gray-100 text-gray-600 p-2 rounded-lg mr-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </span>
+                                            施術履歴
+                                        </h4>
+                                        {reservations.past && reservations.past.length > 0 ? (
+                                            <div className="overflow-hidden bg-white border border-gray-100 rounded-xl">
+                                                <ul className="divide-y divide-gray-100">
+                                                    {reservations.past.map((reservation) => (
+                                                        <li key={reservation.id} className="p-4 hover:bg-gray-50 transition">
+                                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                                                                <div>
+                                                                    <p className="text-sm font-bold text-gray-900">
+                                                                        {format(new Date(reservation.start_time), 'yyyy年M月d日(EEE) HH:mm', { locale: ja })}
+                                                                    </p>
+                                                                    <p className="text-sm text-gray-500 mt-1">
+                                                                        {reservation.menu?.name} <span className="text-gray-300">|</span> {reservation.clinic?.name}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <span className="px-2 py-1 text-xs text-gray-500 bg-gray-100 rounded-lg">施術完了</span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-8 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                                履歴はありません。
+                                            </div>
+                                        )}
+                                    </section>
+                                </div>
+                            </Tab.Panel>
+
+                            {/* Contracts Tab */}
+                            <Tab.Panel className={classNames('rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2')}>
+                                <div className="space-y-4 p-4">
+                                    {contracts && contracts.length > 0 ? (
+                                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                            {contracts.map((contract) => (
+                                                <div key={contract.id} className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm relative overflow-hidden">
+                                                    <div className="absolute top-0 right-0 p-2 opacity-5">
+                                                        <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                                    </div>
+                                                    <div className="relative z-10">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <h5 className="font-bold text-gray-900 line-clamp-1" title={contract.menu?.name}>
+                                                                {contract.menu?.name}
+                                                            </h5>
+                                                            {contract.remaining_count > 0 ? (
+                                                                <span className="shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-bold">有効</span>
+                                                            ) : (
+                                                                <span className="shrink-0 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-bold">終了</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-xs text-gray-500 mb-4">
+                                                            契約日: {format(new Date(contract.contract_date), 'yyyy/MM/dd', { locale: ja })}
+                                                        </div>
+
+                                                        {/* Usage Progress */}
+                                                        <div className="mt-4">
+                                                            <div className="flex justify-between text-sm mb-1">
+                                                                <span className="text-gray-600">消化状況</span>
+                                                                <span className="font-bold text-gray-900">
+                                                                    残 {contract.remaining_count}回 <span className="text-gray-400 text-xs font-normal">/ 全{contract.total_count}回</span>
+                                                                </span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-100 rounded-full h-2.5">
+                                                                <div
+                                                                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
+                                                                    style={{ width: `${Math.min(100, ((contract.total_count - contract.remaining_count) / contract.total_count) * 100)}%` }}
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             ))}
-                                        </tbody>
-                                    </table>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-12 text-gray-400">
+                                            契約中のコースはありません。
+                                        </div>
+                                    )}
                                 </div>
-                            </>
-                        ) : (
-                            <div className="p-8 lg:p-12 text-center">
-                                <div className="mx-auto h-12 w-12 text-gray-300 mb-4">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
+                            </Tab.Panel>
+
+                            {/* Documents Tab */}
+                            <Tab.Panel className={classNames('rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2')}>
+                                <div className="p-4">
+                                    {documents && documents.length > 0 ? (
+                                        <ul className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
+                                            {documents.map((doc) => (
+                                                <li key={doc.id} className="p-4 flex flex-col sm:flex-row justify-between sm:items-center hover:bg-gray-50/50 transition bg-white">
+                                                    <div className="flex items-center gap-3 mb-2 sm:mb-0">
+                                                        <div className="bg-red-50 text-red-500 p-2 rounded-lg">
+                                                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h5v5h5v11H6z" /></svg>
+                                                        </div>
+                                                        <div>
+                                                            <h5 className="font-medium text-gray-900">{doc.title}</h5>
+                                                            <p className="text-xs text-gray-500">
+                                                                署名日: {format(new Date(doc.signed_at), 'yyyy年M月d日', { locale: ja })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex-shrink-0">
+                                                        <a
+                                                            href={route('my-page.documents.download', doc.id)}
+                                                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                        >
+                                                            <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                            PDFダウンロード
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className="text-center py-12 text-gray-400">
+                                            署名済みの書類はありません。
+                                        </div>
+                                    )}
                                 </div>
-                                <h3 className="text-lg font-medium text-gray-900">予約はありません</h3>
-                                <p className="mt-1 text-sm text-gray-500">新しい予約を入れて、クリニックを利用しましょう。</p>
-                            </div>
-                        )}
-                    </div>
+                            </Tab.Panel>
+                        </Tab.Panels>
+                    </Tab.Group>
                 </div>
             </div>
         </AuthenticatedLayout>
