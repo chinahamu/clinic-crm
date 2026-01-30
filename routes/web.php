@@ -33,9 +33,16 @@ Route::post('/inquiry', [\App\Http\Controllers\InquiryController::class, 'store'
 Route::get('/reservation/{code}', [\App\Http\Controllers\PatientReservationController::class, 'index'])->name('patient.reservation.index');
 Route::get('/reservation/{code}/availability', [\App\Http\Controllers\PatientReservationController::class, 'availability'])->name('patient.reservation.availability');
 
+Route::get('/patient/login', function () {
+    return Inertia::render('Auth/Login');
+})->name('login');
+
 Route::post('/patient/login', [\App\Http\Controllers\PatientAuthController::class, 'login'])->name('patient.login');
 Route::post('/patient/register', [\App\Http\Controllers\PatientAuthController::class, 'register'])->name('patient.register');
 Route::post('/patient/reservation', [\App\Http\Controllers\PatientReservationController::class, 'store'])->name('patient.reservation.store');
+
+Route::get('auth/line', [\App\Http\Controllers\Auth\LineAuthController::class, 'redirectToProvider'])->name('auth.line');
+Route::get('auth/line/callback', [\App\Http\Controllers\Auth\LineAuthController::class, 'handleProviderCallback']);
 
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', function () {

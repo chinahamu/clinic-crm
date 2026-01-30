@@ -28,7 +28,7 @@ export default function Login() {
                         ご登録のメールアドレスとパスワードを入力してください
                     </p>
                 </div>
-                
+
                 <div className="p-8">
                     <form onSubmit={submit} className="space-y-6">
                         <div>
@@ -102,8 +102,32 @@ export default function Login() {
                             </button>
                         </div>
                     </form>
+
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white text-gray-500">または</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <a
+                                href={route('auth.line')}
+                                className="w-full flex items-center justify-center py-2.5 px-4 rounded-lg shadow-sm text-sm font-bold text-white bg-[#06C755] hover:bg-[#05b34c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#06C755] transition-colors"
+                            >
+                                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.5 2 2 5.6 2 10c0 3.7 3.1 6.8 7.3 7.7 0 0 .5-.1.5.4 0 .5-.1 1.7-.1 2.2 0 .8.5 1.3.8.9 3.5-2.1 8-6.1 8-11.2C22 5.6 17.5 2 12 2z" />
+                                </svg>
+                                LINEでログイン
+                            </a>
+                        </div>
+                        {errors.line && <div className="mt-2 text-sm text-red-600 text-center">{errors.line}</div>}
+                    </div>
                 </div>
-                
+
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
                     <p className="text-sm text-gray-600">
                         アカウントをお持ちでない方は{' '}

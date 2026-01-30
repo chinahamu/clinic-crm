@@ -23,7 +23,7 @@ class ShiftSeeder extends Seeder
 
         foreach ($staffs as $staff) {
             // Create shifts for the next 30 days
-            for ($i = 0; $i < 30; $i++) {
+            for ($i = 0; $i < 90; $i++) {
                 if (rand(0, 1) === 0) continue; // Skip some days
 
                 Shift::factory()->create([
