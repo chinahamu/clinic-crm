@@ -74,4 +74,16 @@ class ContractController extends Controller
         $contract->delete();
         return redirect()->back()->with('success', '契約を削除しました。');
     }
+
+    public function markAsOverviewDelivered(Request $request, Contract $contract)
+    {
+        $contract->update(['overview_delivered_at' => now()]);
+        
+        activity()
+            ->performedOn($contract)
+            ->causedBy(auth()->guard('staff')->user())
+            ->log('overview_delivered');
+            
+        return response()->json(['success' => true, 'timestamp' => now()]);
+    }
 }

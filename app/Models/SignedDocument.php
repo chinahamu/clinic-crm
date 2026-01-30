@@ -21,10 +21,14 @@ class SignedDocument extends Model
         'signed_at',
         'ip_address',
         'user_agent',
+        'file_hash',
+        'file_path',
+        'signed_data',
     ];
 
     protected $casts = [
         'signed_at' => 'datetime',
+        'signed_data' => 'array',
     ];
 
     public function user(): BelongsTo
