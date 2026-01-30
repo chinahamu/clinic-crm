@@ -67,8 +67,8 @@ export default function AuthSelection({ onAuthenticated, onBack, menu, selectedD
                 <div className="flex border-b border-gray-100">
                     <button
                         className={`flex-1 py-4 text-sm font-bold text-center transition-all duration-200 ${mode === 'login'
-                                ? 'bg-white text-primary-600 border-b-2 border-primary-600'
-                                : 'bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            ? 'bg-white text-primary-600 border-b-2 border-primary-600'
+                            : 'bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                             }`}
                         onClick={() => setMode('login')}
                     >
@@ -76,8 +76,8 @@ export default function AuthSelection({ onAuthenticated, onBack, menu, selectedD
                     </button>
                     <button
                         className={`flex-1 py-4 text-sm font-bold text-center transition-all duration-200 ${mode === 'register'
-                                ? 'bg-white text-primary-600 border-b-2 border-primary-600'
-                                : 'bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            ? 'bg-white text-primary-600 border-b-2 border-primary-600'
+                            : 'bg-gray-50 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                             }`}
                         onClick={() => setMode('register')}
                     >
@@ -86,6 +86,25 @@ export default function AuthSelection({ onAuthenticated, onBack, menu, selectedD
                 </div>
 
                 <div className="p-8">
+                    <div className="mb-8">
+                        <a
+                            href={route('auth.line')}
+                            className="w-full flex items-center justify-center py-2.5 px-4 rounded-lg shadow-sm text-sm font-bold text-white bg-[#06C755] hover:bg-[#05b34c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#06C755] transition-colors"
+                        >
+                            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.5 2 2 5.6 2 10c0 3.7 3.1 6.8 7.3 7.7 0 0 .5-.1.5.4 0 .5-.1 1.7-.1 2.2 0 .8.5 1.3.8.9 3.5-2.1 8-6.1 8-11.2C22 5.6 17.5 2 12 2z" />
+                            </svg>
+                            LINEでログイン / 新規登録
+                        </a>
+                        <div className="mt-6 relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white text-gray-500">またはメールアドレスで</span>
+                            </div>
+                        </div>
+                    </div>
                     {mode === 'login' ? (
                         <div className="max-w-md mx-auto animate-fade-in">
                             <p className="text-sm text-gray-500 mb-6 text-center">
