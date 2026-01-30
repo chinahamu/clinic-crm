@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@headlessui/react": "^2.2.9",
+        "@heroicons/react": "^2.2.0",
         "@inertiajs/react": "^2.2.18",
         "date-fns": "^4.1.0",
         "prop-types": "^15.8.1",

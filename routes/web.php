@@ -96,5 +96,6 @@ Route::prefix('staff')->name('staff.')->group(function () {
 
         Route::get('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'edit'])->name('settings.clinic.edit');
         Route::put('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'update'])->name('settings.clinic.update');
+        Route::resource('settings/mail-scenarios', \App\Http\Controllers\Staff\MailScenarioController::class);
     });
 });

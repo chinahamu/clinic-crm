@@ -44,128 +44,108 @@ class SendStepMails extends Command
      */
     public function handle()
     {
-        $this->info('Starting Step Mail sending process...');
+        $this->info('Starting Step Mail sending process (DB Driven)...');
         Log::info('crm:send-step-mails started.');
 
-        $this->sendPostVisitThankYou();
-        $this->sendSixMonthReminder();
+        $scenarios = \App\Models\MailScenario::active()->get();
+
+        foreach ($scenarios as $scenario) {
+            $this->processScenario($scenario);
+        }
 
         $this->info('Step Mail sending process completed.');
         Log::info('crm:send-step-mails completed.');
     }
 
-    private function sendPostVisitThankYou()
+    private function processScenario(\App\Models\MailScenario $scenario)
     {
-        $targetDate = Carbon::yesterday();
-        $this->info("Processing Post Visit Thank You for {$targetDate->toDateString()}...");
+        $this->info("Processing Scenario: {$scenario->name}");
 
-        Reservation::query()
-            ->whereDate('start_time', $targetDate)
-            ->where('status', 'visited')
-            ->whereHas('user')
-            ->with('user')
-            ->chunk(100, function ($reservations) {
-                foreach ($reservations as $reservation) {
-                    $user = $reservation->user;
+        // Calculate target date: today - days_offset
+        // Example: if offset is 1, target is yesterday. logic: visited on yesterday implies 1 day passed.
+        $targetDate = Carbon::today()->subDays($scenario->days_offset)->toDateString();
+        
+        // Initial query based on trigger_type
+        // Note: Currently primarily supporting 'after_visit' logic as per request context
+        if ($scenario->trigger_type === 'after_visit') {
+            $query = Reservation::query()
+                ->whereDate('start_time', $targetDate)
+                ->where('status', 'visited') // Assuming 'visited' status key
+                ->where('clinic_id', $scenario->clinic_id)
+                ->whereHas('user')
+                ->with('user');
+        } else {
+            // Placeholder for other triggers if implemented
+            $this->warn("Unknown trigger type: {$scenario->trigger_type}");
+            return;
+        }
 
-                    // 重複チェック
-                    if ($this->checkIfSent($user, 'post_visit_thank_you', $reservation->id)) continue;
+        $query->chunk(100, function ($reservations) use ($scenario) {
+            foreach ($reservations as $reservation) {
+                $user = $reservation->user;
 
-                    try {
-                        $channel = 'mail'; // Default
-                        if ($user->line_id) {
-                            // --- LINE送信ルート ---
-                            $text = $this->messageService->getThankYouText($user);
-                            if ($this->lineService->pushMessage($user->line_id, $text)) {
-                                $channel = 'line';
-                            } else {
-                                // Fallback to mail if LINE fails? 
-                                // Requirements said "If line_id exists -> LINE". Implicitly if fail, maybe log?
-                                // "LINE送信時に 400 ... エラーログに残して次のユーザーへ進む" -> So just log and continue.
-                                // But if it fails, do we mark as sent? Probably not effectively sent if failed.
-                                // However, strictly following "line_id exists -> LINE", if it fails, we shouldn't send mail as duplicate.
-                                // Let's assume failure means we log and don't record success in DB, so it might retry if logic allowed, 
-                                // but my logic checks DB. So if I don't write DB, it will help.
-                                Log::error("Failed to send LINE thank you to User {$user->id}");
-                                continue; 
-                            }
+                // Duplicate Check using scenario ID
+                if ($this->checkIfSent($user, "scenario:{$scenario->id}", $reservation->id)) {
+                    continue;
+                }
+
+                // Prepare Content
+                $subject = $this->replacePlaceholders($scenario->subject, $user, $reservation);
+                $body = $this->replacePlaceholders($scenario->body, $user, $reservation);
+
+                try {
+                    $channel = 'mail'; // Default
+                    if ($user->line_id) {
+                        // --- LINE ---
+                        // LINE subject handling: Prepend to body or ignore?
+                        // User request: "Subject is ignored or joined to first line"
+                        $lineText = "【{$subject}】\n\n" . $body;
+                        
+                        if ($this->lineService->pushMessage($user->line_id, $lineText)) {
+                            $channel = 'line';
                         } else {
-                            // --- メール送信ルート ---
-                            Mail::to($user)->queue(new FollowUpMail(
-                                $user,
-                                'ご来院ありがとうございます【クリニックCRM】',
-                                'emails.followup.thank_you'
-                            ));
-                            $channel = 'mail';
+                            Log::error("Failed to send LINE for Scenario {$scenario->id} to User {$user->id}");
+                            // Fallback logic or skip? Assuming skip to avoid duplicate mail if LINE was intended
+                            continue;
+                        }
+                    } else {
+                        // --- Mail ---
+                        $mail = new FollowUpMail(
+                            $user,
+                            $subject,
+                            'emails.step_mail', // Generic view
+                            ['body' => $body]
+                        );
+
+                        // Override sender if configured
+                        if ($scenario->sender_name) {
+                            $mail->from(config('mail.from.address'), $scenario->sender_name);
                         }
 
-                        // ログ保存
-                        $this->logSent($user, 'post_visit_thank_you', $reservation->id, $channel);
-                        $this->info("Sent thank you ({$channel}) to User ID: {$user->id}");
-
-                    } catch (\Exception $e) {
-                        Log::error("Step delivery failed for User {$user->id}: " . $e->getMessage());
+                        Mail::to($user)->queue($mail);
+                        $channel = 'mail';
                     }
+
+                    // Log
+                    $this->logSent($user, "scenario:{$scenario->id}", $reservation->id, $channel);
+                    $this->info("Sent scenario '{$scenario->name}' via {$channel} to User ID: {$user->id}");
+
+                } catch (\Exception $e) {
+                    Log::error("Step delivery failed for Scenario {$scenario->id}, User {$user->id}: " . $e->getMessage());
                 }
-            });
+            }
+        });
     }
 
-    private function sendSixMonthReminder()
+    private function replacePlaceholders($text, $user, $reservation)
     {
-        $targetDate = Carbon::now()->subMonths(6);
-        $this->info("Processing 6 Month Reminder for visits on {$targetDate->toDateString()}...");
+        $replacements = [
+            '{name}' => $user->name,
+            '{clinic_name}' => config('app.name'),
+            '{visit_date}' => Carbon::parse($reservation->start_time)->format('Y年m月d日'),
+        ];
 
-        Reservation::query()
-            ->whereDate('start_time', $targetDate)
-            ->where('status', 'visited')
-            ->whereHas('user')
-            ->with('user')
-            ->chunk(100, function ($reservations) {
-                foreach ($reservations as $reservation) {
-                    $user = $reservation->user;
-
-                    // Check for newer reservations
-                    $hasNewerReservation = Reservation::where('user_id', $user->id)
-                        ->where('start_time', '>', $reservation->start_time)
-                        ->exists();
-
-                    if ($hasNewerReservation) {
-                        continue;
-                    }
-
-                    // 重複チェック
-                    if ($this->checkIfSent($user, 'inactive_6_months', $reservation->id)) continue;
-
-                    try {
-                        $channel = 'mail';
-                        if ($user->line_id) {
-                            // LINE
-                            $text = $this->messageService->getSixMonthReminderText($user);
-                            if ($this->lineService->pushMessage($user->line_id, $text)) {
-                                $channel = 'line';
-                            } else {
-                                Log::error("Failed to send LINE reminder to User {$user->id}");
-                                continue;
-                            }
-                        } else {
-                            // Mail
-                            Mail::to($user)->queue(new FollowUpMail(
-                                $user,
-                                '定期検診のご案内【クリニックCRM】',
-                                'emails.followup.reminder_6_months'
-                            ));
-                            $channel = 'mail';
-                        }
-
-                        // Log
-                        $this->logSent($user, 'inactive_6_months', $reservation->id, $channel);
-                        $this->info("Sent 6-month reminder ({$channel}) to User ID: {$user->id}");
-
-                    } catch (\Exception $e) {
-                         Log::error("Step delivery failed for User {$user->id}: " . $e->getMessage());
-                    }
-                }
-            });
+        return str_replace(array_keys($replacements), array_values($replacements), $text);
     }
 
     private function checkIfSent($user, $type, $reservationId)

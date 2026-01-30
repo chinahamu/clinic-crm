@@ -100,6 +100,12 @@ const ChartBarIcon = ({ className }) => (
     </svg>
 );
 
+const MailIcon = ({ className }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+);
+
 export default function StaffLayout({ user, header, children }) {
     const { auth } = usePage().props;
     const currentUser = user ?? (auth ? auth.user : null);
@@ -274,6 +280,14 @@ export default function StaffLayout({ user, header, children }) {
             >
                 <OfficeBuildingIcon className={iconClass(route().current('staff.settings.clinic.*'))} />
                 クリニック設定
+            </Link>
+            <Link
+                href={route('staff.mail-scenarios.index')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.mail-scenarios.*'))}
+            >
+                <MailIcon className={iconClass(route().current('staff.mail-scenarios.*'))} />
+                ステップ配信設定
             </Link>
         </>
     );
