@@ -27,6 +27,34 @@ class LineMessagingService
         );
     }
 
+    public function pushMessage(string $lineUserId, string $text): bool
+    {
+        if (empty($lineUserId)) {
+            Log::warning('LINE User ID is empty. Cannot send push message.');
+            return false;
+        }
+
+        $message = new TextMessage(['text' => $text, 'type' => 'text']);
+
+        try {
+            $request = new \LINE\Clients\MessagingApi\Model\PushMessageRequest([
+                'to' => $lineUserId,
+                'messages' => [$message],
+            ]);
+            
+            $this->client->pushMessage($request);
+            return true; 
+        } catch (\LINE\Clients\MessagingApi\ApiException $e) {
+            Log::error("LINE API Exception: " . $e->getMessage());
+            // Log body if available
+            Log::error("LINE API Response Body: " . $e->getResponseBody()); 
+            return false;
+        } catch (\Exception $e) {
+            Log::error("General Exception sending LINE message: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function sendReservationConfirmation($lineUserId, $reservation)
     {
         if (empty($lineUserId)) {
@@ -39,20 +67,7 @@ class LineMessagingService
         $menuName = $reservation->menu->name;
         
         $messageText = "ご予約ありがとうございます。\n\n以下の内容で承りました。\n\n■日時\n{$startDate}\n\n■クリニック\n{$clinicName}\n\n■メニュー\n{$menuName}\n\nご来院をお待ちしております。";
-
-        $message = new TextMessage(['text' => $messageText, 'type' => 'text']);
-
-        try {
-            $request = new \LINE\Clients\MessagingApi\Model\PushMessageRequest([
-                'to' => $lineUserId,
-                'messages' => [$message],
-            ]);
-            
-            $this->client->pushMessage($request);
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Failed to send LINE message: ' . $e->getMessage());
-            return false;
-        }
+        
+        return $this->pushMessage($lineUserId, $messageText);
     }
 }

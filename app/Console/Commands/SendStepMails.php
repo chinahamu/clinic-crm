@@ -29,6 +29,19 @@ class SendStepMails extends Command
     /**
      * Execute the console command.
      */
+    protected $lineService;
+    protected $messageService;
+
+    public function __construct(\App\Services\LineMessagingService $lineService, \App\Services\MessageContentService $messageService)
+    {
+        parent::__construct();
+        $this->lineService = $lineService;
+        $this->messageService = $messageService;
+    }
+
+    /**
+     * Execute the console command.
+     */
     public function handle()
     {
         $this->info('Starting Step Mail sending process...');
@@ -46,43 +59,52 @@ class SendStepMails extends Command
         $targetDate = Carbon::yesterday();
         $this->info("Processing Post Visit Thank You for {$targetDate->toDateString()}...");
 
-        // Find reservations from yesterday with 'visited' status
         Reservation::query()
             ->whereDate('start_time', $targetDate)
             ->where('status', 'visited')
-            ->whereHas('user') // Ensure user exists
+            ->whereHas('user')
             ->with('user')
             ->chunk(100, function ($reservations) {
                 foreach ($reservations as $reservation) {
-                    try {
-                        // Check if already sent
-                        $exists = StepMailLog::where('user_id', $reservation->user_id)
-                            ->where('mail_type', 'post_visit_thank_you')
-                            ->where('reservation_id', $reservation->id)
-                            ->exists();
+                    $user = $reservation->user;
 
-                        if ($exists) {
-                            continue;
+                    // 重複チェック
+                    if ($this->checkIfSent($user, 'post_visit_thank_you', $reservation->id)) continue;
+
+                    try {
+                        $channel = 'mail'; // Default
+                        if ($user->line_id) {
+                            // --- LINE送信ルート ---
+                            $text = $this->messageService->getThankYouText($user);
+                            if ($this->lineService->pushMessage($user->line_id, $text)) {
+                                $channel = 'line';
+                            } else {
+                                // Fallback to mail if LINE fails? 
+                                // Requirements said "If line_id exists -> LINE". Implicitly if fail, maybe log?
+                                // "LINE送信時に 400 ... エラーログに残して次のユーザーへ進む" -> So just log and continue.
+                                // But if it fails, do we mark as sent? Probably not effectively sent if failed.
+                                // However, strictly following "line_id exists -> LINE", if it fails, we shouldn't send mail as duplicate.
+                                // Let's assume failure means we log and don't record success in DB, so it might retry if logic allowed, 
+                                // but my logic checks DB. So if I don't write DB, it will help.
+                                Log::error("Failed to send LINE thank you to User {$user->id}");
+                                continue; 
+                            }
+                        } else {
+                            // --- メール送信ルート ---
+                            Mail::to($user)->queue(new FollowUpMail(
+                                $user,
+                                'ご来院ありがとうございます【クリニックCRM】',
+                                'emails.followup.thank_you'
+                            ));
+                            $channel = 'mail';
                         }
 
-                        // Send Mail
-                        Mail::to($reservation->user)->queue(new FollowUpMail(
-                            $reservation->user,
-                            'ご来院ありがとうございます【クリニックCRM】',
-                            'emails.followup.thank_you'
-                        ));
-
-                        // Log
-                        StepMailLog::create([
-                            'user_id' => $reservation->user_id,
-                            'reservation_id' => $reservation->id,
-                            'mail_type' => 'post_visit_thank_you',
-                        ]);
-
-                        $this->info("Sent thank you mail to User ID: {$reservation->user_id}");
+                        // ログ保存
+                        $this->logSent($user, 'post_visit_thank_you', $reservation->id, $channel);
+                        $this->info("Sent thank you ({$channel}) to User ID: {$user->id}");
 
                     } catch (\Exception $e) {
-                        Log::error("Failed to send thank you mail to User ID: {$reservation->user_id}. Error: " . $e->getMessage());
+                        Log::error("Step delivery failed for User {$user->id}: " . $e->getMessage());
                     }
                 }
             });
@@ -90,8 +112,6 @@ class SendStepMails extends Command
 
     private function sendSixMonthReminder()
     {
-        // Logic: 6 months ago EXACTLY? Or around 6 months?
-        // Requirement says "just 6 months ago" (exact date match for the run)
         $targetDate = Carbon::now()->subMonths(6);
         $this->info("Processing 6 Month Reminder for visits on {$targetDate->toDateString()}...");
 
@@ -102,50 +122,67 @@ class SendStepMails extends Command
             ->with('user')
             ->chunk(100, function ($reservations) {
                 foreach ($reservations as $reservation) {
+                    $user = $reservation->user;
+
+                    // Check for newer reservations
+                    $hasNewerReservation = Reservation::where('user_id', $user->id)
+                        ->where('start_time', '>', $reservation->start_time)
+                        ->exists();
+
+                    if ($hasNewerReservation) {
+                        continue;
+                    }
+
+                    // 重複チェック
+                    if ($this->checkIfSent($user, 'inactive_6_months', $reservation->id)) continue;
+
                     try {
-                         // Check if user has ANY future reservation or reservation AFTER the 6 month mark
-                         $hasNewerReservation = Reservation::where('user_id', $reservation->user_id)
-                            ->where('start_time', '>', $reservation->start_time)
-                            ->exists();
-
-                        if ($hasNewerReservation) {
-                            continue;
+                        $channel = 'mail';
+                        if ($user->line_id) {
+                            // LINE
+                            $text = $this->messageService->getSixMonthReminderText($user);
+                            if ($this->lineService->pushMessage($user->line_id, $text)) {
+                                $channel = 'line';
+                            } else {
+                                Log::error("Failed to send LINE reminder to User {$user->id}");
+                                continue;
+                            }
+                        } else {
+                            // Mail
+                            Mail::to($user)->queue(new FollowUpMail(
+                                $user,
+                                '定期検診のご案内【クリニックCRM】',
+                                'emails.followup.reminder_6_months'
+                            ));
+                            $channel = 'mail';
                         }
-
-                        // Check if already sent (avoid duplicate for this specific type recently?)
-                        // Since it's triggered by a specific past reservation, check against that reservation
-                        // OR check if we sent this type within the last X days to avoid spam if script runs multiple times?
-                        // Using reservation_id as key is safest if we tie it to that specific visit 6 months ago.
-                        
-                        $exists = StepMailLog::where('user_id', $reservation->user_id)
-                            ->where('mail_type', 'inactive_6_months')
-                            ->where('reservation_id', $reservation->id)
-                            ->exists();
-
-                        if ($exists) {
-                            continue;
-                        }
-
-                        // Send Mail
-                        Mail::to($reservation->user)->queue(new FollowUpMail(
-                            $reservation->user,
-                            '定期検診のご案内【クリニックCRM】',
-                            'emails.followup.reminder_6_months'
-                        ));
 
                         // Log
-                        StepMailLog::create([
-                            'user_id' => $reservation->user_id,
-                            'reservation_id' => $reservation->id,
-                            'mail_type' => 'inactive_6_months',
-                        ]);
-
-                        $this->info("Sent 6-month reminder to User ID: {$reservation->user_id}");
+                        $this->logSent($user, 'inactive_6_months', $reservation->id, $channel);
+                        $this->info("Sent 6-month reminder ({$channel}) to User ID: {$user->id}");
 
                     } catch (\Exception $e) {
-                        Log::error("Failed to send 6-month reminder to User ID: {$reservation->user_id}. Error: " . $e->getMessage());
+                         Log::error("Step delivery failed for User {$user->id}: " . $e->getMessage());
                     }
                 }
             });
+    }
+
+    private function checkIfSent($user, $type, $reservationId)
+    {
+        return StepMailLog::where('user_id', $user->id)
+            ->where('mail_type', $type)
+            ->where('reservation_id', $reservationId)
+            ->exists();
+    }
+
+    private function logSent($user, $type, $reservationId, $channel)
+    {
+        StepMailLog::create([
+            'user_id' => $user->id,
+            'reservation_id' => $reservationId,
+            'mail_type' => $type,
+            'channel' => $channel,
+        ]);
     }
 }
