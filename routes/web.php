@@ -97,5 +97,11 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::get('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'edit'])->name('settings.clinic.edit');
         Route::put('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'update'])->name('settings.clinic.update');
         Route::resource('settings/mail-scenarios', \App\Http\Controllers\Staff\MailScenarioController::class);
+
+        // Marketing
+        Route::prefix('marketing')->name('marketing.')->group(function () {
+            Route::resource('segments', \App\Http\Controllers\Staff\CustomerSegmentController::class);
+            Route::get('segments/{segment}/export', [\App\Http\Controllers\Staff\CustomerSegmentController::class, 'export'])->name('segments.export');
+        });
     });
 });

@@ -158,6 +158,18 @@ export default function StaffLayout({ user, header, children }) {
             </Link>
 
             <div className="px-4 mt-6 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                マーケティング
+            </div>
+            <Link
+                href={route('staff.marketing.segments.index')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.marketing.segments.*'))}
+            >
+                <UsersIcon className={iconClass(route().current('staff.marketing.segments.*'))} />
+                顧客セグメント
+            </Link>
+
+            <div className="px-4 mt-6 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 管理
             </div>
             <Link
