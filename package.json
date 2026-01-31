@@ -22,7 +22,9 @@
         "@heroicons/react": "^2.2.0",
         "@inertiajs/react": "^2.2.18",
         "date-fns": "^4.1.0",
+        "html5-qrcode": "^2.3.8",
         "prop-types": "^15.8.1",
+        "qrcode.react": "^4.2.0",
         "react-quill-new": "^3.6.0",
         "react-signature-canvas": "^1.1.0-alpha.2"
     }

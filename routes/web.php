@@ -85,6 +85,10 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::post('shifts/generate', [\App\Http\Controllers\Staff\ShiftController::class, 'generate'])->name('shifts.generate');
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
         Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
+        
+        // Kiosk Check-in
+        Route::get('kiosk/check-in', [\App\Http\Controllers\Staff\KioskController::class, 'index'])->name('kiosk.check-in');
+        Route::post('kiosk/check-in', [\App\Http\Controllers\Staff\KioskController::class, 'store'])->name('kiosk.check-in.store');
 
         Route::resource('medicines', \App\Http\Controllers\Staff\MedicineController::class);
         Route::resource('consumables', \App\Http\Controllers\Staff\ConsumableController::class);

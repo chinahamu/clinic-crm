@@ -106,6 +106,12 @@ const MailIcon = ({ className }) => (
     </svg>
 );
 
+const QrcodeIcon = ({ className }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zM6 6h6v6H6V6zm12 0h6v6h-6V6zm-6 12h6v6h-6v-6zm-6 0h6v6H6v-6z" />
+    </svg>
+);
+
 export default function StaffLayout({ user, header, children }) {
     const { auth } = usePage().props;
     const currentUser = user ?? (auth ? auth.user : null);
@@ -155,6 +161,14 @@ export default function StaffLayout({ user, header, children }) {
             >
                 <ChartBarIcon className={iconClass(route().current('staff.sales.*'))} />
                 売上管理
+            </Link>
+            <Link
+                href={route('staff.kiosk.check-in')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.kiosk.*'))}
+            >
+                <QrcodeIcon className={iconClass(route().current('staff.kiosk.*'))} />
+                QR受付 (Kiosk)
             </Link>
 
             <div className="px-4 mt-6 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">

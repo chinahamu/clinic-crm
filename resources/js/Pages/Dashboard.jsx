@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Tab } from '@headlessui/react';
+import { Tab, Dialog, Transition } from '@headlessui/react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { QRCodeSVG } from 'qrcode.react';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
 export default function Dashboard({ auth, reservations, contracts, documents }) {
+    const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+
     const categories = {
         '予約管理': 'appointments',
         '契約・コース': 'plans',
@@ -25,9 +28,18 @@ export default function Dashboard({ auth, reservations, contracts, documents }) 
 
             <div className="space-y-6">
                 {/* Welcome Message */}
-                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">ようこそ、{auth.user.name} 様</h3>
-                    <p className="text-gray-500">各種履歴や契約状況をご確認いただけます。</p>
+                <div className="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100 p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">ようこそ、{auth.user.name} 様</h3>
+                        <p className="text-gray-500">各種履歴や契約状況をご確認いただけます。</p>
+                    </div>
+                    <button
+                        onClick={() => setIsQrModalOpen(true)}
+                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                        <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zM6 6h6v6H6V6zm12 0h6v6h-6V6zm-6 12h6v6h-6v-6zm-6 0h6v6H6v-6z" /></svg>
+                        会員証 / チェックイン
+                    </button>
                 </div>
 
                 {/* Tabs */}
@@ -228,6 +240,75 @@ export default function Dashboard({ auth, reservations, contracts, documents }) 
                     </Tab.Group>
                 </div>
             </div>
+
+            {/* QR Code Modal for Check-in */}
+            <Transition appear show={isQrModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsQrModalOpen(false)}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-black bg-opacity-75" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-center align-middle shadow-xl transition-all">
+                                    <Dialog.Title
+                                        as="h3"
+                                        className="text-lg font-bold leading-6 text-gray-900 mb-6"
+                                    >
+                                        会員証 / チェックイン
+                                    </Dialog.Title>
+                                    <div className="flex flex-col items-center justify-center space-y-6">
+                                        <div className="p-4 bg-white border-2 border-gray-900 rounded-xl">
+                                            <QRCodeSVG
+                                                value={JSON.stringify({ user_id: auth.user.id, type: 'checkin' })}
+                                                size={200}
+                                                level="H"
+                                                includeMargin={true}
+                                            />
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            <p>受付の端末にQRコードをかざしてください。</p>
+                                        </div>
+                                        <div className="w-full pt-4 border-t border-gray-100">
+                                            <p className="text-xs text-gray-400 mb-1">会員ID</p>
+                                            <p className="font-mono font-bold text-gray-900 text-lg">{auth.user.id.toString().padStart(6, '0')}</p>
+                                            <p className="font-bold text-gray-900 mt-1">{auth.user.name} 様</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-8">
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center rounded-xl border border-transparent bg-gray-100 px-6 py-3 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 w-full"
+                                            onClick={() => setIsQrModalOpen(false)}
+                                        >
+                                            閉じる
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </AuthenticatedLayout>
     );
 }
+
