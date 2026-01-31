@@ -47,6 +47,10 @@ Route::get('auth/line/callback', [\App\Http\Controllers\Auth\LineAuthController:
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/home', [\App\Http\Controllers\Patient\MyPageController::class, 'index'])->name('home');
     Route::get('/my-page/documents/{document}', [\App\Http\Controllers\Patient\MyPageController::class, 'downloadDocument'])->name('my-page.documents.download');
+
+    // Web Interview
+    Route::get('/reservations/{reservation}/interview', [\App\Http\Controllers\Patient\InterviewController::class, 'show'])->name('patient.interview.show');
+    Route::post('/reservations/{reservation}/interview', [\App\Http\Controllers\Patient\InterviewController::class, 'store'])->name('patient.interview.store');
 });
 
 Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservations.create');
@@ -104,6 +108,16 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::get('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'edit'])->name('settings.clinic.edit');
         Route::put('settings/clinic', [\App\Http\Controllers\Staff\ClinicSettingController::class, 'update'])->name('settings.clinic.update');
         Route::resource('settings/mail-scenarios', \App\Http\Controllers\Staff\MailScenarioController::class);
+        Route::resource('settings/interviews', \App\Http\Controllers\Staff\InterviewTemplateController::class)
+            ->names([
+                'index' => 'settings.interviews.index',
+                'create' => 'settings.interviews.create',
+                'store' => 'settings.interviews.store',
+                'show' => 'settings.interviews.show',
+                'edit' => 'settings.interviews.edit',
+                'update' => 'settings.interviews.update',
+                'destroy' => 'settings.interviews.destroy',
+            ]);
 
         // Marketing
         Route::prefix('marketing')->name('marketing.')->group(function () {

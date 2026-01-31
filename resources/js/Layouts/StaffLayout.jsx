@@ -315,6 +315,14 @@ export default function StaffLayout({ user, header, children }) {
                 <MailIcon className={iconClass(route().current('staff.mail-scenarios.*'))} />
                 ステップ配信設定
             </Link>
+            <Link
+                href={route('staff.settings.interviews.index')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.settings.interviews.*'))}
+            >
+                <DocumentTextIcon className={iconClass(route().current('staff.settings.interviews.*'))} />
+                問診票テンプレート
+            </Link>
         </>
     );
 
