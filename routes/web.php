@@ -110,5 +110,12 @@ Route::prefix('staff')->name('staff.')->group(function () {
             Route::resource('segments', \App\Http\Controllers\Staff\CustomerSegmentController::class);
             Route::get('segments/{segment}/export', [\App\Http\Controllers\Staff\CustomerSegmentController::class, 'export'])->name('segments.export');
         });
+
+        // Narrative Profile
+        Route::post('patients/{patient}/values', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'updateValues'])->name('patients.values.update');
+        Route::post('patients/{patient}/life-events', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'storeLifeEvent'])->name('patients.life-events.store');
+        Route::delete('patients/{patient}/life-events/{event}', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'destroyLifeEvent'])->name('patients.life-events.destroy');
+        Route::post('patients/{patient}/narrative-logs', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'storeNarrative'])->name('patients.narrative-logs.store');
+
     });
 });

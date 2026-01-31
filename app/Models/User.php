@@ -75,4 +75,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(SignedDocument::class);
     }
+
+    public function patientValues()
+    {
+        return $this->hasMany(PatientValue::class);
+    }
+
+    public function lifeEvents()
+    {
+        return $this->hasMany(LifeEvent::class);
+    }
+
+    public function narrativeLogs()
+    {
+        return $this->hasMany(NarrativeLog::class);
+    }
 }
