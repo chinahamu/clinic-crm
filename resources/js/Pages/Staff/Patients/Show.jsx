@@ -101,8 +101,8 @@ export default function Show({ patient, menus }) {
                         <button
                             onClick={() => setActiveTab('details')}
                             className={`${activeTab === 'details'
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-indigo-500 text-indigo-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                         >
                             基本情報・契約
@@ -110,8 +110,8 @@ export default function Show({ patient, menus }) {
                         <button
                             onClick={() => setActiveTab('narrative')}
                             className={`${activeTab === 'narrative'
-                                    ? 'border-green-500 text-green-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-green-500 text-green-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                         >
                             ナラティブ (Life Context)
@@ -200,9 +200,17 @@ export default function Show({ patient, menus }) {
                         </div>
 
                         <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-                            <div className="px-4 py-5 sm:px-6">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900">同意済書類</h3>
-                                <p className="mt-1 max-w-2xl text-sm text-gray-500">患者が同意した書類一覧</p>
+                            <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+                                <div>
+                                    <h3 className="text-lg leading-6 font-medium text-gray-900">同意済書類</h3>
+                                    <p className="mt-1 max-w-2xl text-sm text-gray-500">患者が同意した書類一覧</p>
+                                </div>
+                                <Link
+                                    href={route('staff.patients.documents.create', { patient: patient.id })}
+                                    className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 focus:outline-none transition ease-in-out duration-150"
+                                >
+                                    同意書作成
+                                </Link>
                             </div>
                             <div className="border-t border-gray-200">
                                 {patient.signed_documents && patient.signed_documents.length > 0 ? (

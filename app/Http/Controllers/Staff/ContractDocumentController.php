@@ -7,6 +7,7 @@ use App\Models\Clinic;
 use App\Models\Contract;
 use App\Models\Menu;
 use App\Models\Product;
+use App\Models\DocumentTemplate;
 use App\Models\SignedDocument;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -97,6 +98,45 @@ class ContractDocumentController extends Controller
             DB::rollBack();
             return back()->withErrors(['message' => '契約の作成に失敗しました: ' . $e->getMessage()]);
         }
+    }
+
+    public function createConsentDocument(User $patient)
+    {
+        return Inertia::render('Staff/Documents/SignConsent', [
+            'patient' => $patient,
+            'templates' => DocumentTemplate::where('is_active', true)->get(),
+        ]);
+    }
+
+    public function storeConsentDocument(Request $request, User $patient)
+    {
+        $validated = $request->validate([
+            'document_template_id' => 'required|exists:document_templates,id',
+            'signature_data' => 'required|string', // Base64
+        ]);
+
+        // 1. Save Signature Image
+        $signature = $validated['signature_data'];
+        $imageName = 'sig_' . time() . '_' . uniqid() . '.png';
+        
+        // Remove prefix
+        $imageData = preg_replace('#^data:image/\w+;base64,#i', '', $signature);
+        Storage::disk('public')->put('signatures/' . $imageName, base64_decode($imageData));
+
+        // 2. Create SignedDocument
+        SignedDocument::create([
+            'user_id' => $patient->id,
+            'document_template_id' => $validated['document_template_id'],
+            'signature_image_path' => 'signatures/' . $imageName,
+            'signed_at' => now(),
+            'staff_id' => Auth::guard('staff')->id(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'signed_content' => DocumentTemplate::find($validated['document_template_id'])->content,
+        ]);
+
+        return redirect()->route('staff.patients.show', $patient->id)
+                         ->with('success', '同意書を保存しました');
     }
 
     private function saveSignature($user, $contract, $base64Image, $title)
