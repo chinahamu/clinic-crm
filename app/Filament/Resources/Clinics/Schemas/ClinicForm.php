@@ -12,9 +12,11 @@ class ClinicForm
     {
         return $schema
             ->components([
-                TextInput::make('code'),
+                TextInput::make('code')
+                    ->extraInputAttributes(['class' => 'py-3']),
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->extraInputAttributes(['class' => 'py-3']),
                 TextInput::make('address'),
                 TextInput::make('phone')
                     ->tel(),

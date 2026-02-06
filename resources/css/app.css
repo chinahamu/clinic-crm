@@ -23,3 +23,19 @@
     --color-primary-900: #134e4a;
     --color-primary-950: #042f2e;
 }
+@layer base {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea {
+        @apply py-3 px-4 text-base leading-6 border-gray-300 rounded-xl shadow-sm transition-all duration-200;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        @apply ring-2 ring-primary-500 border-primary-500 outline-none shadow-md;
+    }
+}

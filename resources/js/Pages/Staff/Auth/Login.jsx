@@ -36,7 +36,7 @@ export default function Login() {
                             type="email"
                             name="email"
                             value={data.email}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition duration-150 ease-in-out"
+                            className="mt-1 block w-full rounded-xl border-gray-300 py-3 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition duration-150 ease-in-out"
                             autoComplete="username"
                             onChange={(e) => setData('email', e.target.value)}
                             required
