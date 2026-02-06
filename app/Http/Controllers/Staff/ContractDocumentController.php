@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\DocumentTemplate;
 use App\Models\SignedDocument;
 use App\Models\User;
+use App\Traits\GeneratesDocumentPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,8 @@ use Inertia\Inertia;
 
 class ContractDocumentController extends Controller
 {
+    use GeneratesDocumentPdf;
+
     public function create(User $patient)
     {
         return Inertia::render('Staff/Contracts/Create', [
@@ -123,16 +126,41 @@ class ContractDocumentController extends Controller
         $imageData = preg_replace('#^data:image/\w+;base64,#i', '', $signature);
         Storage::disk('public')->put('signatures/' . $imageName, base64_decode($imageData));
 
-        // 2. Create SignedDocument
+        // 2. Generate PDF
+        $documentId = (string) \Illuminate\Support\Str::uuid();
+        $signedAt = now();
+        $template = DocumentTemplate::find($validated['document_template_id']);
+        
+        $variables = [
+            'patient_name' => $patient->name,
+            'patient_id' => $patient->id,
+            'current_date' => $signedAt->format('Y年m月d日'),
+            'clinic_name' => config('app.name', 'Clinic CRM'),
+            'staff_name' => Auth::guard('staff')->user()->name ?? '担当者',
+        ];
+
+        $replacedContent = $this->replaceVariables($template->content, $variables);
+
+        $pdfData = $this->generateAndSavePdf(
+            $replacedContent,
+            $imageData,
+            $documentId,
+            $signedAt,
+            [] // Use empty array since already replaced
+        );
+        // 3. Create SignedDocument
         SignedDocument::create([
             'user_id' => $patient->id,
             'document_template_id' => $validated['document_template_id'],
             'signature_image_path' => 'signatures/' . $imageName,
-            'signed_at' => now(),
+            'file_path' => $pdfData['file_path'],
+            'file_hash' => $pdfData['file_hash'],
+            'signed_at' => $signedAt,
             'staff_id' => Auth::guard('staff')->id(),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
-            'signed_content' => DocumentTemplate::find($validated['document_template_id'])->content,
+            'signed_content' => $replacedContent,
+            'signed_data' => json_encode(['document_uuid' => $documentId]),
         ]);
 
         return redirect()->route('staff.patients.show', $patient->id)

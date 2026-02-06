@@ -9,10 +9,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\GeneratesDocumentPdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
+    use GeneratesDocumentPdf;
+
     private function getAvailableVariables()
     {
         return [
@@ -149,20 +153,16 @@ class DocumentController extends Controller
         // PDF生成
         $documentId = (string) \Illuminate\Support\Str::uuid();
         $signedAt = now();
-        $pdfContent = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($this->generatePdfHtml(
+        $pdfData = $this->generateAndSavePdf(
             $validated['signed_content'],
             $signatureBase64,
             $documentId,
-            $signedAt
-        ))->setPaper('a4')->output();
+            $signedAt,
+            [] // Content is already replaced in frontend for contracts
+        );
 
-        // PDF保存 (private disk)
-        // disk('local') is usually storage/app. We'll store in private/contracts.
-        $pdfFilename = 'private/contracts/' . $documentId . '.pdf';
-        Storage::put($pdfFilename, $pdfContent);
-
-        // ハッシュ計算
-        $fileHash = hash('sha256', $pdfContent);
+        $pdfFilename = $pdfData['file_path'];
+        $fileHash = $pdfData['file_hash'];
 
         SignedDocument::create([
             'user_id' => $user->id,
@@ -197,78 +197,19 @@ class DocumentController extends Controller
     {
         // Check authorization if needed (e.g., only staff or the patient)
         
-        if (!Storage::exists($signedDocument->file_path)) {
+        if (!$signedDocument->file_path || !Storage::exists($signedDocument->file_path)) {
             abort(404, 'PDF file not found.');
         }
 
         return Storage::download($signedDocument->file_path, 'signed_document_' . $signedDocument->id . '.pdf');
     }
 
-    private function generatePdfHtml($content, $signatureBase64, $documentId, $signedAt)
+    public function showSigned(SignedDocument $signedDocument)
     {
-        // 日本語フォント対応のためのCSSなどはここで定義
-        // NOTE: 実際の環境に合わせてフォントパスなどを調整する必要がありますが、
-        // ここでは標準的な日本語対応CSSをインラインで埋め込みます。
-        // ipaexg.ttfなどがstorage/fontsにある前提、あるいはCDN/Google FontsはDomPDFでは難しいので
-        // 標準の firefly, ume, ipa などがサーバーにあればそれを使う。
-        // ここでは汎用的な sans-serif を指定しつつ、必要なら @font-face を追加。
+        $signedDocument->load(['documentTemplate', 'user', 'staff']);
         
-        $signatureImgTag = '<img src="data:image/png;base64,' . $signatureBase64 . '" style="max-width: 300px; display: block; margin-top: 20px;" />';
-        
-        return <<<HTML
-        <!DOCTYPE html>
-        <html lang="ja">
-        <head>
-            <meta charset="UTF-8">
-            <style>
-                body {
-                    font-family: 'ipesxg', sans-serif; /* Setup correct font family for Japanese */
-                    font-size: 12pt;
-                    line-height: 1.6;
-                    color: #333;
-                }
-                @page {
-                    margin: 0cm 0cm;
-                }
-                .container {
-                    padding: 2cm;
-                }
-                .footer {
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 1.5cm;
-                    background-color: #f3f4f6;
-                    color: #6b7280;
-                    text-align: center;
-                    line-height: 1.5cm;
-                    font-size: 9pt;
-                    border-top: 1px solid #e5e7eb;
-                }
-                .signature-section {
-                    margin-top: 50px;
-                    border-top: 1px solid #ccc;
-                    padding-top: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="footer">
-                Document ID: {$documentId} / Signed at: {$signedAt->format('Y-m-d H:i:s')}
-            </div>
-            
-            <div class="container">
-                {$content}
-                
-                <div class="signature-section">
-                    <p>署名:</p>
-                    {$signatureImgTag}
-                    <p>署名日: {$signedAt->format('Y年m月d日')}</p>
-                </div>
-            </div>
-        </body>
-        </html>
-HTML;
+        return Inertia::render('Staff/Documents/ShowSigned', [
+            'signedDocument' => $signedDocument,
+        ]);
     }
 }

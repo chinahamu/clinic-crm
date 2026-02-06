@@ -107,6 +107,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::get('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'sign'])->name('documents.sign');
         Route::post('patients/{user}/sign', [\App\Http\Controllers\Staff\DocumentController::class, 'storeSignature'])->name('documents.storeSignature');
         Route::get('documents/{signedDocument}/download-pdf', [\App\Http\Controllers\Staff\DocumentController::class, 'downloadPdf'])->name('documents.downloadPdf');
+        Route::get('signed-documents/{signedDocument}', [\App\Http\Controllers\Staff\DocumentController::class, 'showSigned'])->name('documents.showSigned');
 
         Route::post('contracts/{contract}/mark-overview-delivered', [\App\Http\Controllers\Staff\ContractController::class, 'markAsOverviewDelivered'])->name('contracts.markOverviewDelivered');
 

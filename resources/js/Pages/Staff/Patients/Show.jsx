@@ -219,7 +219,9 @@ export default function Show({ patient, menus }) {
                                             <li key={doc.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
                                                 <div className="flex items-center justify-between">
                                                     <div className="text-sm font-medium text-indigo-600 truncate">
-                                                        {doc.document_template ? doc.document_template.title : '不明な書類'}
+                                                        <Link href={route('staff.documents.showSigned', doc.id)} className="hover:underline">
+                                                            {doc.document_template ? doc.document_template.title : '不明な書類'}
+                                                        </Link>
                                                     </div>
                                                     <div className="ml-2 flex-shrink-0 flex">
                                                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
