@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
      * Phase 1: マスターデータ（依存なし）
      * Phase 2: ユーザー・スタッフ
      * Phase 3: 在庫
-     * Phase 4: オペレーション（今回実装）
-     * Phase 5: カルテ            ← 後続フェーズで追加予定
-     * Phase 6: マーケティング    ← 後続フェーズで追加予定
+     * Phase 4: オペレーション
+     * Phase 5: カルテ・問診・同意書（今回実装）
+     * Phase 6: マーケティング（今回実装）
      *
      * @see docs/seeder-plan.md
      */
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             // ==========================================================
             // Phase 4: オペレーション（スタッフ・患者・メニューに依存）
             // ==========================================================
-            ShiftSeeder::class,               // 過去2ヶ月+未来1ヶ月分のシフト
+            ShiftSeeder::class,               // 過去 2ヶ月 + 未来 1ヶ月分のシフト
             ShiftRequestSeeder::class,        // 翌月分シフト希望
             StaffConstraintSeeder::class,     // スタッフ勤務制約
             ContractSeeder::class,            // 患者契約（回数券）
@@ -62,18 +62,22 @@ class DatabaseSeeder extends Seeder
             ReservationItemSeeder::class,     // completed 予約 → 使用薬剤/消耗品記録
 
             // ==========================================================
-            // Phase 5 & 6: カルテ・マーケティング（予約・患者に依存）
+            // Phase 5: カルテ・問診・同意書（予約・患者・テンプレートに依存）
             // ==========================================================
-            // MedicalInterviewResponseSeeder::class, // TODO: Phase 5 実装予定
-            // NarrativeSeeder::class,                // TODO: Phase 5 実装予定
-            // SignedDocumentSeeder::class,           // TODO: Phase 5 実装予定
-            // StepMailLogSeeder::class,              // TODO: Phase 6 実装予定
+            MedicalInterviewResponseSeeder::class, // 初回予約毎に問診票回答を付与
+            NarrativeSeeder::class,                // 施術記録 / 患者属性 / ライフイベント
+            SignedDocumentSeeder::class,           // 初回カウンセリング日の同意書署名
+
+            // ==========================================================
+            // Phase 6: マーケティング（予約・患者・シナリオに依存）
+            // ==========================================================
+            StepMailLogSeeder::class,              // 3 シナリオのステップメールログ
 
             // ==========================================================
             // CustomerSegmentSeeder: User/Reservation/Contract の
             // 追加デモデータを独自生成するため最後に実行
             // ==========================================================
-            CustomerSegmentSeeder::class,     // セグメント定義 & デモ患者生成
+            CustomerSegmentSeeder::class,          // セグメント定義 & デモ患者生成
         ]);
     }
 }
