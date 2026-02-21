@@ -8,48 +8,91 @@ use Illuminate\Database\Eloquent\Builder;
 class PatientFilterService
 {
     /**
-     * Apply filters to the User query.
+     * フィルター条件を適用した User クエリビルダーを返す。
      *
-     * @param Builder $query
-     * @param array $filters
-     * @return Builder
+     * 利用可能な $filters キー:
+     *   clinic_id         int     クリニック絞り込み
+     *   min_total_sales   int     最小LTV（円）— patient_values.ltv を参照（Phase1改善）
+     *   max_total_sales   int     最大LTV（円）
+     *   status_label      string  new / active / dormant （Phase1新規）
+     *   visit_count_min   int     来院回数下限（Phase1新規）
+     *   visit_count_max   int     来院回数上限（Phase1新規）
+     *   dormant_since     string  Y-m-d: この日以降未来院の患者（Phase1新規）
+     *   gender            string  性別絞り込み
+     *   min_age / max_age int     年齢絞り込み
+     *
+     * @param array<string, mixed> $filters
      */
-    public function apply(Builder $query, array $filters): Builder
+    public function apply(array $filters = []): Builder
     {
-        // 1. Last Visit Before (Dormant for X time)
-        // User has NOT visited since this date.
-        // Or if strictly "Last visit date is before X", meaning they HAVE visited, but long ago.
-        if (!empty($filters['last_visit_before'])) {
-            $query->where('last_visit_at', '<', $filters['last_visit_before']);
+        $query = User::query();
+
+        // --- クリニック ---
+        if (!empty($filters['clinic_id'])) {
+            $query->where('clinic_id', $filters['clinic_id']);
         }
 
-        // 2. Last Visit After (Active recently)
-        if (!empty($filters['last_visit_after'])) {
-            $query->where('last_visit_at', '>=', $filters['last_visit_after']);
+        // --- Phase 1: patient_values JOIN に切り替え（サブクエリ排除） ---
+
+        // LTV 最小値
+        if (isset($filters['min_total_sales'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('ltv', '>=', (int) $filters['min_total_sales']);
+            });
         }
 
-        // 3. Visit Count (Min)
-        // Count ONLY 'visited' status reservations
-        if (!empty($filters['min_visit_count'])) {
-            $query->whereHas('reservations', function ($q) {
-                $q->where('status', 'visited');
-            }, '>=', $filters['min_visit_count']);
+        // LTV 最大値
+        if (isset($filters['max_total_sales'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('ltv', '<=', (int) $filters['max_total_sales']);
+            });
         }
 
-        // 4. Total Sales (Min)
-        // Using Contract total_price as main source
-        if (!empty($filters['min_total_sales'])) {
-            $query->whereRaw('(SELECT COALESCE(SUM(total_price), 0) FROM contracts WHERE contracts.user_id = users.id) >= ?', [$filters['min_total_sales']]);
+        // ステータスラベル（new / active / dormant）
+        if (!empty($filters['status_label'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('status_label', $filters['status_label']);
+            });
         }
 
-        // 5. Birth Month
-        if (!empty($filters['birth_month'])) {
-            $query->whereMonth('birthday', $filters['birth_month']);
+        // 来院回数 下限
+        if (isset($filters['visit_count_min'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('visit_count', '>=', (int) $filters['visit_count_min']);
+            });
         }
 
-        // 6. Registered After
-        if (!empty($filters['registered_after'])) {
-            $query->where('created_at', '>=', $filters['registered_after']);
+        // 来院回数 上限
+        if (isset($filters['visit_count_max'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('visit_count', '<=', (int) $filters['visit_count_max']);
+            });
+        }
+
+        // 休眠開始日以降未来院
+        if (!empty($filters['dormant_since'])) {
+            $query->whereHas('patientValue', function (Builder $q) use ($filters) {
+                $q->where('last_visit_at', '<=', $filters['dormant_since']);
+            });
+        }
+
+        // --- デモグラフィックフィルター ---
+        if (!empty($filters['gender'])) {
+            $query->where('gender', $filters['gender']);
+        }
+
+        if (isset($filters['min_age'])) {
+            $query->whereDate(
+                'birthday', '<=',
+                now()->subYears((int) $filters['min_age'])->toDateString()
+            );
+        }
+
+        if (isset($filters['max_age'])) {
+            $query->whereDate(
+                'birthday', '>=',
+                now()->subYears((int) $filters['max_age'] + 1)->addDay()->toDateString()
+            );
         }
 
         return $query;

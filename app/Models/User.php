@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,39 +56,54 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'birthday' => 'date',
-            'caution_flag' => 'boolean',
-            'last_visit_at' => 'datetime',
+            'password'          => 'hashed',
+            'birthday'          => 'date',
+            'caution_flag'      => 'boolean',
+            'last_visit_at'     => 'datetime',
         ];
     }
 
-    public function reservations()
+    // -------------------------------------------------------
+    // Relationships
+    // -------------------------------------------------------
+
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }
 
-    public function contracts()
+    public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);
     }
 
-    public function signedDocuments()
+    public function signedDocuments(): HasMany
     {
         return $this->hasMany(SignedDocument::class);
     }
 
-    public function patientValues()
+    /**
+     * Phase 1: LTV集計レコード（user_id 比対 1対1）
+     * 既存の patientValues()（hasMany）は残し、
+     * 集計参照はこちらを使う。
+     */
+    public function patientValue(): HasOne
+    {
+        return $this->hasOne(PatientValue::class)->latestOfMany('updated_at');
+    }
+
+    /** @deprecated Phase1以前の hasMany 属性 — patientValue()へ移行は阪せない場所で使用のこと */
+    public function patientValues(): HasMany
     {
         return $this->hasMany(PatientValue::class);
     }
 
-    public function lifeEvents()
+    public function lifeEvents(): HasMany
     {
         return $this->hasMany(LifeEvent::class);
     }
 
-    public function narrativeLogs()
+    public function narrativeLogs(): HasMany
     {
         return $this->hasMany(NarrativeLog::class);
     }
