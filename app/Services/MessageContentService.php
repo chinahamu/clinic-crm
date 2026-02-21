@@ -7,54 +7,38 @@ use App\Models\User;
 class MessageContentService
 {
     /**
-     * Terminology:
-     * - LINE messages are plain text (or flex messages, but we use text for now).
-     * - Constraints: 5000 chars max.
+     * MailScenario.body のテンプレート変数を展開する。
+     *
+     * 使用可能な変数:
+     *   {{\u60a3\u8005\u540d}}        患者の氏名 (name)
+     *   {{\u656c\u79f0}}          様 (固定文字列)
+     *   {{\u6765\u9662\u65e5}}        最終来院日 (Y年m月d日)
+     *   {{\u30e1\u30cb\u30e5\u30fc\u540d}}      面当メニュー名 ($context['menu_name'])
+     *   {{\u30af\u30ea\u30cb\u30c3\u30af\u540d}}    クリニック名 ($context['clinic_name'])
+     *
+     * @param string               $template MailScenario.body の内容
+     * @param User                 $user     対象患者
+     * @param array<string, mixed> $context  予約コンテキスト（menu_name, clinic_name など）
      */
-
-    public function getThankYouText(User $user): string
+    public function render(string $template, User $user, array $context = []): string
     {
-        $name = $user->name;
-        
-        return <<<EOT
-{$name} 様
+        $lastVisit = $user->reservations()
+            ->where('status', 'visited')
+            ->latest('start_time')
+            ->first();
 
-昨日はご来院ありがとうございました。
-施術後の経過はいかがでしょうか？
+        $replacements = [
+            '{{患者名}}'    => $user->name ?? 'お客様',
+            '{{敬称}}'      => '様',
+            '{{来院日}}'    => $lastVisit?->start_time?->format('Y年m月d日') ?? '',
+            '{{メニュー名}}'  => $context['menu_name']    ?? '',
+            '{{クリニック名}}' => $context['clinic_name'] ?? '',
+        ];
 
-もし気になる点やご不明な点がございましたら、
-お気軽に当院までご連絡ください。
-
-またのご来院を心よりお待ちしております。
-
---------------------------
-クリニックCRM
-Tel: 03-1234-5678
---------------------------
-EOT;
-    }
-
-    public function getSixMonthReminderText(User $user): string
-    {
-        $name = $user->name;
-
-        return <<<EOT
-{$name} 様
-
-いつも当院をご利用いただきありがとうございます。
-前回の施術から半年が経過いたしました。
-
-その後、お変わりありませんでしょうか？
-定期的な検診やメンテナンスをお勧めしております。
-
-ご予約はWebまたはお電話にて承っております。
-スタッフ一同、{$name}様のご来院をお待ちしております。
-
---------------------------
-クリニックCRM
-Tel: 03-1234-5678
-Web予約: https://clinic-crm.example.com/login
---------------------------
-EOT;
+        return str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            $template
+        );
     }
 }
