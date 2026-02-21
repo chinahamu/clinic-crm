@@ -82,6 +82,12 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\Staff\DashboardController::class, 'index'])->name('dashboard');
         Route::get('sales', [\App\Http\Controllers\Staff\SalesController::class, 'index'])->name('sales.index');
 
+        // ---------------------------------------------------------------
+        // Phase 4: KPI ダッシュボード
+        // GET  /staff/kpi-dashboard
+        // ---------------------------------------------------------------
+        Route::get('kpi-dashboard', [\App\Http\Controllers\Staff\KpiDashboardController::class, 'index'])->name('kpi-dashboard');
+
         Route::resource('patients', \App\Http\Controllers\Staff\PatientController::class);
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);
         Route::get('patients/{patient}/contracts/create-new', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'create'])->name('patients.contracts.create_new');
@@ -147,13 +153,19 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::delete('patients/{patient}/life-events/{event}', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'destroyLifeEvent'])->name('patients.life-events.destroy');
         Route::post('patients/{patient}/narrative-logs', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'storeNarrative'])->name('patients.narrative-logs.store');
 
-        // ---------------------------------------------------------------
         // Phase 2: LINE バインドトークン発行（受付スタッフ用）
-        // POST /staff/patients/{patient}/issue-line-token
-        // ---------------------------------------------------------------
         Route::post(
             'patients/{patient}/issue-line-token',
             [\App\Http\Controllers\Staff\LineBindTokenController::class, 'issue']
         )->name('patients.issue-line-token');
+
+        // ---------------------------------------------------------------
+        // Phase 4: スタッフ手動シナリオトリガー
+        // POST /staff/patients/{patient}/trigger-scenario
+        // ---------------------------------------------------------------
+        Route::post(
+            'patients/{patient}/trigger-scenario',
+            [\App\Http\Controllers\Staff\PatientScenarioController::class, 'trigger']
+        )->name('patients.trigger-scenario');
     });
 });
