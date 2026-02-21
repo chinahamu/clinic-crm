@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Reservation;
+use App\Observers\ReservationObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,9 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Event::listen(
-            \SocialiteProviders\Manager\SocialiteWasCalled::class,
-            \SocialiteProviders\Line\LineExtendSocialite::class
-        );
+        // Phase 1: visited 変更時に PatientValue を自動再計算
+        Reservation::observe(ReservationObserver::class);
     }
 }

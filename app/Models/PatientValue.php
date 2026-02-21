@@ -15,6 +15,17 @@ class PatientValue extends Model
         'attribute_name',
         'score',
         'notes',
+        // Phase 1: LTV集計属性
+        'ltv',
+        'visit_count',
+        'last_visit_at',
+        'status_label',
+    ];
+
+    protected $casts = [
+        'last_visit_at' => 'datetime',
+        'ltv'           => 'integer',
+        'visit_count'   => 'integer',
     ];
 
     public function user()
