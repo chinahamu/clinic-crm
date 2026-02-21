@@ -94,6 +94,7 @@ export default function Welcome({ auth }) {
                                 <a href="#features" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">機能</a>
                                 <a href="#solutions" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">ソリューション</a>
                                 <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">料金</a>
+                                <a href="#contact" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">お問い合わせ</a>
                             </div>
                         </div>
                     </div>
@@ -179,10 +180,11 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
-                {/* Feature 1: Smart Reservation */}
+                {/* Feature Sections */}
                 <div id="features">
+                    {/* Feature 1: Smart Reservation */}
                     <FeatureSection
-                        title="複雑な予約も、AIが瞬時に最適化"
+                        title="複雑な予約も、リアルタイムで自動最適化"
                         description="スタッフのシフト、部屋の空き状況、機器の利用可否。これら全ての条件をリアルタイムで照合し、最適な予約枠を自動で提案します。ダブルブッキングの心配はもうありません。"
                         icon={
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,7 +199,7 @@ export default function Welcome({ auth }) {
                     <FeatureSection
                         reverse
                         title="患者様に、最高の利便性を"
-                        description="専用のマイページから、24時間いつでも予約・変更が可能。予約履歴の確認や、過去の施術内容の閲覧もスムーズに。電話対応の負担を大幅に削減します。"
+                        description="専用のマイページから、24時間いつでも予約・閲覧が可能。予約履歴の確認や、過去の施術内容の閲覧もスムーズに。LINEログインにも対応し、電話対応の負担を大幅に削減します。"
                         icon={
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -210,7 +212,7 @@ export default function Welcome({ auth }) {
                     {/* Feature 3: Staff Management */}
                     <FeatureSection
                         title="チームの力を最大化する管理機能"
-                        description="スタッフごとのスキルや役割に応じたシフト管理が可能。パフォーマンス分析機能により、クリニック全体の生産性向上をサポートします。"
+                        description="スタッフごとのスキルや役割に応じたシフト管理が可能。希望シフト収集から自動生成まで対応し、来院数・売上・新規患者数などのKPIをリアルタイムで可視化します。"
                         icon={
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -218,6 +220,20 @@ export default function Welcome({ auth }) {
                         }
                         imageLabel="スタッフシフト管理画面"
                         imageSrc="/img/staffschedule.png"
+                    />
+
+                    {/* Feature 4: Narrative CRM */}
+                    <FeatureSection
+                        reverse
+                        title="患者を「知る」ナラティブCRM"
+                        description="価値観・ライフイベント・施術記録を蓄積する独自の「ナラティブプロフィール」機能。患者一人ひとりの背景を深く理解し、より質の高いコミュニケーションとリピーター育成を実現します。"
+                        icon={
+                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        }
+                        imageLabel="ナラティブプロフィール画面"
+                        imageSrc={null}
                     />
                 </div>
 
@@ -235,10 +251,31 @@ export default function Welcome({ auth }) {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <BentoItem
+                                title="LINE連携"
+                                description="LINEアカウントでのログインに対応。LINE Messaging APIを通じたメッセージ・シナリオの自動配信で、患者とのコミュニケーションをLINEで完結できます。"
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>}
+                                className="md:col-span-2 bg-green-50 border-green-100"
+                            />
+                            <BentoItem
+                                title="Web問診"
+                                description="予約と連動したオンライン問診フォーム。来院前に事前入力してもらうことで、受付の紙作業をゼロにします。"
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>}
+                            />
+                            <BentoItem
                                 title="電子契約・同意書"
-                                description="タブレットでのサインに対応。紙の保管場所はもう不要です。"
+                                description="タブレットでのサインに対応。署名済みドキュメントのPDFダウンロードも可能で、紙の保管場所はもう不要です。"
                                 icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
+                            />
+                            <BentoItem
+                                title="ステップメール・マーケティング"
+                                description="患者をセグメント化して条件に合わせたフォローアップメールを自動配信。CSVエクスポートにも対応しています。"
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>}
                                 className="md:col-span-2 bg-indigo-50 border-indigo-100"
+                            />
+                            <BentoItem
+                                title="キオスクチェックイン"
+                                description="受付端末から患者様がセルフチェックイン。フロント業務を効率化します。"
+                                icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>}
                             />
                             <BentoItem
                                 title="リソース管理"
@@ -275,7 +312,6 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
-
                 {/* Pricing Section */}
                 <div id="pricing" className="py-24 bg-slate-50 border-t border-slate-200">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -305,7 +341,9 @@ export default function Welcome({ auth }) {
                                         "機能追加・カスタマイズ依頼",
                                         "スタッフ・シフト管理",
                                         "患者マイページ機能",
-                                        "売上・在庫管理"
+                                        "売上・在庫管理",
+                                        "LINE連携・Web問診",
+                                        "電子契約・同意書管理",
                                     ].map((item, i) => (
                                         <li key={i} className="flex items-center text-slate-600">
                                             <svg className="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -315,9 +353,9 @@ export default function Welcome({ auth }) {
                                         </li>
                                     ))}
                                 </ul>
-                                <Link href="#" className="block w-full py-4 px-6 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">
+                                <a href="#contact" className="block w-full py-4 px-6 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20 text-center">
                                     今すぐ申し込む
-                                </Link>
+                                </a>
                                 <p className="mt-4 text-xs text-slate-400">
                                     ※初期費用は無料です。いつでも解約可能です。
                                 </p>
@@ -341,9 +379,9 @@ export default function Welcome({ auth }) {
                             まずは無料デモで、その使いやすさを体験してください。
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Link href="#" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-indigo-900 bg-white hover:bg-indigo-50 shadow-xl transition-all hover:scale-105">
+                            <a href="#contact" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-indigo-900 bg-white hover:bg-indigo-50 shadow-xl transition-all hover:scale-105">
                                 無料デモを申し込む
-                            </Link>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -369,7 +407,6 @@ export default function Welcome({ auth }) {
                 {/* Inquiry Form */}
                 <InquiryForm />
 
-
                 <footer className="bg-slate-50 pt-16 pb-8 border-t border-slate-200">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -386,9 +423,8 @@ export default function Welcome({ auth }) {
                             <div>
                                 <h4 className="font-bold text-slate-900 mb-4">製品</h4>
                                 <ul className="space-y-2 text-sm text-slate-600">
-                                    <li><a href="#" className="hover:text-indigo-600">機能一覧</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">料金プラン</a></li>
-                                    <li><a href="#" className="hover:text-indigo-600">導入事例</a></li>
+                                    <li><a href="#features" className="hover:text-indigo-600">機能一覧</a></li>
+                                    <li><a href="#pricing" className="hover:text-indigo-600">料金プラン</a></li>
                                 </ul>
                             </div>
                             <div>
