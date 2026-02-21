@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
      *
      * Phase 1: マスターデータ（依存なし）
      * Phase 2: ユーザー・スタッフ
-     * Phase 3: 在庫              ← 後続フェーズで追加予定
+     * Phase 3: 在庫              ← 今回実装
      * Phase 4: オペレーション
      * Phase 5: カルテ            ← 後続フェーズで追加予定
      * Phase 6: マーケティング    ← 後続フェーズで追加予定
@@ -32,12 +32,12 @@ class DatabaseSeeder extends Seeder
             ClinicRoleSeeder::class,          // クリニック内ロール定義
             MasterDataSeeder::class,          // 部屋・機器マスター
             MenuSeeder::class,                // 施術メニュー
-            ProductSeeder::class,             // [Phase 1 新規] 物販商品 & menu_product 紐付け
-            MedicineAndConsumableSeeder::class, // 薬剤・消耗品マスター
+            ProductSeeder::class,             // 物販商品 & menu_product 紐付け
+            MedicineAndConsumableSeeder::class, // 薬剤・消耗品マスター（stocksも同時作成）
             MenuItemSeeder::class,            // メニュー×薬剤/消耗品 紐付け
             DocumentTemplateSeeder::class,    // 同意書テンプレート
-            MedicalInterviewTemplateSeeder::class, // [Phase 1 追加登録] 問診テンプレート
-            DefaultScenariosSeeder::class,    // [Phase 1 追加登録] ステップメールシナリオ
+            MedicalInterviewTemplateSeeder::class, // 問診テンプレート
+            DefaultScenariosSeeder::class,    // ステップメールシナリオ
 
             // ==========================================================
             // Phase 2: ユーザー・スタッフ（Phase 1 のロール定義に依存）
@@ -46,9 +46,9 @@ class DatabaseSeeder extends Seeder
             PatientSeeder::class,             // 患者アカウント（50 名 + 固定テスト患者）
 
             // ==========================================================
-            // Phase 3: 在庫（薬剤・消耗品に依存）
+            // Phase 3: 在庫（MedicineAndConsumableSeeder の stocks 生成後に実行）
             // ==========================================================
-            // StockSeeder::class,            // TODO: Phase 2 実装予定
+            StockSeeder::class,               // clinic_id 付与 + アラートシナリオ設定
 
             // ==========================================================
             // Phase 4: オペレーション（スタッフ・患者・メニューに依存）
@@ -56,24 +56,24 @@ class DatabaseSeeder extends Seeder
             ShiftSeeder::class,               // スタッフシフト
             ContractSeeder::class,            // 患者契約
             ReservationSeeder::class,         // 予約
-            // ShiftRequestSeeder::class,     // TODO: Phase 2 実装予定
-            // StaffConstraintSeeder::class,  // TODO: Phase 2 実装予定
-            // ContractUsageSeeder::class,    // TODO: Phase 2 実装予定
-            // ReservationItemSeeder::class,  // TODO: Phase 2 実装予定
+            // ShiftRequestSeeder::class,     // TODO: Phase 3 実装予定
+            // StaffConstraintSeeder::class,  // TODO: Phase 3 実装予定
+            // ContractUsageSeeder::class,    // TODO: Phase 3 実装予定
+            // ReservationItemSeeder::class,  // TODO: Phase 3 実装予定
 
             // ==========================================================
             // Phase 5 & 6: カルテ・マーケティング（予約・患者に依存）
             // ==========================================================
-            // MedicalInterviewResponseSeeder::class, // TODO: Phase 3 実装予定
-            // NarrativeSeeder::class,                // TODO: Phase 3 実装予定
-            // SignedDocumentSeeder::class,           // TODO: Phase 3 実装予定
-            // StepMailLogSeeder::class,              // TODO: Phase 4 実装予定
+            // MedicalInterviewResponseSeeder::class, // TODO: Phase 4 実装予定
+            // NarrativeSeeder::class,                // TODO: Phase 4 実装予定
+            // SignedDocumentSeeder::class,           // TODO: Phase 4 実装予定
+            // StepMailLogSeeder::class,              // TODO: Phase 5 実装予定
 
             // ==========================================================
-            // CustomerSegmentSeeder は User・Reservation・Contract の
+            // CustomerSegmentSeeder: User/Reservation/Contract の
             // 追加デモデータを独自生成するため最後に実行
             // ==========================================================
-            CustomerSegmentSeeder::class,     // [Phase 1 追加登録] セグメント定義 & デモ患者
+            CustomerSegmentSeeder::class,     // セグメント定義 & デモ患者生成
         ]);
     }
 }
