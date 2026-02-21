@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MailScenario extends Model
 {
@@ -19,16 +21,32 @@ class MailScenario extends Model
         'body',
     ];
 
-    /**
-     * Scope a query to only include active scenarios.
-     */
+    protected $casts = [
+        'is_active'   => 'boolean',
+        'days_offset' => 'integer',
+    ];
+
+    // -------------------------------------------------------
+    // Scopes
+    // -------------------------------------------------------
+
+    /** 有効なシナリオのみを返す */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    public function clinic()
+    // -------------------------------------------------------
+    // Relationships
+    // -------------------------------------------------------
+
+    public function clinic(): BelongsTo
     {
         return $this->belongsTo(Clinic::class);
+    }
+
+    public function stepMailLogs(): HasMany
+    {
+        return $this->hasMany(StepMailLog::class);
     }
 }
