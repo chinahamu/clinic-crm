@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
      *
      * Phase 1: マスターデータ（依存なし）
      * Phase 2: ユーザー・スタッフ
-     * Phase 3: 在庫              ← 今回実装
-     * Phase 4: オペレーション
+     * Phase 3: 在庫
+     * Phase 4: オペレーション（今回実装）
      * Phase 5: カルテ            ← 後続フェーズで追加予定
      * Phase 6: マーケティング    ← 後続フェーズで追加予定
      *
@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
             MasterDataSeeder::class,          // 部屋・機器マスター
             MenuSeeder::class,                // 施術メニュー
             ProductSeeder::class,             // 物販商品 & menu_product 紐付け
-            MedicineAndConsumableSeeder::class, // 薬剤・消耗品マスター（stocksも同時作成）
-            MenuItemSeeder::class,            // メニュー×薬剤/消耗品 紐付け
+            MedicineAndConsumableSeeder::class, // 薬剤・消耗品マスター（stocks も同時作成）
+            MenuItemSeeder::class,            // メニュー × 薬剤/消耗品 紐付け
             DocumentTemplateSeeder::class,    // 同意書テンプレート
             MedicalInterviewTemplateSeeder::class, // 問診テンプレート
             DefaultScenariosSeeder::class,    // ステップメールシナリオ
@@ -53,21 +53,21 @@ class DatabaseSeeder extends Seeder
             // ==========================================================
             // Phase 4: オペレーション（スタッフ・患者・メニューに依存）
             // ==========================================================
-            ShiftSeeder::class,               // スタッフシフト
-            ContractSeeder::class,            // 患者契約
-            ReservationSeeder::class,         // 予約
-            // ShiftRequestSeeder::class,     // TODO: Phase 3 実装予定
-            // StaffConstraintSeeder::class,  // TODO: Phase 3 実装予定
-            // ContractUsageSeeder::class,    // TODO: Phase 3 実装予定
-            // ReservationItemSeeder::class,  // TODO: Phase 3 実装予定
+            ShiftSeeder::class,               // 過去2ヶ月+未来1ヶ月分のシフト
+            ShiftRequestSeeder::class,        // 翌月分シフト希望
+            StaffConstraintSeeder::class,     // スタッフ勤務制約
+            ContractSeeder::class,            // 患者契約（回数券）
+            ReservationSeeder::class,         // 予約（confirmed 60%/completed 30%/cancelled 5%/no_show 5%）
+            ContractUsageSeeder::class,       // completed 予約 → contract_usages 紐付け
+            ReservationItemSeeder::class,     // completed 予約 → 使用薬剤/消耗品記録
 
             // ==========================================================
             // Phase 5 & 6: カルテ・マーケティング（予約・患者に依存）
             // ==========================================================
-            // MedicalInterviewResponseSeeder::class, // TODO: Phase 4 実装予定
-            // NarrativeSeeder::class,                // TODO: Phase 4 実装予定
-            // SignedDocumentSeeder::class,           // TODO: Phase 4 実装予定
-            // StepMailLogSeeder::class,              // TODO: Phase 5 実装予定
+            // MedicalInterviewResponseSeeder::class, // TODO: Phase 5 実装予定
+            // NarrativeSeeder::class,                // TODO: Phase 5 実装予定
+            // SignedDocumentSeeder::class,           // TODO: Phase 5 実装予定
+            // StepMailLogSeeder::class,              // TODO: Phase 6 実装予定
 
             // ==========================================================
             // CustomerSegmentSeeder: User/Reservation/Contract の
