@@ -34,7 +34,13 @@ const FeatureDetailSection = ({ title, description, imageSrc, reverse = false, d
                 {/* Image Content */}
                 <div className="flex-1 w-full sticky top-24">
                     <div className="relative bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 p-2 border border-slate-100">
-                        <img src={imageSrc} alt={title} className="w-full h-auto rounded-xl" />
+                        {imageSrc ? (
+                            <img src={imageSrc} alt={title} className="w-full h-auto rounded-xl" />
+                        ) : (
+                            <div className="w-full h-64 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-sm">
+                                [スクリーンショット準備中]
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -80,12 +86,12 @@ export default function FeatureDetail() {
                 {/* Features */}
                 <div className="divide-y divide-slate-100">
                     <FeatureDetailSection
-                        title="AI搭載スマート予約管理"
-                        description="従来の予約システムでは難しかった、複雑な条件（スタッフ、部屋、機器）を考慮した予約最適化をAIが自動で行います。"
+                        title="スマート予約管理"
+                        description="スタッフ・部屋・機器の空き状況をリアルタイムで照合するルールエンジンが、最適な予約枠を自動で提案します。従来の手作業では難しかった複雑な条件管理を自動化します。"
                         imageSrc="/img/reservation.png"
                         details={[
                             {
-                                title: "自動最適化アルゴリズム",
+                                title: "自動最適化",
                                 description: "スタッフのシフト、処置室の空き状況、必要な医療機器の稼働状況をリアルタイムで分析し、最適な予約枠を提案します。"
                             },
                             {
@@ -102,40 +108,122 @@ export default function FeatureDetail() {
                     <FeatureDetailSection
                         reverse
                         title="患者マイページ"
-                        description="患者様自身のスマートフォンから、いつでもどこでも予約や確認ができる専用ポータルを提供します。"
+                        description="患者様自身のスマートフォンから、いつでもどこでも予約確認ができる専用ポータルを提供します。LINEアカウントでのログインにも対応しています。"
                         imageSrc="/img/patientdashboard.png"
                         details={[
                             {
-                                title: "24時間365日予約受付",
-                                description: "診療時間外でも予約の受付・変更・キャンセルが可能。機会損失を防ぎ、患者様の利便性を向上させます。"
+                                title: "24時間365日 予約受付",
+                                description: "クリニックコード付きURLから診療時間外でも予約の受付が可能。機会損失を防ぎ、患者様の利便性を向上させます。"
                             },
                             {
-                                title: "予約履歴・施術履歴の確認",
+                                title: "予約履歴・施術記録の確認",
                                 description: "過去の予約や施術内容をいつでも確認できるため、患者様自身の健康管理意識の向上にもつながります。"
                             },
                             {
-                                title: "お知らせ配信",
-                                description: "クリニックからのお知らせや、予約のリマインド通知を配信し、来院忘れを防止します。"
+                                title: "予約完了メール通知",
+                                description: "予約完了時に患者・スタッフ双方へ自動でメール通知を送信。確認漏れを防ぎます。"
                             }
                         ]}
                     />
 
                     <FeatureDetailSection
-                        title="スタッフ管理・分析"
-                        description="スタッフのシフト管理からパフォーマンス分析まで、組織運営に必要な機能を網羅しています。"
+                        title="スタッフ管理・KPIダッシュボード"
+                        description="スタッフのシフト管理から経営KPIの可視化まで、組織運営に必要な機能を網羅しています。希望シフトの収集から自動生成まで一貫して対応します。"
                         imageSrc="/img/staffschedule.png"
                         details={[
                             {
-                                title: "スキルベースのシフト管理",
-                                description: "スタッフごとの保有資格やスキルセットに基づいたシフト作成が可能。適切な人員配置をサポートします。"
+                                title: "シフト自動生成",
+                                description: "スタッフの希望シフトや制約条件をもとに、システムが最適なシフトを自動生成。シフト作成にかかる管理工数を大幅に削減します。"
                             },
                             {
-                                title: "業務負荷の可視化",
-                                description: "誰がどの業務をどれくらい担当しているかを可視化し、業務の偏りを是正します。"
+                                title: "KPIダッシュボード",
+                                description: "来院数・売上・新規患者数などクリニック経営の主要指標をリアルタイムで可視化。データに基づいた経営判断をサポートします。"
                             },
                             {
-                                title: "パフォーマンス分析",
-                                description: "施術数や指名数などのデータを分析し、スタッフの評価や育成に活用できます。"
+                                title: "役割・権限管理",
+                                description: "スタッフごとにクリニック内の役割（ClinicRole）を設定し、適切な情報へのアクセス権限を管理できます。"
+                            }
+                        ]}
+                    />
+
+                    <FeatureDetailSection
+                        reverse
+                        title="ナラティブCRM"
+                        description="患者一人ひとりの価値観・ライフイベント・施術記録を蓄積する独自の「ナラティブプロフィール」機能。表面的な顧客データに留まらない、深い患者理解を実現します。"
+                        imageSrc={null}
+                        details={[
+                            {
+                                title: "ナラティブプロフィール",
+                                description: "患者の価値観・特性（PatientValue）やライフイベントを記録・更新。患者背景を深く理解することで、より質の高いコミュニケーションが可能になります。"
+                            },
+                            {
+                                title: "患者価値の自動計算",
+                                description: "蓄積されたデータをもとに、患者価値スコアを非同期でバックグラウンド計算。重要な患者へのフォローアップ優先度付けに活用できます。"
+                            },
+                            {
+                                title: "ナラティブログ",
+                                description: "施術記録やスタッフメモをナラティブログとして蓄積。次回来院時に患者の状況を素早く把握できます。"
+                            }
+                        ]}
+                    />
+
+                    <FeatureDetailSection
+                        title="LINE連携"
+                        description="LINEアカウントでのログインから、LINE Messaging APIを活用したメッセージ・シナリオの自動配信まで、患者とのコミュニケーションをLINEで完結できます。"
+                        imageSrc={null}
+                        details={[
+                            {
+                                title: "LINEログイン（LINE OAuth）",
+                                description: "患者がLINEアカウントでそのままログイン可能。新規登録の手間を省き、アカウント登録率の向上に貢献します。"
+                            },
+                            {
+                                title: "LINEメッセージ送信",
+                                description: "LINE Messaging APIを通じて、スタッフから患者へ直接LINEメッセージを送信。重要なお知らせも確実に届けられます。"
+                            },
+                            {
+                                title: "LINEシナリオ自動配信",
+                                description: "設定したステップメールシナリオをLINEでも自動配信。メールが届きにくい患者へのフォローアップに有効です。"
+                            }
+                        ]}
+                    />
+
+                    <FeatureDetailSection
+                        reverse
+                        title="Web問診・電子契約"
+                        description="予約に連動したオンライン問診フォームと電子署名による同意書管理で、受付業務のペーパーレス化を実現します。"
+                        imageSrc={null}
+                        details={[
+                            {
+                                title: "Web問診フォーム",
+                                description: "予約に紐づく問診フォームを事前にオンラインで収集。来院前の入力で受付時間を短縮し、スタッフの負担を軽減します。"
+                            },
+                            {
+                                title: "電子署名・同意書管理",
+                                description: "タブレットでのデジタルサインに対応。署名済みドキュメントはPDFでダウンロード可能で、紙の保管場所が不要になります。"
+                            },
+                            {
+                                title: "問診テンプレート管理",
+                                description: "Web問診のテンプレートをCRUDで自由に管理。クリニックの診療内容に合わせた問診票を柔軟に作成・変更できます。"
+                            }
+                        ]}
+                    />
+
+                    <FeatureDetailSection
+                        title="マーケティング・ステップメール"
+                        description="患者のセグメント化と自動メール配信により、休眠患者の掘り起こしやリピーター育成を仕組み化します。"
+                        imageSrc={null}
+                        details={[
+                            {
+                                title: "顧客セグメント",
+                                description: "様々な条件（来院回数・最終来院日・施術種別など）で患者をセグメント化し、ターゲットを絞ったコミュニケーションを実現します。"
+                            },
+                            {
+                                title: "ステップメール自動配信",
+                                description: "メールシナリオを設定しておけば、スタッフが手動でトリガーするか、条件に基づいてフォローアップメールが自動送信されます。"
+                            },
+                            {
+                                title: "CSVエクスポート",
+                                description: "セグメントに基づいた患者リストをCSV形式でエクスポート。外部のマーケティングツールとの連携にも活用できます。"
                             }
                         ]}
                     />
@@ -147,9 +235,9 @@ export default function FeatureDetail() {
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
                             まずは無料デモで体験してください
                         </h2>
-                        <Link href="#" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-indigo-900 bg-white hover:bg-indigo-50 shadow-xl transition-all hover:scale-105">
+                        <a href="/#contact" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-indigo-900 bg-white hover:bg-indigo-50 shadow-xl transition-all hover:scale-105">
                             無料デモを申し込む
-                        </Link>
+                        </a>
                     </div>
                 </div>
 
