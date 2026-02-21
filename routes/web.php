@@ -2,8 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Staff\Auth\AuthenticatedSessionController as StaffAuthenticatedSessionController;
+use App\Http\Controllers\LineWebhookController;
 
 use Inertia\Inertia;
+
+// -----------------------------------------------------------------------
+// LINE Messaging API Webhook
+// CSRF 除外: withoutMiddleware で個別除外（bootstrap/app.php 修正不要）
+// LINE Developers Console の Webhook URL: https://your-domain.com/webhook/line
+// -----------------------------------------------------------------------
+Route::post('/webhook/line', [LineWebhookController::class, 'handle'])
+    ->name('webhook.line')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -76,7 +86,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('patients.contracts', \App\Http\Controllers\Staff\ContractController::class);
         Route::get('patients/{patient}/contracts/create-new', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'create'])->name('patients.contracts.create_new');
         Route::post('patients/{patient}/contracts/store-new', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'store'])->name('patients.contracts.store_new');
-        
+
         // Consent Documents
         Route::get('patients/{patient}/documents/create', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'createConsentDocument'])->name('patients.documents.create');
         Route::post('patients/{patient}/documents', [\App\Http\Controllers\Staff\ContractDocumentController::class, 'storeConsentDocument'])->name('patients.documents.store');
@@ -94,7 +104,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::post('shifts/generate', [\App\Http\Controllers\Staff\ShiftController::class, 'generate'])->name('shifts.generate');
         Route::resource('shifts', \App\Http\Controllers\Staff\ShiftController::class);
         Route::resource('reservations', \App\Http\Controllers\Staff\ReservationController::class);
-        
+
         // Kiosk Check-in
         Route::get('kiosk/check-in', [\App\Http\Controllers\Staff\KioskController::class, 'index'])->name('kiosk.check-in');
         Route::post('kiosk/check-in', [\App\Http\Controllers\Staff\KioskController::class, 'store'])->name('kiosk.check-in.store');
@@ -116,12 +126,12 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::resource('settings/mail-scenarios', \App\Http\Controllers\Staff\MailScenarioController::class);
         Route::resource('settings/interviews', \App\Http\Controllers\Staff\InterviewTemplateController::class)
             ->names([
-                'index' => 'settings.interviews.index',
-                'create' => 'settings.interviews.create',
-                'store' => 'settings.interviews.store',
-                'show' => 'settings.interviews.show',
-                'edit' => 'settings.interviews.edit',
-                'update' => 'settings.interviews.update',
+                'index'   => 'settings.interviews.index',
+                'create'  => 'settings.interviews.create',
+                'store'   => 'settings.interviews.store',
+                'show'    => 'settings.interviews.show',
+                'edit'    => 'settings.interviews.edit',
+                'update'  => 'settings.interviews.update',
                 'destroy' => 'settings.interviews.destroy',
             ]);
 
@@ -137,5 +147,13 @@ Route::prefix('staff')->name('staff.')->group(function () {
         Route::delete('patients/{patient}/life-events/{event}', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'destroyLifeEvent'])->name('patients.life-events.destroy');
         Route::post('patients/{patient}/narrative-logs', [\App\Http\Controllers\Staff\PatientNarrativeController::class, 'storeNarrative'])->name('patients.narrative-logs.store');
 
+        // ---------------------------------------------------------------
+        // Phase 2: LINE バインドトークン発行（受付スタッフ用）
+        // POST /staff/patients/{patient}/issue-line-token
+        // ---------------------------------------------------------------
+        Route::post(
+            'patients/{patient}/issue-line-token',
+            [\App\Http\Controllers\Staff\LineBindTokenController::class, 'issue']
+        )->name('patients.issue-line-token');
     });
 });
