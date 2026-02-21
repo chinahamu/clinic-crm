@@ -139,6 +139,14 @@ export default function StaffLayout({ user, header, children }) {
                 ダッシュボード
             </Link>
             <Link
+                href={route('staff.kpi-dashboard')}
+                onClick={() => setSidebarOpen(false)}
+                className={navLinkClass(route().current('staff.kpi-dashboard'))}
+            >
+                <ChartBarIcon className={iconClass(route().current('staff.kpi-dashboard'))} />
+                KPIダッシュボード
+            </Link>
+            <Link
                 href={route('staff.reservations.index')}
                 onClick={() => setSidebarOpen(false)}
                 className={navLinkClass(route().current('staff.reservations.*'))}

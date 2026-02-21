@@ -1,14 +1,16 @@
-import { Head, router } from '@inertiajs/react';
+import React from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
+import StaffLayout from '@/Layouts/StaffLayout';
 
 // -------------------------------------------------------------------
 // KPIカード
 // -------------------------------------------------------------------
 const KpiCard = ({ title, value, diff, accent }) => {
     const accentMap = {
-        blue:   'border-blue-200   bg-blue-50',
-        green:  'border-green-200  bg-green-50',
+        blue: 'border-blue-200   bg-blue-50',
+        green: 'border-green-200  bg-green-50',
         purple: 'border-purple-200 bg-purple-50',
-        amber:  'border-amber-200  bg-amber-50',
+        amber: 'border-amber-200  bg-amber-50',
     };
     const isUp = diff !== null && parseFloat(diff) >= 0;
 
@@ -17,9 +19,8 @@ const KpiCard = ({ title, value, diff, accent }) => {
             <p className="text-xs font-medium text-gray-500 mb-1">{title}</p>
             <p className="text-2xl font-bold text-gray-900 tracking-tight">{value}</p>
             {diff !== null && (
-                <p className={`mt-1 text-xs font-medium ${
-                    isUp ? 'text-emerald-600' : 'text-red-500'
-                }`}>
+                <p className={`mt-1 text-xs font-medium ${isUp ? 'text-emerald-600' : 'text-red-500'
+                    }`}>
                     {isUp ? '▲' : '▼'} 先月比 {Math.abs(parseFloat(diff)).toFixed(1)}%
                 </p>
             )}
@@ -40,8 +41,8 @@ const VisitTrendChart = ({ data }) => {
         <div>
             <div className="flex items-end gap-px" style={{ height: '128px' }}>
                 {data.map((item, i) => {
-                    const total  = (item.new ?? 0) + (item.repeat ?? 0);
-                    const pct    = (total / maxVal) * 100;
+                    const total = (item.new ?? 0) + (item.repeat ?? 0);
+                    const pct = (total / maxVal) * 100;
                     const newPct = total > 0 ? ((item.new ?? 0) / total) * 100 : 0;
                     return (
                         <div key={i} className="flex flex-col justify-end flex-1" style={{ height: '100%' }}>
@@ -88,6 +89,8 @@ const VisitTrendChart = ({ data }) => {
 // メインコンポーネント
 // -------------------------------------------------------------------
 export default function KpiDashboard({ kpi, visit_trend, scenario_effect, dormant_patients }) {
+    const { auth } = usePage().props;
+
     const diffPct = (cur, last) =>
         last > 0 ? (((cur - last) / last) * 100).toFixed(1) : null;
 
@@ -101,7 +104,10 @@ export default function KpiDashboard({ kpi, visit_trend, scenario_effect, dorman
     };
 
     return (
-        <>
+        <StaffLayout
+            user={auth.user}
+            header="KPI ダッシュボード"
+        >
             <Head title="KPI ダッシュボード" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -176,9 +182,8 @@ export default function KpiDashboard({ kpi, visit_trend, scenario_effect, dorman
                             </div>
                             <div className="flex items-center justify-between py-2">
                                 <dt className="text-sm text-gray-600">送信失敗</dt>
-                                <dd className={`text-xl font-bold ${
-                                    scenario_effect.failed > 0 ? 'text-red-500' : 'text-gray-300'
-                                }`}>
+                                <dd className={`text-xl font-bold ${scenario_effect.failed > 0 ? 'text-red-500' : 'text-gray-300'
+                                    }`}>
                                     {scenario_effect.failed.toLocaleString()}
                                 </dd>
                             </div>
@@ -262,6 +267,6 @@ export default function KpiDashboard({ kpi, visit_trend, scenario_effect, dorman
                 </div>
 
             </div>
-        </>
+        </StaffLayout>
     );
 }
